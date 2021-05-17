@@ -49,7 +49,7 @@ public class EidDAO extends CRCLoaderDAO implements IEidDAO {
 	public int getRecordCountByUploadId(int uploadId) {
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(getDataSource());
 		int insertCount = jdbcTemplate.queryForObject("select count(1) from "
-				+ getDbSchemaName() + " encounter_mapping where upload_id ='?'", Integer.class,
+				+ getDbSchemaName() + " encounter_mapping where upload_id =?", Integer.class,
 				new Object[] { uploadId });
 		return insertCount;
 	}
@@ -67,7 +67,7 @@ public class EidDAO extends CRCLoaderDAO implements IEidDAO {
 		try {
 			conn = getDataSource().getConnection();
 			CallableStatement callStmt = conn.prepareCall("{call "
-					+ getDbSchemaName() + "CREATE_TEMP_EID_TABLE('?','?')}");
+					+ getDbSchemaName() + "CREATE_TEMP_EID_TABLE(?,?)}");
 			callStmt.setString(1, tempEncounterMappingTableName);
 			callStmt.registerOutParameter(2, java.sql.Types.VARCHAR);
 			callStmt.execute();
@@ -121,7 +121,7 @@ public class EidDAO extends CRCLoaderDAO implements IEidDAO {
 			conn = getDataSource().getConnection();
 			CallableStatement callStmt = conn.prepareCall("{call "
 					+ this.getDbSchemaName()
-					+ "INSERT_EID_MAP_FROMTEMP('?','?','?')}");
+					+ "INSERT_EID_MAP_FROMTEMP(?,?,?)}");
 			callStmt.setString(1, tempMapTableName);
 			callStmt.setInt(2, uploadId);
 			callStmt.registerOutParameter(3, java.sql.Types.VARCHAR);

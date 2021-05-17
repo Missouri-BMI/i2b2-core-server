@@ -29,7 +29,6 @@ public class DataSourceLookupDAOFactory {
 	public static final String ORACLE = "ORACLE";
 	public static final String SQLSERVER = "MICROSOFT SQL SERVER";
 	public static final String POSTGRESQL = "POSTGRESQL";
-	public static final String SNOWFLAKE = "SNOWFLAKE";
 
 	//private static String dataSourceName = null;
 	private static String serverType = null;
@@ -49,9 +48,6 @@ public class DataSourceLookupDAOFactory {
 			return new OracleDataSourceLookupDAO(lookupDataSource,
 					schemaName);
 		} else if (serverType.equalsIgnoreCase(POSTGRESQL)) {
-			return new OracleDataSourceLookupDAO(lookupDataSource,
-					schemaName);
-		} else if (serverType.equalsIgnoreCase(SNOWFLAKE)) {
 			return new OracleDataSourceLookupDAO(lookupDataSource,
 					schemaName);
 		} else {

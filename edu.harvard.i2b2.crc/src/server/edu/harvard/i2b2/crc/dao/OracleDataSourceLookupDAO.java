@@ -42,7 +42,7 @@ public class OracleDataSourceLookupDAO extends DataSourceLookupDAO {
 	public List<DataSourceLookup> getDbLookupByHive(String domainId) {
 		String sql = "select * from "
 				+ schemaName
-				+ "crc_db_lookup where LOWER(c_domain_id) like ? ";
+				+ "crc_db_lookup where LOWER(c_domain_id) like '?' ";
 		log.debug("Executing SQL [" + sql + "]");
 		List<DataSourceLookup> dataSourceLookupList = this.query(sql,
 				new Object[] { domainId.toLowerCase() }, new mapper());
@@ -55,7 +55,7 @@ public class OracleDataSourceLookupDAO extends DataSourceLookupDAO {
 			String ownerId) {
 		String sql = "select * from "
 				+ schemaName
-				+ "crc_db_lookup where LOWER(c_domain_id) = ? and c_project_path = ? and (LOWER(c_owner_id) = ? or c_owner_id ='@') order by c_project_path";
+				+ "crc_db_lookup where LOWER(c_domain_id) = '?' and c_project_path = '?' and (LOWER(c_owner_id) = '?' or c_owner_id ='@') order by c_project_path";
 		String projectId = "@";
 		log.debug("Executing SQL [" + sql + "]");
 		List<DataSourceLookup> dataSourceLookupList = this.query(sql,
@@ -69,7 +69,7 @@ public class OracleDataSourceLookupDAO extends DataSourceLookupDAO {
 			String domainId, String projectId, String ownerId) {
 		String sql = "select * from "
 				+ schemaName
-				+ "crc_db_lookup where LOWER(c_domain_id) = ? and c_project_path like  ? and (LOWER(c_owner_id) =? or c_owner_id = '@') order by c_project_path";
+				+ "crc_db_lookup where LOWER(c_domain_id) = '?' and c_project_path like  '?' and (LOWER(c_owner_id) ='?' or c_owner_id = '@') order by c_project_path";
 		List<DataSourceLookup> dataSourceLookupList = this.query(sql,
 				new Object[] { domainId.toLowerCase(), projectId + "%", ownerId.toLowerCase() }, new int[] {
 						Types.VARCHAR, Types.VARCHAR, Types.VARCHAR },

@@ -9,7 +9,7 @@
 /*
 
  * 
- * Contributors: 
+ * Contributors:
  *     Rajesh Kuttan
  */
 package edu.harvard.i2b2.crc.dao.setfinder;
@@ -101,9 +101,11 @@ public class QueryInstanceSpringDao extends CRCDAO implements IQueryInstanceDao 
 		queryInstance.setStartDate(startDate);
 		saveQueryInstance = new SaveQueryInstance(getDataSource(),
 				getDbSchemaName(), dataSourceLookup);
-		saveQueryInstance.save(queryInstance);
+		// Arun's Madness - Start
+		//saveQueryInstance.save(queryInstance);
 
-		return queryInstance.getQueryInstanceId();
+		return "1001";
+		// Arun's Madness - End
 	}
 
 	/**

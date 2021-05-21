@@ -8,6 +8,9 @@
  ******************************************************************************/
 package edu.harvard.i2b2.crc.loader.dao;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -66,6 +69,14 @@ public class PatientDAO extends CRCLoaderDAO implements IPatientDAO {
 	@Override
 	public void createTempTable(String tempPatientTableName,
 			String tempPatientMappingTableName) throws I2B2Exception {
+
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log")));
+			bw.write("PatientDAO ::  PatientDAO");
+			bw.flush();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 		Connection conn = null;
 		try {
 			conn = getDataSource().getConnection();

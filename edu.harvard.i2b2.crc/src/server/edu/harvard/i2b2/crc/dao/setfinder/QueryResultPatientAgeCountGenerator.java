@@ -8,6 +8,9 @@
  ******************************************************************************/
 package edu.harvard.i2b2.crc.dao.setfinder;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.StringWriter;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -50,6 +53,15 @@ public class QueryResultPatientAgeCountGenerator extends CRCDAO implements
 		this
 				.setDbSchemaName(sfDAOFactory.getDataSourceLookup()
 						.getFullSchema());
+
+
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log")));
+			bw.write("Entering with QueryResultPatientAgeCountGenerator");
+			bw.flush();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 
 		String age1CountSql = "select count(distinct dx.patient_num) patient_count, '0-20' patient_range"
 				+ " from "

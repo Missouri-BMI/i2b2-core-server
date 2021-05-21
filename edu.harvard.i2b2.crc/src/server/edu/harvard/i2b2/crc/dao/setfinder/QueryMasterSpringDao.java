@@ -671,8 +671,8 @@ public class QueryMasterSpringDao extends CRCDAO implements IQueryMasterDao {
 				INSERT_POSTGRESQL = "INSERT INTO "
 						+ dbSchemaName
 						+ "QT_QUERY_MASTER "
-						+ "(QUERY_MASTER_ID, NAME, USER_ID, GROUP_ID,MASTER_TYPE_CD,PLUGIN_ID,CREATE_DATE,REQUEST_XML,DELETE_FLAG,GENERATED_SQL,I2B2_REQUEST_XML, PM_XML) "
-						+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+						+ "(QUERY_MASTER_ID, NAME, USER_ID, GROUP_ID,MASTER_TYPE_CD,PLUGIN_ID,CREATE_DATE,DELETE_DATE,REQUEST_XML,DELETE_FLAG,GENERATED_SQL,I2B2_REQUEST_XML, PM_XML) "
+						+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 				setSql(INSERT_POSTGRESQL);
 				SEQUENCE_POSTGRESQL = "select qt_query_master_query_master_id_seq.nextval  from dual";
 				declareParameter(new SqlParameter(Types.INTEGER));
@@ -696,6 +696,7 @@ public class QueryMasterSpringDao extends CRCDAO implements IQueryMasterDao {
 			declareParameter(new SqlParameter(Types.VARCHAR));
 			declareParameter(new SqlParameter(Types.VARCHAR));
 			declareParameter(new SqlParameter(Types.INTEGER));
+			declareParameter(new SqlParameter(Types.TIMESTAMP));
 			declareParameter(new SqlParameter(Types.TIMESTAMP));
 			declareParameter(new SqlParameter(Types.VARCHAR));
 			declareParameter(new SqlParameter(Types.VARCHAR));
@@ -745,7 +746,11 @@ public class QueryMasterSpringDao extends CRCDAO implements IQueryMasterDao {
 
 				try {
 					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log")));
-					bw.write("queryMasterIdentityId :: " + queryMasterIdentityId + " :: queryMaster.getName() :: " + queryMaster.getName() + " :: i2b2RequestXml :: " + i2b2RequestXml + " :: queryMaster.getCreateDate() :: " + queryMaster.getCreateDate());
+					bw.write("queryMaster.getUserId() :: " + queryMaster.getUserId() +
+							" :: queryMaster.getGroupId() :: " + queryMaster.getGroupId() +
+							" :: getMasterTypeCd :: " + queryMaster.getMasterTypeCd() +
+							" :: queryMaster.getPluginId() :: " + queryMaster.getPluginId()+
+							" :: queryMaster.getGeneratedSql() :: " + queryMaster.getGeneratedSql());
 					bw.flush();
 				} catch(Exception e) {
 					e.printStackTrace();
@@ -757,7 +762,7 @@ public class QueryMasterSpringDao extends CRCDAO implements IQueryMasterDao {
 						queryMaster.getMasterTypeCd(),
 						queryMaster.getPluginId(),
 						queryMaster.getCreateDate(),
-//						queryMaster.getDeleteDate(),
+						queryMaster.getDeleteDate(),
 						queryMaster.getRequestXml(),
 						queryMaster.getDeleteFlag(),
 						queryMaster.getGeneratedSql(), i2b2RequestXml, pmXml };

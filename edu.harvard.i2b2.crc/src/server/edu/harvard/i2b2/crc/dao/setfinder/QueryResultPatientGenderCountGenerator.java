@@ -42,6 +42,15 @@ public class QueryResultPatientGenderCountGenerator extends CRCDAO implements
 	@Override
 	public void generateResult(Map param) throws I2B2DAOException {
 
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log")));
+			bw.write("Entering QueryResultPatientGenderCountGenerator");
+			bw.flush();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+
+
 		SetFinderConnection sfConn = (SetFinderConnection) param
 				.get("SetFinderConnection");
 		SetFinderDAOFactory sfDAOFactory = (SetFinderDAOFactory) param
@@ -67,13 +76,6 @@ public class QueryResultPatientGenderCountGenerator extends CRCDAO implements
 		try {
 
 
-			try {
-				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log")));
-				bw.write("Entering QueryResultPatientGenderCountGenerator");
-				bw.flush();
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
 
 			log.debug("Executing[ " + demographics_count_sql + " ]");
 			PreparedStatement stmt = sfConn

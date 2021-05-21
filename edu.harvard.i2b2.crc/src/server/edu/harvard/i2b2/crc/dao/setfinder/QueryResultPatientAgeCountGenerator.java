@@ -39,6 +39,8 @@ public class QueryResultPatientAgeCountGenerator extends CRCDAO implements
 	@Override
 	public void generateResult(Map param) throws I2B2DAOException {
 
+		System.out.println("generateResultgenerateResultgenerateResultgenerateResult");
+
 		SetFinderConnection sfConn = (SetFinderConnection) param
 				.get("SetFinderConnection");
 		SetFinderDAOFactory sfDAOFactory = (SetFinderDAOFactory) param

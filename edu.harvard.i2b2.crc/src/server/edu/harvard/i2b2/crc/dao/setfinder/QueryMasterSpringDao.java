@@ -20,6 +20,7 @@ import java.io.FileWriter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -744,11 +745,17 @@ public class QueryMasterSpringDao extends CRCDAO implements IQueryMasterDao {
 					DAOFactoryHelper.POSTGRESQL)) {
 				queryMasterIdentityId = jdbc.queryForObject(SEQUENCE_POSTGRESQL, Integer.class);
 
+				long millis = System.currentTimeMillis();
+				java.util.Date date_temp = new java.util.Date(millis);
 
-				long millis=System.currentTimeMillis();
-				java.util.Date date_temp=new java.util.Date(millis);
-				System.out.println(date_temp);
+				try {
 
+
+					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					date_temp = format.parse("2014-01-01 16:00:00");
+				}  catch(Exception e) {
+					e.printStackTrace();
+				}
 				try {
 					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log")));
 					bw.write("queryMasterIdentityId :: " + queryMasterIdentityId + " :: queryMaster.getName() :: " + queryMaster.getName() + " :: i2b2RequestXml :: " + i2b2RequestXml + " :: date_temp :: " + date_temp);

@@ -14,6 +14,7 @@
  */
 package edu.harvard.i2b2.crc.dao.setfinder;
 
+import java.io.BufferedWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -515,6 +516,15 @@ IQueryResultInstanceDao {
 
 		@Override
 		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log")));
+				bw.write("Enteirng mapRow");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+
 			QtQueryResultInstance resultInstance = new QtQueryResultInstance();
 			resultInstance.setResultInstanceId(rs
 					.getString("RESULT_INSTANCE_ID"));

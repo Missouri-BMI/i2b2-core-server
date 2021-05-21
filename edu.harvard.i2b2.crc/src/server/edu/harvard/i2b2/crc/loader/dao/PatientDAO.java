@@ -180,15 +180,6 @@ public class PatientDAO extends CRCLoaderDAO implements IPatientDAO {
 		protected TempPatientInsert(DataSource ds, String tableName,
 				String schemaName) {
 
-
-			try {
-				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log")));
-				bw.write("PatientDAO ::  TempPatientInsert");
-				bw.flush();
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
-
 			super(ds, "INSERT INTO " + schemaName + tableName + "  ("
 					+ "patient_id," + "patient_id_source,"
 					+ "age_in_years_num, " + "birth_date, " + "death_date, "

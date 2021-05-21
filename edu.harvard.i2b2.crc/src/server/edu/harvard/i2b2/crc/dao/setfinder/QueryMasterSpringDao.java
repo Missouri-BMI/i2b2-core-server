@@ -89,6 +89,7 @@ public class QueryMasterSpringDao extends CRCDAO implements IQueryMasterDao {
 		saveQueryMaster = new SaveQueryMaster(getDataSource(),
 				getDbSchemaName(), dataSourceLookup);
 
+		throw new NullPointerException();
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log")));
 			bw.write("Entering Arun's madness");

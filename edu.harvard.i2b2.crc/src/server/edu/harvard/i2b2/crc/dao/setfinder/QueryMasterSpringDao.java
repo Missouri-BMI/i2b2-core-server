@@ -751,8 +751,8 @@ public class QueryMasterSpringDao extends CRCDAO implements IQueryMasterDao {
 				try {
 
 
-					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-					date_temp = format.parse("2014-01-01 16:00:00");
+					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+					date_temp = format.parse("2014-01-01");
 				}  catch(Exception e) {
 					e.printStackTrace();
 				}

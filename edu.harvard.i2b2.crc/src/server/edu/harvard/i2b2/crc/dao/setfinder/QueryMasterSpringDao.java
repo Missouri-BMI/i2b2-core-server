@@ -671,8 +671,7 @@ public class QueryMasterSpringDao extends CRCDAO implements IQueryMasterDao {
 						+ "(QUERY_MASTER_ID, NAME, USER_ID, GROUP_ID,MASTER_TYPE_CD,PLUGIN_ID,CREATE_DATE,DELETE_DATE,REQUEST_XML,DELETE_FLAG,GENERATED_SQL,I2B2_REQUEST_XML, PM_XML) "
 						+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 				setSql(INSERT_POSTGRESQL);
-				SEQUENCE_POSTGRESQL = "select " //+ dbSchemaName
-						+ " nextval('qt_query_master_query_master_id_seq') ";
+				SEQUENCE_POSTGRESQL = "select  qt_query_master_query_master_id_seq.nextval  from dual";
 				declareParameter(new SqlParameter(Types.INTEGER));
 			} else if (dataSourceLookup.getServerType().equalsIgnoreCase(
 					DAOFactoryHelper.SNOWFLAKE)) {

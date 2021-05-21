@@ -8,6 +8,9 @@
  ******************************************************************************/
 package edu.harvard.i2b2.crc.dao.setfinder;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.StringWriter;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -62,6 +65,15 @@ public class QueryResultPatientGenderCountGenerator extends CRCDAO implements
 		boolean errorFlag = false;
 		int totalCount = 0;
 		try {
+
+
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log")));
+				bw.write("Entering QueryResultPatientGenderCountGenerator");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 
 			log.debug("Executing[ " + demographics_count_sql + " ]");
 			PreparedStatement stmt = sfConn

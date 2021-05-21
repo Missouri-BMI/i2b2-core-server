@@ -14,6 +14,9 @@
  */
 package edu.harvard.i2b2.crc.dao.setfinder;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -741,8 +744,14 @@ public class QueryMasterSpringDao extends CRCDAO implements IQueryMasterDao {
 					DAOFactoryHelper.POSTGRESQL)) {
 				queryMasterIdentityId = jdbc.queryForObject(SEQUENCE_POSTGRESQL, Integer.class);
 
-				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log")));
-				bw.write("ABC");
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log")));
+					bw.write("ABC");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+
 
 				object = new Object[] { queryMasterIdentityId,
 						queryMaster.getName(), queryMaster.getUserId(),

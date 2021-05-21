@@ -88,8 +88,8 @@ public class QueryMasterSpringDao extends CRCDAO implements IQueryMasterDao {
 		queryMaster.setDeleteFlag(DELETE_NO_FLAG);
 		saveQueryMaster = new SaveQueryMaster(getDataSource(),
 				getDbSchemaName(), dataSourceLookup);
-		saveQueryMaster.save(queryMaster, i2b2RequestXml, pmXml);
-		return queryMaster.getQueryMasterId();
+		//saveQueryMaster.save(queryMaster, i2b2RequestXml, pmXml);
+		return "1001";
 	}
 
 	/**
@@ -743,25 +743,11 @@ public class QueryMasterSpringDao extends CRCDAO implements IQueryMasterDao {
 			}  else if (dataSourceLookup.getServerType().equalsIgnoreCase(
 					DAOFactoryHelper.POSTGRESQL)) {
 				queryMasterIdentityId = jdbc.queryForObject(SEQUENCE_POSTGRESQL, Integer.class);
-
-				try {
-					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log")));
-					bw.write("queryMaster.getUserId() :: " + queryMaster.getUserId() +
-							" :: queryMaster.getGroupId() :: " + queryMaster.getGroupId() +
-							" :: getMasterTypeCd :: " + queryMaster.getMasterTypeCd() +
-							" :: queryMaster.getPluginId() :: " + queryMaster.getPluginId()+
-							" :: queryMaster.getGeneratedSql() :: " + queryMaster.getGeneratedSql());
-					bw.flush();
-				} catch(Exception e) {
-					e.printStackTrace();
-				}
-
 				object = new Object[] { queryMasterIdentityId,
 						queryMaster.getName(), queryMaster.getUserId(),
 						queryMaster.getGroupId(),
 						queryMaster.getMasterTypeCd(),
-						queryMaster.getPluginId(),
-						queryMaster.getCreateDate(),
+						queryMaster.getPluginId(), queryMaster.getCreateDate(),
 						queryMaster.getDeleteDate(),
 						queryMaster.getRequestXml(),
 						queryMaster.getDeleteFlag(),

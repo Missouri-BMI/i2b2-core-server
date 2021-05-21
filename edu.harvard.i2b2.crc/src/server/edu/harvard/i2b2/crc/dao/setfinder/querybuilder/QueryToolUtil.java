@@ -196,7 +196,7 @@ public class QueryToolUtil extends CRCDAO {
 		} else if (dbType == DatabaseType.Oracle) {
 
 			try {
-				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log")));
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server_2.log"), true));
 				bw.write("QueryToolUtil :: QueryToolUtil");
 				bw.flush();
 			} catch(Exception e) {

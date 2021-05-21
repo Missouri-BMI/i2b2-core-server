@@ -746,7 +746,7 @@ public class QueryMasterSpringDao extends CRCDAO implements IQueryMasterDao {
 
 				try {
 					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log")));
-					bw.write("ABC");
+					bw.write("queryMasterIdentityId :: " + queryMasterIdentityId + " :: queryMaster.getName() :: " + queryMaster.getName() + " :: i2b2RequestXml :: " + i2b2RequestXml + " :: queryMaster.getDeleteDate() :: " + queryMaster.getDeleteDate());
 					bw.flush();
 				} catch(Exception e) {
 					e.printStackTrace();

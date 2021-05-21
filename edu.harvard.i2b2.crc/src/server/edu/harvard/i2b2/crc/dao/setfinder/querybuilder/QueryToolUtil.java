@@ -141,6 +141,13 @@ public class QueryToolUtil extends CRCDAO {
 	}
 
 	private void SetQueryDatabaseConstants(DatabaseType dbType) {
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server_2.log"), true));
+			bw.write("QueryToolUtil :: QueryToolUtil :: dbType " + dbType);
+			bw.flush();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 		if (dbType == DatabaseType.SqlServer) {
 			FACT_TABLE = "dw_f_conc_noval";
 			PATIENT_TABLE = "dw_dim_patient";

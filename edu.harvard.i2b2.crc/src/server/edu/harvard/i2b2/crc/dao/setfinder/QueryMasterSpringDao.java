@@ -744,21 +744,26 @@ public class QueryMasterSpringDao extends CRCDAO implements IQueryMasterDao {
 					DAOFactoryHelper.POSTGRESQL)) {
 				queryMasterIdentityId = jdbc.queryForObject(SEQUENCE_POSTGRESQL, Integer.class);
 
+
+				long millis=System.currentTimeMillis();
+				java.util.Date date_temp=new java.util.Date(millis);
+				System.out.println(date_temp);
+
 				try {
 					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log")));
-					bw.write("queryMasterIdentityId :: " + queryMasterIdentityId + " :: queryMaster.getName() :: " + queryMaster.getName() + " :: i2b2RequestXml :: " + i2b2RequestXml + " :: queryMaster.getDeleteDate() :: " + queryMaster.getDeleteDate());
+					bw.write("queryMasterIdentityId :: " + queryMasterIdentityId + " :: queryMaster.getName() :: " + queryMaster.getName() + " :: i2b2RequestXml :: " + i2b2RequestXml + " :: date_temp :: " + date_temp);
 					bw.flush();
 				} catch(Exception e) {
 					e.printStackTrace();
 				}
 
-
 				object = new Object[] { queryMasterIdentityId,
 						queryMaster.getName(), queryMaster.getUserId(),
 						queryMaster.getGroupId(),
 						queryMaster.getMasterTypeCd(),
-						queryMaster.getPluginId(), queryMaster.getCreateDate(),
-						queryMaster.getDeleteDate(),
+						queryMaster.getPluginId(),
+						date_temp,
+						date_temp,
 						queryMaster.getRequestXml(),
 						queryMaster.getDeleteFlag(),
 						queryMaster.getGeneratedSql(), i2b2RequestXml, pmXml };

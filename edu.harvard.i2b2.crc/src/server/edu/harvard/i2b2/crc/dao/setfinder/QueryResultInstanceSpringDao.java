@@ -15,6 +15,7 @@
 package edu.harvard.i2b2.crc.dao.setfinder;
 
 import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

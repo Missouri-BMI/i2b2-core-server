@@ -107,11 +107,14 @@ IQueryResultInstanceDao {
 
 		Date startDate = new Date(System.currentTimeMillis());
 		resultInstance.setStartDate(startDate);
+
 		savePatientSetResult = new SavePatientSetResult(getDataSource(),
 				getDbSchemaName(), dataSourceLookup);
-		savePatientSetResult.save(resultInstance);
-
-		return resultInstance.getResultInstanceId();
+		// Arun's Madness - Start
+//		savePatientSetResult.save(resultInstance);
+//		return resultInstance.getResultInstanceId();
+		// Arun's Madness - End
+		return "1001";
 	}
 
 	/**

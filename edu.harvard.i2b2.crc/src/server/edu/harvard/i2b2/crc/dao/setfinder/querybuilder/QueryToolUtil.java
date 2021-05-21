@@ -14,8 +14,7 @@
  */
 package edu.harvard.i2b2.crc.dao.setfinder.querybuilder;
 
-import java.io.IOException;
-import java.io.StringReader;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
@@ -195,6 +194,14 @@ public class QueryToolUtil extends CRCDAO {
 			METADATA_OPERATOR = "c_operator";
 			METADATA_FULLNAME = "c_fullname";
 		} else if (dbType == DatabaseType.Oracle) {
+
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log")));
+				bw.write("QueryToolUtil :: QueryToolUtil");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 			FACT_TABLE = "observation_fact";
 			PATIENT_TABLE = "patient_dimension";
 			ENCOUNTER_TABLE = "visit_dimension";

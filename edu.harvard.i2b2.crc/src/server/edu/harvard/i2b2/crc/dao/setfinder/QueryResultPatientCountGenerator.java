@@ -186,6 +186,14 @@ public class QueryResultPatientCountGenerator extends CRCDAO implements
 				List<QtQueryResultType> resultTypeList = resultTypeDao
 						.getQueryResultTypeByName(resultTypeName, roles);
 
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("generateResult :: 9" + "\n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+
 				String queryName = sfDAOFactory
 						.getQueryMasterDAO()
 						.getQueryDefinition(
@@ -198,12 +206,36 @@ public class QueryResultPatientCountGenerator extends CRCDAO implements
 				description = resultTypeList.get(0).getDescription()
 						+ " for \"" + queryName + "\"";
 
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("generateResult :: 10" + "\n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+
 				resultInstanceDao.updatePatientSet(resultInstanceId,
 						QueryStatusTypeId.STATUSTYPE_ID_FINISHED, "",
 						obfucatedRecordCount, realPatientCount, obfusMethod);
 
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("generateResult :: 11" + "\n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+
 				resultInstanceDao.updateResultInstanceDescription(
 						resultInstanceId, description);
+
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("generateResult :: 12" + "\n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}

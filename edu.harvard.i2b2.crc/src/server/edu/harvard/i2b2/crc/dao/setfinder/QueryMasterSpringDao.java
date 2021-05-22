@@ -84,9 +84,8 @@ public class QueryMasterSpringDao extends CRCDAO implements IQueryMasterDao {
 		queryMaster.setDeleteFlag(DELETE_NO_FLAG);
 		saveQueryMaster = new SaveQueryMaster(getDataSource(),
 				getDbSchemaName(), dataSourceLookup);
-//		saveQueryMaster.save(queryMaster, i2b2RequestXml, pmXml);
-//		return queryMaster.getQueryMasterId();
-		return "1001";
+		saveQueryMaster.save(queryMaster, i2b2RequestXml, pmXml);
+		return queryMaster.getQueryMasterId();
 	}
 
 	/**

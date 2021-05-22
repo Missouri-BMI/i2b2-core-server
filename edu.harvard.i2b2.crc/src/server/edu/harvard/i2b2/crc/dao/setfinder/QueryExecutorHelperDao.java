@@ -1045,6 +1045,13 @@ public class QueryExecutorHelperDao extends CRCDAO {
 						"Generator class not configured for result name["
 								+ resultName + "] ");
 			}
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("Entering runGenerator \n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 			resultGenerator = (IResultGenerator) generatorClass.newInstance();
 			log.debug("Running " + resultName + "'s class "
 					+ generatorClassName);

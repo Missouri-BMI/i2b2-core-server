@@ -824,8 +824,8 @@ public class QueryExecutorHelperDao extends CRCDAO {
 				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
 				bw.write("Entering callResultGenerator 8 \n");
 				bw.flush();
-			} catch(Exception e) {
-				e.printStackTrace();
+			} catch(Exception ex) {
+				ex.printStackTrace();
 			}
 			throw new I2B2DAOException(e.getMessage());
 		}

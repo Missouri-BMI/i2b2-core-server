@@ -425,7 +425,7 @@ public class QueryExecutorHelperDao extends CRCDAO {
 				try {
 					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
 					try {
-						recordCount = resultSet.getInt("patient_num_count");
+						recordCount = resultSet.getInt("PATIENT_NUM_COUNT");
 					} catch(Exception e) {
 						bw.write("Entering executeQuery 4.3.5 :: e :: " + e.getMessage() + "\n");
 					}

@@ -8,6 +8,9 @@
  ******************************************************************************/
 package edu.harvard.i2b2.crc.dao.setfinder;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -523,6 +526,15 @@ public class QueryExecutorDao extends CRCDAO implements IQueryExecutorDao {
 					log.debug("Setfinder skip temp table process timing message " + processTimingMessage);
 				}
 				queryMasterDao.updateQueryAfterRun(masterId, generatedSql, queryType);
+
+
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("Entering here");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 
 				if (missingItemMessage != null
 						&& missingItemMessage.trim().length() > 1) {

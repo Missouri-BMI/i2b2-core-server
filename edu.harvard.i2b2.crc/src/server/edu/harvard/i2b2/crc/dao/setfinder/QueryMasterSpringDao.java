@@ -709,10 +709,12 @@ public class QueryMasterSpringDao extends CRCDAO implements IQueryMasterDao {
 						queryMaster.getRequestXml(),
 						queryMaster.getDeleteFlag(),
 						queryMaster.getGeneratedSql(), i2b2RequestXml, pmXml };
-				update(object);
+
 			}
 
 			queryMaster.setQueryMasterId(String.valueOf(queryMasterIdentityId));
+
+			update(object);
 
 		}
 	}

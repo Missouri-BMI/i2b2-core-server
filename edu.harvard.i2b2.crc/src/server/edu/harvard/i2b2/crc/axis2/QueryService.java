@@ -482,7 +482,7 @@ public class QueryService {
 
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
-			bw.write("requestHandlerDelegate :: " + requestHandlerDelegate);
+			bw.write("requestHandlerDelegate :: " + requestHandlerDelegate + "\n");
 			bw.flush();
 		} catch(Exception e) {
 			e.printStackTrace();

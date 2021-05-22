@@ -390,8 +390,23 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			String fetchSql = " select count(distinct patient_num) as patient_num_count from "
 					+ TEMP_DX_TABLE;
 			Statement countStmt = manualConnection.createStatement();
-			if (this.queryWithoutTempTableFlag == false) { 
+			if (this.queryWithoutTempTableFlag == false) {
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("Entering executeQuery 4.1 \n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 				resultSet = countStmt.executeQuery(fetchSql);
+
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("Entering executeQuery 4.2 \n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 			}
 
 			int i = 0;

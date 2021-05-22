@@ -367,7 +367,7 @@ public class QueryInstanceSpringDao extends CRCDAO implements IQueryInstanceDao 
 				setSql(INSERT_POSTGRESQL);
 //				SEQUENCE_POSTGRESQL = "select " // + dbSchemaName
 //						+ "nextval('qt_query_instance_query_instance_id_seq') ";
-				SEQUENCE_POSTGRESQL = "select qt_query_master_query_master_id_seq.nextval from dual";
+				SEQUENCE_POSTGRESQL = "select qt_query_instance_query_instance_id_seq.nextval from dual";
 				declareParameter(new SqlParameter(Types.INTEGER));
 
 			} 

@@ -743,7 +743,9 @@ public class QueryMasterSpringDao extends CRCDAO implements IQueryMasterDao {
 			}  else if (dataSourceLookup.getServerType().equalsIgnoreCase(
 					DAOFactoryHelper.POSTGRESQL)) {
 				queryMasterIdentityId = jdbc.queryForObject(SEQUENCE_POSTGRESQL, Integer.class);
-				object = new Object[] { queryMasterIdentityId,
+				queryMaster.setQueryMasterId(String
+						.valueOf(queryMasterIdentityId));
+				object = new Object[] { queryMaster.getQueryMasterId(),
 						queryMaster.getName(), queryMaster.getUserId(),
 						queryMaster.getGroupId(),
 						queryMaster.getMasterTypeCd(),

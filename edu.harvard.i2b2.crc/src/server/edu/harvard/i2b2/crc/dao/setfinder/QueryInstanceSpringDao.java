@@ -101,11 +101,9 @@ public class QueryInstanceSpringDao extends CRCDAO implements IQueryInstanceDao 
 		queryInstance.setStartDate(startDate);
 		saveQueryInstance = new SaveQueryInstance(getDataSource(),
 				getDbSchemaName(), dataSourceLookup);
-		// Arun's Madness - Start
-		//saveQueryInstance.save(queryInstance);
+		saveQueryInstance.save(queryInstance);
 
-		return null;
-		// Arun's Madness - End
+		return queryInstance.getQueryInstanceId();
 	}
 
 	/**

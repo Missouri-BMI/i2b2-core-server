@@ -627,6 +627,15 @@ public class QueryExecutorDao extends CRCDAO implements IQueryExecutorDao {
 				log.error("Error closing statement/resultset ", sqle);
 			}
 		}
+
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+			bw.write("Entering patientSetId :: " + patientSetId + "\n");
+			bw.flush();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+
 		return patientSetId;
 	}
 

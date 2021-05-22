@@ -410,11 +410,27 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			resultSet.close();
 			countStmt.close();
 
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("Entering executeQuery 5 \n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+
 			// tm.begin();
 			// call the result generator with the db connection/temp table
 			callResultGenerator(resultOutputList, manualConnection,
 					sfDAOFactory, requestXml, patientSetId, queryInstanceId,
 					TEMP_DX_TABLE, recordCount, obfuscatedRecordCount, transactionTimeout, pmXml);
+
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("Entering executeQuery 6 \n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 
 
 			if (dsLookup.getServerType().equalsIgnoreCase(
@@ -425,8 +441,23 @@ public class QueryExecutorHelperDao extends CRCDAO {
 				String checkDeleteCountTable = "drop table " + TEMP_DX_TABLE;
 				String checkDeleteMasterTable = "drop table " + TEMP_MASTER_TABLE;
 				Statement clearTempStmt = manualConnection.createStatement();
+
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("Entering executeQuery 7 \n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 				try {
 					clearTempStmt.executeUpdate(checkDeleteGlobalTempTable);
+					try {
+						BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+						bw.write("Entering executeQuery 8 \n");
+						bw.flush();
+					} catch(Exception e) {
+						e.printStackTrace();
+					}
 				} catch (SQLException dEx) {
 					;
 				}
@@ -439,6 +470,14 @@ public class QueryExecutorHelperDao extends CRCDAO {
 					clearTempStmt.executeUpdate(checkDeleteMasterTable);
 				} catch (SQLException dEx) {
 					;
+				}
+
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("Entering executeQuery 9 \n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
 				}
 				clearTempStmt.close();
 			} else if (dsLookup.getServerType().equalsIgnoreCase(

@@ -69,7 +69,7 @@ public class QueryMasterSpringDao extends CRCDAO implements IQueryMasterDao {
 		setDbSchemaName(dataSourceLookup.getFullSchema());
 		jdbcTemplate = new JdbcTemplate(dataSource);
 		this.dataSourceLookup = dataSourceLookup;
-		queryMasterMapper = new QtQueryMasterRowMapper();
+
 	}
 
 	/**
@@ -635,7 +635,7 @@ public class QueryMasterSpringDao extends CRCDAO implements IQueryMasterDao {
 				this.setSql(INSERT_SQLSERVER);
 			} else if (dataSourceLookup.getServerType().equalsIgnoreCase(
 					DAOFactoryHelper.POSTGRESQL)) {
-				this.setReturnGeneratedKeys(true);
+//				this.setReturnGeneratedKeys(true);
 				INSERT_POSTGRESQL = "INSERT INTO "
 						+ dbSchemaName
 						+ "QT_QUERY_MASTER "

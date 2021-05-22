@@ -455,9 +455,9 @@ public class QueryExecutorHelperDao extends CRCDAO {
 
 			// tm.begin();
 			// call the result generator with the db connection/temp table
-			callResultGenerator(resultOutputList, manualConnection,
-					sfDAOFactory, requestXml, patientSetId, queryInstanceId,
-					TEMP_DX_TABLE, recordCount, obfuscatedRecordCount, transactionTimeout, pmXml);
+//			callResultGenerator(resultOutputList, manualConnection,
+//					sfDAOFactory, requestXml, patientSetId, queryInstanceId,
+//					TEMP_DX_TABLE, recordCount, obfuscatedRecordCount, transactionTimeout, pmXml);
 
 			try {
 				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));

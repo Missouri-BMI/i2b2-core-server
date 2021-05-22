@@ -85,7 +85,7 @@ public class QueryResultPatientCountGenerator extends CRCDAO implements
 			resultType.setName("PATIENT_COUNT_XML");
 			DataType mdataType = new DataType();
 			mdataType.setValue(String.valueOf(patientCount));
-			mdataType.setColumn("patient_count");
+			mdataType.setColumn("PATIENT_COUNT");
 			mdataType.setType("int");
 			resultType.getData().add(mdataType);
 

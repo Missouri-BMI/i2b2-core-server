@@ -1055,6 +1055,13 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			resultGenerator = (IResultGenerator) generatorClass.newInstance();
 			log.debug("Running " + resultName + "'s class "
 					+ generatorClassName);
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("Entering resultName :: " + resultName + " :: generatorClassName :: " + generatorClassName +" ::\n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 			resultGenerator.generateResult(param);
 		} catch (ClassNotFoundException e) {
 			throw new I2B2DAOException(

@@ -455,9 +455,9 @@ public class QueryExecutorHelperDao extends CRCDAO {
 
 			// tm.begin();
 			// call the result generator with the db connection/temp table
-//			callResultGenerator(resultOutputList, manualConnection,
-//					sfDAOFactory, requestXml, patientSetId, queryInstanceId,
-//					TEMP_DX_TABLE, recordCount, obfuscatedRecordCount, transactionTimeout, pmXml);
+			callResultGenerator(resultOutputList, manualConnection,
+					sfDAOFactory, requestXml, patientSetId, queryInstanceId,
+					TEMP_DX_TABLE, recordCount, obfuscatedRecordCount, transactionTimeout, pmXml);
 
 			try {
 				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
@@ -658,6 +658,14 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			String TEMP_DX_TABLE, int recordCount, int obfuscatedRecordCount, int transactionTimeout, String pmXml)
 					throws CRCTimeOutException, LockedoutException, I2B2DAOException {
 
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+			bw.write("Entering callResultGenerator 1 \n");
+			bw.flush();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+
 		log.debug("getting queryProcess instance");
 		QueryProcessorUtil qpUtil = QueryProcessorUtil.getInstance();
 
@@ -681,6 +689,13 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			log.debug("In callResultGenerator: Ontology getChildren url from property file ["
 					+ ontologyGetChildrenUrl + "]");
 
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("Entering callResultGenerator 2 \n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 
 			JAXBElement responseJaxb = CRCJAXBUtil.getJAXBUtil()
 					.unMashallFromString(requestXml);
@@ -702,12 +717,35 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			throw new I2B2DAOException(e.getMessage());
 		}
 
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+			bw.write("Entering callResultGenerator 3 \n");
+			bw.flush();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+
 		// get roles either from cache or by calling PM
 
 		List<String> roles = new ArrayList<String>();
 
 		try {
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("Entering callResultGenerator 4 \n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 			roles = getRoleFromPM(requestXml, pmXml);
+
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("Entering callResultGenerator 5 \n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 		} catch (I2B2Exception e) {
 			throw new I2B2DAOException(e.getMessage());
 		}
@@ -729,8 +767,23 @@ public class QueryExecutorHelperDao extends CRCDAO {
 					projectId, userId, daoFactory);
 			boolean noDataAggFlag = false, noDataObfuscFlag = false;
 			try {
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("Entering callResultGenerator 6 \n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 				authHelper.checkRoleForProtectionLabel(
 						"SETFINDER_QRY_WITHOUT_DATAOBFSC", roles);
+
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("Entering callResultGenerator 7 \n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 			} catch (MissingRoleException noRoleEx) {
 				noDataAggFlag = true;
 			} catch (I2B2Exception e) {

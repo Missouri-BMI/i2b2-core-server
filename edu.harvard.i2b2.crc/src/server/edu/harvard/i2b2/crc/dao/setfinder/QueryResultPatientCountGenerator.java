@@ -148,10 +148,32 @@ public class QueryResultPatientCountGenerator extends CRCDAO implements
 			IQueryResultInstanceDao resultInstanceDao = sfDAOFactory
 					.getPatientSetResultDAO();
 
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("generateResult :: 6" + "\n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+
 			if (errorFlag) {
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("generateResult :: 7" + "\n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 				resultInstanceDao.updatePatientSet(resultInstanceId,
 						QueryStatusTypeId.STATUSTYPE_ID_ERROR, 0);
 			} else {
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("generateResult :: 8" + "\n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 				String obfusMethod = "", description = null;
 				if (dataObfusRole) {
 					obfusMethod = IQueryResultInstanceDao.OBSUBTOTAL;

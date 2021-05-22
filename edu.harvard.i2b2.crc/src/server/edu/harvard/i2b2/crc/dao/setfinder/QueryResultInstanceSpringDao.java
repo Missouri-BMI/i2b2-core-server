@@ -411,6 +411,16 @@ IQueryResultInstanceDao {
 		public SavePatientSetResult(DataSource dataSource, String dbSchemaName,
 				DataSourceLookup dataSourceLookup) {
 			super();
+
+
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("Entering SavePatientSetResult" + "\n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+
 			setDataSource(dataSource);
 			if (dataSourceLookup.getServerType().equalsIgnoreCase(
 					DAOFactoryHelper.ORACLE)) {

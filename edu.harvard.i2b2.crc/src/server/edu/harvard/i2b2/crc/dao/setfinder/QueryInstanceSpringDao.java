@@ -365,8 +365,9 @@ public class QueryInstanceSpringDao extends CRCDAO implements IQueryInstanceDao 
 						+ "(QUERY_INSTANCE_ID, QUERY_MASTER_ID, USER_ID, GROUP_ID,BATCH_MODE,START_DATE,END_DATE,STATUS_TYPE_ID,DELETE_FLAG) "
 						+ "VALUES (?,?,?,?,?,?,?,?,?)";
 				setSql(INSERT_POSTGRESQL);
-				SEQUENCE_POSTGRESQL = "select " // + dbSchemaName
-						+ "nextval('qt_query_instance_query_instance_id_seq') ";
+//				SEQUENCE_POSTGRESQL = "select " // + dbSchemaName
+//						+ "nextval('qt_query_instance_query_instance_id_seq') ";
+				SEQUENCE_POSTGRESQL = "select qt_query_master_query_master_id_seq.nextval from dual";
 				declareParameter(new SqlParameter(Types.INTEGER));
 
 			} 
@@ -413,8 +414,7 @@ public class QueryInstanceSpringDao extends CRCDAO implements IQueryInstanceDao 
 						queryInstance.getDeleteFlag() };
 			} else if (dataSourceLookup.getServerType().equalsIgnoreCase(
 					DAOFactoryHelper.POSTGRESQL)) {
-//				queryInstanceId = jdbc.queryForObject(SEQUENCE_POSTGRESQL, Integer.class);
-				queryInstance.setQueryInstanceId("123");
+				queryInstanceId = jdbc.queryForObject(SEQUENCE_POSTGRESQL, Integer.class);
 				object = new Object[] { queryInstance.getQueryInstanceId(),
 						queryInstance.getQtQueryMaster().getQueryMasterId(),
 						queryInstance.getUserId(), queryInstance.getGroupId(),

@@ -437,8 +437,9 @@ IQueryResultInstanceDao {
 						+ "(RESULT_INSTANCE_ID, QUERY_INSTANCE_ID, RESULT_TYPE_ID, SET_SIZE,START_DATE,END_DATE,STATUS_TYPE_ID,DELETE_FLAG) "
 						+ "VALUES (?,?,?,?,?,?,?,?)";
 				setSql(INSERT_POSTGRESQL);
+
 				SEQUENCE_POSTGRESQL = "select " //+ dbSchemaName
-						+ "nextval('qt_query_result_instance_result_instance_id_seq') ";
+						+ "qt_query_result_instance_result_instance_id_seq.nextval from dual ";
 				declareParameter(new SqlParameter(Types.INTEGER));
 
 

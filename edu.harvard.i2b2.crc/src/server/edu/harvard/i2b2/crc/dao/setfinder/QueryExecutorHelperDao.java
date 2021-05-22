@@ -886,12 +886,12 @@ public class QueryExecutorHelperDao extends CRCDAO {
 					} catch(Exception e) {
 						e.printStackTrace();
 					}
-//					String resultName = resultOutputOption.getName()
-//							.toUpperCase();
-//					String resultInstanceId = getQueryResultInstanceId(
-//							sfDAOFactory, queryInstanceId, resultName);
-//					param.put("ResultInstanceId", resultInstanceId);
-//					param.put("ResultOptionName", resultName);
+					String resultName = resultOutputOption.getName()
+							.toUpperCase();
+					String resultInstanceId = getQueryResultInstanceId(
+							sfDAOFactory, queryInstanceId, resultName);
+					param.put("ResultInstanceId", resultInstanceId);
+					param.put("ResultOptionName", resultName);
 
 					try {
 						BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));

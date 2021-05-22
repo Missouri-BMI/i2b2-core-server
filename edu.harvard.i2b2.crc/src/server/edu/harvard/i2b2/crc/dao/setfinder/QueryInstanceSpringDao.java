@@ -104,7 +104,7 @@ public class QueryInstanceSpringDao extends CRCDAO implements IQueryInstanceDao 
 		// Arun's Madness - Start
 		//saveQueryInstance.save(queryInstance);
 
-		return "1";
+		return null;
 		// Arun's Madness - End
 	}
 

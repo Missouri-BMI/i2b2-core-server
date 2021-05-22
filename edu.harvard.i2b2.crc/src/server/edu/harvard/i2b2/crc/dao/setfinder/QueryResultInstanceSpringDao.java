@@ -117,7 +117,7 @@ IQueryResultInstanceDao {
 //		savePatientSetResult.save(resultInstance);
 //		return resultInstance.getResultInstanceId();
 		// Arun's Madness - End
-		return "1001";
+		return null;
 	}
 
 	/**

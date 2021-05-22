@@ -226,29 +226,8 @@ IQueryResultInstanceDao {
 
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
-			bw.write("QtQueryResultInstance :: 1 :: queryInstanceId " + queryInstanceId + " \n");
+			bw.write("QtQueryResultInstance :: 1" + "\n");
 			bw.flush();
-
-			try {
-				String sql = "select *  from "
-						+ getDbSchemaName()
-						+ "qt_query_result_instance ri, "
-						+ getDbSchemaName()
-						+ "qt_query_result_type rt where ri.query_instance_id = ? and ri.result_type_id = rt.result_type_id and rt.name=?";
-				QtQueryResultInstance queryResultInstanceList = (QtQueryResultInstance) jdbcTemplate
-						.queryForObject(sql,
-								new Object[] { Integer.parseInt(queryInstanceId), resultName },
-								patientSetMapper);
-
-				return queryResultInstanceList;
-			} catch (Exception exc) {
-				bw.write("QtQueryResultInstance :: 1 :: exception :: " + exc.getMessage() + "\n");
-				bw.flush();
-			}
-
-
-
-
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -260,8 +239,7 @@ IQueryResultInstanceDao {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		//return queryResultInstanceList;
-		return null;
+		return queryResultInstanceList;
 	}
 
 	/**

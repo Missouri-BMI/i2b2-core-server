@@ -611,6 +611,14 @@ public class QueryExecutorDao extends CRCDAO implements IQueryExecutorDao {
 						generatedSql, pmXml);
 
 			}
+
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("Entering after 5 \n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 		} catch (NamingException e) {
 			exception = e;
 			errorFlag = true;

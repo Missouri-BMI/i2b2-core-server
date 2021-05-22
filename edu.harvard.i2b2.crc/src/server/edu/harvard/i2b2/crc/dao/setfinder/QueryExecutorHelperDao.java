@@ -284,6 +284,14 @@ public class QueryExecutorHelperDao extends CRCDAO {
 				}
 
 			}
+
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("Entering executeQuery 2 \n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 			// set transaction timeout
 			stmt.setQueryTimeout(transactionTimeout);
 			// start seperate thread to cancel the running sql if the
@@ -299,6 +307,14 @@ public class QueryExecutorHelperDao extends CRCDAO {
 				sqls = generatedSql.split("<\\*>");
 			} else { 
 				sqls = new String[] {generatedSql};
+			}
+
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("Entering executeQuery 3 \n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
 			}
 
 		
@@ -346,6 +362,14 @@ public class QueryExecutorHelperDao extends CRCDAO {
 						ptrUtil.logProcessTimingMessage(queryInstanceId, ptrUtil.buildProcessTiming(logTimingUtil,"EXECUTE SQL - ITEM ","sql="+singleSql)); 
 					}
 				}
+			}
+
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("Entering executeQuery 4 \n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
 			}
 
 			outerLogTimingUtil.setEndTime();

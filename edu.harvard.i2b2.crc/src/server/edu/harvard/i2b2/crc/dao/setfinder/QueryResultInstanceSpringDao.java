@@ -114,10 +114,10 @@ IQueryResultInstanceDao {
 		savePatientSetResult = new SavePatientSetResult(getDataSource(),
 				getDbSchemaName(), dataSourceLookup);
 		// Arun's Madness - Start
-//		savePatientSetResult.save(resultInstance);
-//		return resultInstance.getResultInstanceId();
+		savePatientSetResult.save(resultInstance);
+		return resultInstance.getResultInstanceId();
 		// Arun's Madness - End
-		return null;
+//		return null;
 	}
 
 	/**
@@ -415,7 +415,7 @@ IQueryResultInstanceDao {
 
 			try {
 				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
-				bw.write("Entering SavePatientSetResult" + "\n");
+				bw.write("Entering SavePatientSetResult 1" + "\n");
 				bw.flush();
 			} catch(Exception e) {
 				e.printStackTrace();
@@ -444,6 +444,13 @@ IQueryResultInstanceDao {
 				setSql(INSERT_SQLSERVER);
 			} else if (dataSourceLookup.getServerType().equalsIgnoreCase(
 					DAOFactoryHelper.POSTGRESQL)) {
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("Entering SavePatientSetResult 2" + "\n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 				INSERT_POSTGRESQL = "INSERT INTO "
 						+ dbSchemaName
 						+ "QT_QUERY_RESULT_INSTANCE "

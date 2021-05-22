@@ -528,7 +528,7 @@ public class QueryExecutorDao extends CRCDAO implements IQueryExecutorDao {
 
 				try {
 					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
-					bw.write("Entering here");
+					bw.write("Entering here \n");
 					bw.flush();
 				} catch(Exception e) {
 					e.printStackTrace();
@@ -536,7 +536,13 @@ public class QueryExecutorDao extends CRCDAO implements IQueryExecutorDao {
 
 				queryMasterDao.updateQueryAfterRun(masterId, generatedSql, queryType);
 
-
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("Entering after \n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 
 
 				if (missingItemMessage != null

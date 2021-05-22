@@ -475,6 +475,10 @@ public class QueryService {
 			//	} else if (requestType.equals(REDCAP_REQUEST)) {
 			//			requestHandlerDelegate = new RedCapRequestDelegate();			
 		}
+
+		// Arun's madness
+		requestHandlerDelegate = new QTBreakdownRequestDelegate();
+
 		OMElement returnElement = null;
 		try {
 			// call delegate's handleRequest function

@@ -110,7 +110,6 @@ public class QueryMasterSpringDao extends CRCDAO implements IQueryMasterDao {
 	 * @return List<QtQueryMaster>
 	 * @throws I2B2Exception
 	 */
-	@Override
 	@SuppressWarnings("unchecked")
 	public List<QtQueryMaster> getQueryMasterByNameInfo(SecurityType userRequestType, FindByChildType findChildType) throws I2B2DAOException {
 

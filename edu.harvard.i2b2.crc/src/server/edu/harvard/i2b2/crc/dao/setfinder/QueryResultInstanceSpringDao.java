@@ -228,9 +228,20 @@ IQueryResultInstanceDao {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
 			bw.write("QtQueryResultInstance :: 1" + "\n");
 			bw.flush();
+
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+
+		String sql = "select *  from "
+				+ getDbSchemaName()
+				+ "qt_query_result_instance ri, "
+				+ getDbSchemaName()
+				+ "qt_query_result_type rt where ri.query_instance_id = ? and ri.result_type_id = rt.result_type_id and rt.name=?";
+		QtQueryResultInstance queryResultInstanceList = (QtQueryResultInstance) jdbcTemplate
+				.queryForObject(sql,
+						new Object[] { Integer.parseInt(queryInstanceId), resultName },
+						patientSetMapper);
 
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));

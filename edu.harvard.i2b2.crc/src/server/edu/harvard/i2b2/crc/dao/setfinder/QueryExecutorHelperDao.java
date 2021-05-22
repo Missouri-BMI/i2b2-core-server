@@ -820,6 +820,13 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			}
 
 		} catch (I2B2Exception e) {
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("Entering callResultGenerator 8 \n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 			throw new I2B2DAOException(e.getMessage());
 		}
 		Map param = new HashMap();
@@ -843,6 +850,14 @@ public class QueryExecutorHelperDao extends CRCDAO {
 		param.put("ObfuscatedRecordCount", obfuscatedRecordCount);
 		param.put("RecordCount", recordCount);
 		param.put("ObfuscatedRoleFlag", dataObfuscFlag);
+
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+			bw.write("Entering callResultGenerator 9 \n");
+			bw.flush();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 
 		if (resultOutputList != null) {
 			if (resultOutputList.getResultOutput() != null
@@ -898,6 +913,13 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			}
 
 		} else {
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("Entering callResultGenerator 10 \n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 			String resultType = defaultResultType;
 			// perform patient set
 			String resultInstanceId = getQueryResultInstanceId(sfDAOFactory,
@@ -912,6 +934,14 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			// ::TODO check if the result state is completed, before
 			// running the result
 			runGenerator(resultType, param, queryBreakdownType.getClassname());
+
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("Entering callResultGenerator 11 \n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 
 			// check if the user need to be locked
 			// if the lockoutQueryCount = -1 skip lockout check

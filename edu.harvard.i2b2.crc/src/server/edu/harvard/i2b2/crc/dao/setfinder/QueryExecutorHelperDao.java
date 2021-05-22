@@ -414,7 +414,21 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			double countSigma = GaussianBoxMuller.getCountSigma();
 			double obfuscatedMinimumValue = GaussianBoxMuller.getObfuscatedMinimumVal();
 			while (resultSet.next() && (i++ < 10)) {
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("Entering executeQuery 4.3 \n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 				recordCount = resultSet.getInt("patient_num_count");
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("Entering executeQuery 4.4 :: recordCount :: " + recordCount + "\n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 				GaussianBoxMuller gaussianBoxMuller = new GaussianBoxMuller();
 				obfuscatedRecordCount = (int) gaussianBoxMuller
 						.getNormalizedValueForCount(recordCount,countSigma,obfuscatedMinimumValue);

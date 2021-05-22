@@ -85,9 +85,17 @@ public class QueryResultPatientCountGenerator extends CRCDAO implements
 			resultType.setName("PATIENT_COUNT_XML");
 			DataType mdataType = new DataType();
 			mdataType.setValue(String.valueOf(patientCount));
-			mdataType.setColumn("PATIENT_COUNT");
+			mdataType.setColumn("patient_count");
 			mdataType.setType("int");
 			resultType.getData().add(mdataType);
+
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("generateResult :: 2" + "\n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 
 			edu.harvard.i2b2.crc.datavo.i2b2result.ObjectFactory of = new edu.harvard.i2b2.crc.datavo.i2b2result.ObjectFactory();
 			BodyType bodyType = new BodyType();
@@ -95,12 +103,28 @@ public class QueryResultPatientCountGenerator extends CRCDAO implements
 			ResultEnvelopeType resultEnvelope = new ResultEnvelopeType();
 			resultEnvelope.setBody(bodyType);
 
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("generateResult :: 3" + "\n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+
 			JAXBUtil jaxbUtil = CRCJAXBUtil.getJAXBUtil();
 
 			StringWriter strWriter = new StringWriter();
 
 			jaxbUtil.marshaller(of.createI2B2ResultEnvelope(resultEnvelope),
 					strWriter);
+
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("generateResult :: 4" + "\n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 
 			 IXmlResultDao xmlResultDao = sfDAOFactory.getXmlResultDao();
 			 xmlResult = strWriter.toString();
@@ -114,6 +138,13 @@ public class QueryResultPatientCountGenerator extends CRCDAO implements
 					"QueryResultPatientCountGenerator.generateResult:"
 							+ sqlEx.getMessage(), sqlEx);
 		} finally {
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("generateResult :: 5" + "\n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 			IQueryResultInstanceDao resultInstanceDao = sfDAOFactory
 					.getPatientSetResultDAO();
 

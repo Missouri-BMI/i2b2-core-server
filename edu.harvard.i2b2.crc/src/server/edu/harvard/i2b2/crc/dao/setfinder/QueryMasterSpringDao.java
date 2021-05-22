@@ -13,6 +13,9 @@
  */
 package edu.harvard.i2b2.crc.dao.setfinder;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -96,11 +99,27 @@ public class QueryMasterSpringDao extends CRCDAO implements IQueryMasterDao {
 	 */
 	@Override
 	public void updateQueryAfterRun(String masterId, String generatedSql, String masterType) {
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+			bw.write("Entering updateQueryAfterRun before");
+			bw.flush();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+
 		String sql = "UPDATE "
 				+ getDbSchemaName()
 				+ "QT_QUERY_MASTER set  GENERATED_SQL = ?, MASTER_TYPE_CD = ? where query_master_id = ?";
 		jdbcTemplate.update(sql, new Object[] { generatedSql, masterType, Integer.parseInt(masterId) });
 		// jdbcTemplate.update(sql);
+
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+			bw.write("Entering updateQueryAfterRun after");
+			bw.flush();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**

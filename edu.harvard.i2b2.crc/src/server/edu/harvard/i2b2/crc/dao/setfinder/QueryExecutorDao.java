@@ -525,8 +525,6 @@ public class QueryExecutorDao extends CRCDAO implements IQueryExecutorDao {
 					log.debug("Setfinder skip temp table missing item message " +  missingItemMessage);
 					log.debug("Setfinder skip temp table process timing message " + processTimingMessage);
 				}
-				queryMasterDao.updateQueryAfterRun(masterId, generatedSql, queryType);
-
 
 				try {
 					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
@@ -535,6 +533,10 @@ public class QueryExecutorDao extends CRCDAO implements IQueryExecutorDao {
 				} catch(Exception e) {
 					e.printStackTrace();
 				}
+				queryMasterDao.updateQueryAfterRun(masterId, generatedSql, queryType);
+
+
+
 
 				if (missingItemMessage != null
 						&& missingItemMessage.trim().length() > 1) {

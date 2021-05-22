@@ -860,6 +860,13 @@ public class QueryExecutorHelperDao extends CRCDAO {
 		}
 
 		if (resultOutputList != null) {
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("Entering callResultGenerator 10 \n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 			if (resultOutputList.getResultOutput() != null
 					&& resultOutputList.getResultOutput().size() > 0) {
 				List<ResultOutputOptionType> resultOptionList = resultOutputList
@@ -913,13 +920,7 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			}
 
 		} else {
-			try {
-				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
-				bw.write("Entering callResultGenerator 10 \n");
-				bw.flush();
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
+
 			String resultType = defaultResultType;
 			// perform patient set
 			String resultInstanceId = getQueryResultInstanceId(sfDAOFactory,
@@ -966,6 +967,14 @@ public class QueryExecutorHelperDao extends CRCDAO {
 				log.debug("Setfinder not doing the lockout check for instance ["+ queryInstanceId + "] " +
 						"the property value of query count is -1");
 			}
+		}
+
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+			bw.write("Entering callResultGenerator 12 \n");
+			bw.flush();
+		} catch(Exception e) {
+			e.printStackTrace();
 		}
 	}
 

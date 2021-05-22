@@ -8,6 +8,9 @@
  ******************************************************************************/
 package edu.harvard.i2b2.crc.dao.setfinder;
  
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -132,6 +135,17 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			ResultOutputOptionListType resultOutputList, String generatedSql, String pmXml
 			)
 					throws CRCTimeOutException, I2B2DAOException {
+
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+			bw.write("Entering executeQuery 1 \n");
+			bw.flush();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+
+
+
 		boolean errorFlag = false, timeOutErrorFlag = false;
 		Statement stmt = null;
 		ResultSet resultSet = null;

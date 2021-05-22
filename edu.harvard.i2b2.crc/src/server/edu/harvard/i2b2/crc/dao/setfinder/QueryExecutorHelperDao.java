@@ -910,7 +910,7 @@ public class QueryExecutorHelperDao extends CRCDAO {
 							.getBreakdownTypeByName(resultName);
 					// ::TODO check if the result state is completed, before
 					// running the result
-					runGenerator(resultName, param, queryBreakdownType.getClassname());
+					//runGenerator(resultName, param, queryBreakdownType.getClassname());
 
 					try {
 						BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));

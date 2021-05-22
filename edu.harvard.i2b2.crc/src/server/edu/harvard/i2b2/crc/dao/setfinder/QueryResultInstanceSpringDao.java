@@ -239,6 +239,8 @@ IQueryResultInstanceDao {
 						.queryForObject(sql,
 								new Object[] { Integer.parseInt(queryInstanceId), resultName },
 								patientSetMapper);
+
+				return queryResultInstanceList;
 			} catch (Exception exc) {
 				bw.write("QtQueryResultInstance :: 1 :: exception :: " + exc.getMessage() + "\n");
 				bw.flush();

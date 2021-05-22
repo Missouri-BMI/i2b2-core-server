@@ -671,7 +671,7 @@ public class QueryExecutorDao extends CRCDAO implements IQueryExecutorDao {
 			e.printStackTrace();
 		}
 
-		return 34;
+		return "34";
 	}
 
 	private void setQueryInstanceStatus(SetFinderDAOFactory sfDAOFactory,

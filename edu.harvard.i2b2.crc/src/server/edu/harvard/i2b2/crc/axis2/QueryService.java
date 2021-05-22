@@ -15,6 +15,9 @@
  */
 package edu.harvard.i2b2.crc.axis2;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.StringReader;
 
 import javax.xml.stream.XMLInputFactory;
@@ -476,9 +479,14 @@ public class QueryService {
 			//			requestHandlerDelegate = new RedCapRequestDelegate();			
 		}
 
-		// Arun's madness
-		requestHandlerDelegate = new QTBreakdownRequestDelegate();
 
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+			bw.write("requestHandlerDelegate :: " + requestHandlerDelegate);
+			bw.flush();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 		OMElement returnElement = null;
 		try {
 			// call delegate's handleRequest function

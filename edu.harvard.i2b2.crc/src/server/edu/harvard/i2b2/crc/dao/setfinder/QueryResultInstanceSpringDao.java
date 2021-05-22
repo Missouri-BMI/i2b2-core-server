@@ -258,7 +258,8 @@ IQueryResultInstanceDao {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		return queryResultInstanceList;
+		//return queryResultInstanceList;
+		return null;
 	}
 
 	/**

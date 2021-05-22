@@ -8,6 +8,9 @@
  ******************************************************************************/
 package edu.harvard.i2b2.crc.dao.setfinder;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +38,15 @@ public class QueryResultPatientCountGenerator extends CRCDAO implements
 
 	@Override
 	public void generateResult(Map param) throws I2B2DAOException {
+
+
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+			bw.write("generateResult :: 1" + "\n");
+			bw.flush();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 
 		SetFinderConnection sfConn = (SetFinderConnection) param
 				.get("SetFinderConnection");

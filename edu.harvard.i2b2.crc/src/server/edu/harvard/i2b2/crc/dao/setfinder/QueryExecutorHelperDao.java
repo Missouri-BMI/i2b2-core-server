@@ -911,10 +911,25 @@ public class QueryExecutorHelperDao extends CRCDAO {
 					// ::TODO check if the result state is completed, before
 					// running the result
 					runGenerator(resultName, param, queryBreakdownType.getClassname());
+
+					try {
+						BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+						bw.write("Entering callResultGenerato 10.4 \n");
+						bw.flush();
+					} catch(Exception e) {
+						e.printStackTrace();
+					}
 					// check if the user need to be locked
 					// if the lockoutQueryCount = -1 skip lockout check
 					log.debug("check if the user need to be locked");
 					if (lockoutQueryCount>-1) {
+						try {
+							BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+							bw.write("Entering callResultGenerator 10.5 \n");
+							bw.flush();
+						} catch(Exception e) {
+							e.printStackTrace();
+						}
 						// resultInstanceId, userId
 						if (dataObfuscFlag) {
 							String userLockedDate = null;

@@ -226,7 +226,7 @@ IQueryResultInstanceDao {
 
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
-			bw.write("QtQueryResultInstance :: 1" + "\n");
+			bw.write("QtQueryResultInstance :: 1 :: queryInstanceId " + queryInstanceId + " \n");
 			bw.flush();
 
 			try {
@@ -240,7 +240,7 @@ IQueryResultInstanceDao {
 								new Object[] { Integer.parseInt(queryInstanceId), resultName },
 								patientSetMapper);
 			} catch (Exception exc) {
-				bw.write("QtQueryResultInstance :: 1 :: exc" + exc.getMessage() + "\n");
+				bw.write("QtQueryResultInstance :: 1 :: exception :: " + exc.getMessage() + "\n");
 				bw.flush();
 			}
 

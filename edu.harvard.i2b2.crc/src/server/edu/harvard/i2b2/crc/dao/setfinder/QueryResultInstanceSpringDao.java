@@ -556,7 +556,7 @@ IQueryResultInstanceDao {
 		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
 
 			try {
-				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log")));
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
 				bw.write("Enteirng mapRow");
 				bw.flush();
 			} catch(Exception e) {

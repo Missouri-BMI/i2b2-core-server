@@ -1057,7 +1057,7 @@ public class QueryExecutorHelperDao extends CRCDAO {
 					+ generatorClassName);
 			try {
 				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
-				bw.write("Entering resultName :: " + resultName + " :: generatorClassName :: " + generatorClassName" ::\n");
+				bw.write("Entering resultName :: " + resultName + " :: generatorClassName :: " + generatorClassName +" ::\n");
 				bw.flush();
 			} catch(Exception e) {
 				e.printStackTrace();

@@ -415,6 +415,8 @@ public class QueryInstanceSpringDao extends CRCDAO implements IQueryInstanceDao 
 			} else if (dataSourceLookup.getServerType().equalsIgnoreCase(
 					DAOFactoryHelper.POSTGRESQL)) {
 				queryInstanceId = jdbc.queryForObject(SEQUENCE_POSTGRESQL, Integer.class);
+				queryInstance.setQueryInstanceId(String
+						.valueOf(queryInstanceId));
 				object = new Object[] { queryInstance.getQueryInstanceId(),
 						queryInstance.getQtQueryMaster().getQueryMasterId(),
 						queryInstance.getUserId(), queryInstance.getGroupId(),

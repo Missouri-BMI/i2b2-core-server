@@ -413,7 +413,7 @@ public class QueryInstanceSpringDao extends CRCDAO implements IQueryInstanceDao 
 						queryInstance.getDeleteFlag() };
 			} else if (dataSourceLookup.getServerType().equalsIgnoreCase(
 					DAOFactoryHelper.POSTGRESQL)) {
-				queryInstanceId = jdbc.queryForObject(SEQUENCE_POSTGRESQL, Integer.class);
+//				queryInstanceId = jdbc.queryForObject(SEQUENCE_POSTGRESQL, Integer.class);
 				queryInstance.setQueryInstanceId("123");
 				object = new Object[] { queryInstance.getQueryInstanceId(),
 						queryInstance.getQtQueryMaster().getQueryMasterId(),

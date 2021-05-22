@@ -7,16 +7,12 @@
  * the terms of the Healthcare Disclaimer.
  ******************************************************************************/
 /*
-
  *
  * Contributors:
  *     Rajesh Kuttan
  */
 package edu.harvard.i2b2.crc.dao.setfinder;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -200,9 +196,6 @@ public class QueryMasterSpringDao extends CRCDAO implements IQueryMasterDao {
 				else if ( dataSourceLookup.getServerType().equalsIgnoreCase(
 						DAOFactoryHelper.POSTGRESQL))
 					sql += " limit " + fetchSize;
-				else if ( dataSourceLookup.getServerType().equalsIgnoreCase(
-						DAOFactoryHelper.SNOWFLAKE))
-					sql += " limit " + fetchSize;
 			}
 
 			if (roles != null && roles.contains("MANAGER"))
@@ -275,9 +268,6 @@ public class QueryMasterSpringDao extends CRCDAO implements IQueryMasterDao {
 				else if ( dataSourceLookup.getServerType().equalsIgnoreCase(
 						DAOFactoryHelper.POSTGRESQL))
 					sql += " limit " + fetchSize;
-				else if ( dataSourceLookup.getServerType().equalsIgnoreCase(
-						DAOFactoryHelper.SNOWFLAKE))
-					sql += " limit " + fetchSize;
 
 			}
 
@@ -319,11 +309,6 @@ public class QueryMasterSpringDao extends CRCDAO implements IQueryMasterDao {
 				sql += " CAST(qp.patient_num AS TEXT) like ? and qm.delete_flag = ? ";
 			else
 				sql += " qp.patient_num like ? and qm.delete_flag = ? ";
-			if ( dataSourceLookup.getServerType().equalsIgnoreCase(
-					DAOFactoryHelper.SNOWFLAKE))
-				sql += " CAST(qp.patient_num AS TEXT) like '?' and qm.delete_flag = '?' ";
-			else
-				sql += " qp.patient_num like '?' and qm.delete_flag = '?' ";
 
 			if (findChildType.getCreateDate() != null)
 			{
@@ -361,9 +346,6 @@ public class QueryMasterSpringDao extends CRCDAO implements IQueryMasterDao {
 						+ fetchSize;
 			else if ( dataSourceLookup.getServerType().equalsIgnoreCase(
 					DAOFactoryHelper.POSTGRESQL))
-				sql += " limit " + fetchSize;
-			else if ( dataSourceLookup.getServerType().equalsIgnoreCase(
-					DAOFactoryHelper.SNOWFLAKE))
 				sql += " limit " + fetchSize;
 
 		}
@@ -431,9 +413,6 @@ public class QueryMasterSpringDao extends CRCDAO implements IQueryMasterDao {
 			else if ( dataSourceLookup.getServerType().equalsIgnoreCase(
 					DAOFactoryHelper.POSTGRESQL))
 				sql += " limit " + fetchSize;
-			else if ( dataSourceLookup.getServerType().equalsIgnoreCase(
-					DAOFactoryHelper.SNOWFLAKE))
-				sql += " limit " + fetchSize;
 
 		}
 
@@ -499,9 +478,6 @@ public class QueryMasterSpringDao extends CRCDAO implements IQueryMasterDao {
 					DAOFactoryHelper.POSTGRESQL))
 				sql += " limit " + fetchSize;
 
-			else if ( dataSourceLookup.getServerType().equalsIgnoreCase(
-					DAOFactoryHelper.SNOWFLAKE))
-				sql += " limit " + fetchSize;
 		}
 		List<QtQueryMaster> queryMasterList = jdbcTemplate.query(sql,
 				new Object[] { groupId, DELETE_NO_FLAG }, queryMasterMapper);
@@ -613,12 +589,6 @@ public class QueryMasterSpringDao extends CRCDAO implements IQueryMasterDao {
 						+ masterId + "]");
 			}
 
-			if (queryMasterCount < 1 && !dataSourceLookup.getServerType().equalsIgnoreCase(
-					DAOFactoryHelper.SNOWFLAKE)) {
-				throw new I2B2DAOException("Query not found with masterid =["
-						+ masterId + "]");
-			}
-
 			int queryInstanceCount = jdbcTemplate.update(queryInstanceSql,
 					new Object[] { DELETE_YES_FLAG, Integer.parseInt(masterId), DELETE_NO_FLAG });
 			log.debug("Total no. of query instance deleted" + queryInstanceCount);
@@ -636,8 +606,6 @@ public class QueryMasterSpringDao extends CRCDAO implements IQueryMasterDao {
 		private String SEQUENCE_ORACLE = "";
 		private String SEQUENCE_POSTGRESQL = "";
 		private String INSERT_POSTGRESQL = "";
-		private String SEQUENCE_SNOWFLAKE = "";
-		private String INSERT_SNOWFLAKE = "";
 
 		private DataSourceLookup dataSourceLookup = null;
 
@@ -674,19 +642,7 @@ public class QueryMasterSpringDao extends CRCDAO implements IQueryMasterDao {
 						+ "(QUERY_MASTER_ID, NAME, USER_ID, GROUP_ID,MASTER_TYPE_CD,PLUGIN_ID,CREATE_DATE,DELETE_DATE,REQUEST_XML,DELETE_FLAG,GENERATED_SQL,I2B2_REQUEST_XML, PM_XML) "
 						+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 				setSql(INSERT_POSTGRESQL);
-				SEQUENCE_POSTGRESQL = "select qt_query_master_query_master_id_seq.nextval  from dual";
-				declareParameter(new SqlParameter(Types.INTEGER));
-			} else if (dataSourceLookup.getServerType().equalsIgnoreCase(
-					DAOFactoryHelper.SNOWFLAKE)) {
-				this.setReturnGeneratedKeys(true);
-				INSERT_SNOWFLAKE = "INSERT INTO "
-						+ dbSchemaName
-						+ "QT_QUERY_MASTER "
-						+ "(QUERY_MASTER_ID, NAME, USER_ID, GROUP_ID,MASTER_TYPE_CD,PLUGIN_ID,CREATE_DATE,DELETE_DATE,REQUEST_XML,DELETE_FLAG,GENERATED_SQL,I2B2_REQUEST_XML, PM_XML) "
-						+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
-				setSql(INSERT_SNOWFLAKE);
-				SEQUENCE_SNOWFLAKE = "select " //+ dbSchemaName
-						+ "qt_query_master_query_master_id_seq.nextval from dual";
+				SEQUENCE_POSTGRESQL = "select qt_query_master_query_master_id_seq.nextval from dual";
 				declareParameter(new SqlParameter(Types.INTEGER));
 			}
 			this.dataSourceLookup = dataSourceLookup;
@@ -743,21 +699,6 @@ public class QueryMasterSpringDao extends CRCDAO implements IQueryMasterDao {
 			}  else if (dataSourceLookup.getServerType().equalsIgnoreCase(
 					DAOFactoryHelper.POSTGRESQL)) {
 				queryMasterIdentityId = jdbc.queryForObject(SEQUENCE_POSTGRESQL, Integer.class);
-				queryMaster.setQueryMasterId(String
-						.valueOf(queryMasterIdentityId));
-				object = new Object[] { queryMaster.getQueryMasterId(),
-						queryMaster.getName(), queryMaster.getUserId(),
-						queryMaster.getGroupId(),
-						queryMaster.getMasterTypeCd(),
-						queryMaster.getPluginId(), queryMaster.getCreateDate(),
-						queryMaster.getDeleteDate(),
-						queryMaster.getRequestXml(),
-						queryMaster.getDeleteFlag(),
-						queryMaster.getGeneratedSql(), i2b2RequestXml, pmXml };
-				update(object);
-			}   else if (dataSourceLookup.getServerType().equalsIgnoreCase(
-					DAOFactoryHelper.SNOWFLAKE)) {
-				queryMasterIdentityId = jdbc.queryForObject(SEQUENCE_SNOWFLAKE, Integer.class);
 				object = new Object[] { queryMasterIdentityId,
 						queryMaster.getName(), queryMaster.getUserId(),
 						queryMaster.getGroupId(),

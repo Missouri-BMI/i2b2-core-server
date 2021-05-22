@@ -421,10 +421,16 @@ public class QueryExecutorHelperDao extends CRCDAO {
 				} catch(Exception e) {
 					e.printStackTrace();
 				}
-				recordCount = resultSet.getInt("patient_num_count");
+
 				try {
 					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
-					bw.write("Entering executeQuery 4.4 :: recordCount :: " + recordCount + "\n");
+					try {
+						recordCount = resultSet.getInt("patient_num_count");
+					} catch(Exception e) {
+						bw.write("Entering executeQuery 4.3.5 :: e :: " + e.printStackTrace() + "\n");
+					}
+
+					bw.write("Entering executeQuery 4.5 :: recordCount :: " + recordCount + "\n");
 					bw.flush();
 				} catch(Exception e) {
 					e.printStackTrace();

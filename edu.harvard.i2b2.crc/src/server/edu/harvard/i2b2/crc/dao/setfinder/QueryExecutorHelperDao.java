@@ -906,11 +906,25 @@ public class QueryExecutorHelperDao extends CRCDAO {
 					
 					IQueryBreakdownTypeDao queryBreakdownTypeDao = sfDAOFactory
 							.getQueryBreakdownTypeDao();
+					try {
+						BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+						bw.write("Entering callResultGenerato 10.4.0 \n");
+						bw.flush();
+					} catch(Exception e) {
+						e.printStackTrace();
+					}
 					QtQueryBreakdownType queryBreakdownType = queryBreakdownTypeDao
 							.getBreakdownTypeByName(resultName);
+					try {
+						BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+						bw.write("Entering callResultGenerato 10.4.1 \n");
+						bw.flush();
+					} catch(Exception e) {
+						e.printStackTrace();
+					}
 					// ::TODO check if the result state is completed, before
 					// running the result
-					//runGenerator(resultName, param, queryBreakdownType.getClassname());
+					runGenerator(resultName, param, queryBreakdownType.getClassname());
 
 					try {
 						BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));

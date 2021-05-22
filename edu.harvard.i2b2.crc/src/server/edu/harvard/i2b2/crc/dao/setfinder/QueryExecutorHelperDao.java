@@ -869,15 +869,37 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			}
 			if (resultOutputList.getResultOutput() != null
 					&& resultOutputList.getResultOutput().size() > 0) {
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("Entering callResultGenerator 10.1 \n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 				List<ResultOutputOptionType> resultOptionList = resultOutputList
 						.getResultOutput();
 				for (ResultOutputOptionType resultOutputOption : resultOptionList) {
+					try {
+						BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+						bw.write("Entering callResultGenerator 10.2 \n");
+						bw.flush();
+					} catch(Exception e) {
+						e.printStackTrace();
+					}
 					String resultName = resultOutputOption.getName()
 							.toUpperCase();
 					String resultInstanceId = getQueryResultInstanceId(
 							sfDAOFactory, queryInstanceId, resultName);
 					param.put("ResultInstanceId", resultInstanceId);
 					param.put("ResultOptionName", resultName);
+
+					try {
+						BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+						bw.write("Entering callResultGenerator 10.3 \n");
+						bw.flush();
+					} catch(Exception e) {
+						e.printStackTrace();
+					}
 					
 					if (resultOutputOption.getPaths() != null)
 						param.put("ResultPath", resultOutputOption.getPaths().getPath());

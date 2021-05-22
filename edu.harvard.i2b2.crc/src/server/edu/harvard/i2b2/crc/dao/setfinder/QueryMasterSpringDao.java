@@ -708,13 +708,11 @@ public class QueryMasterSpringDao extends CRCDAO implements IQueryMasterDao {
 						queryMaster.getRequestXml(),
 						queryMaster.getDeleteFlag(),
 						queryMaster.getGeneratedSql(), i2b2RequestXml, pmXml };
+				update(object);
 
 			}
 
 			queryMaster.setQueryMasterId(String.valueOf(queryMasterIdentityId));
-
-			update(object);
-
 		}
 	}
 
@@ -736,6 +734,105 @@ public class QueryMasterSpringDao extends CRCDAO implements IQueryMasterDao {
 			queryMaster.setI2b2RequestXml(rs.getString("I2B2_REQUEST_XML"));
 			return queryMaster;
 		}
+	}
+
+	/**
+	 * Update query instance
+	 *
+	 * @param queryInstance
+	 * @return QtQueryInstance
+	 * @throws I2B2DAOException
+	 */
+	@Override
+	public QtQueryInstance update(QtQueryInstance queryInstance,
+								  boolean appendMessageFlag) throws I2B2DAOException {
+
+		Integer statusTypeId = (queryInstance.getQtQueryStatusType() != null) ? queryInstance
+				.getQtQueryStatusType().getStatusTypeId()
+				: null;
+		String messageUpdate = "";
+		if (appendMessageFlag) {
+			String concatOperator = "";
+			if (dataSourceLookup.getServerType().equalsIgnoreCase(
+					DAOFactoryHelper.ORACLE)) {
+				concatOperator = "||";
+				messageUpdate = " MESSAGE = nvl(MESSAGE,'') " + concatOperator
+						+ " ? ";
+			} else if (dataSourceLookup.getServerType().equalsIgnoreCase(
+					DAOFactoryHelper.SQLSERVER) || dataSourceLookup.getServerType().equalsIgnoreCase(
+					DAOFactoryHelper.POSTGRESQL)) {
+				//concatOperator = "+";
+				// messageUpdate = " MESSAGE = isnull(Cast(MESSAGE as nvarchar(4000)),'') "
+				//		+ concatOperator + " ? ";
+				// Cast(notes as nvarchar(4000))
+
+				//update message field
+				//updateMessage(queryInstance.getQueryInstanceId(),queryInstance.getMessage(),true);
+
+				if (queryInstance.getEndDate() != null) {
+					//update rest of the fields
+					String sql = "UPDATE "
+							+ getDbSchemaName()
+							+ "QT_QUERY_INSTANCE set USER_ID = ?, GROUP_ID = ?,BATCH_MODE = ?,END_DATE = ? ,STATUS_TYPE_ID = ? "
+							+ " where query_instance_id = ? ";
+
+					jdbcTemplate.update(sql, new Object[] {
+							queryInstance.getUserId(),
+							queryInstance.getGroupId(),
+							queryInstance.getBatchMode(),
+							queryInstance.getEndDate(),
+							statusTypeId,
+							Integer.parseInt( queryInstance.getQueryInstanceId()) });
+				} else {
+					//update rest of the fields
+					String sql = "UPDATE "
+							+ getDbSchemaName()
+							+ "QT_QUERY_INSTANCE set USER_ID = ?, GROUP_ID = ?,BATCH_MODE = ?,STATUS_TYPE_ID = ? "
+							+ " where query_instance_id = ? ";
+
+					jdbcTemplate.update(sql, new Object[] {
+							queryInstance.getUserId(),
+							queryInstance.getGroupId(),
+							queryInstance.getBatchMode(),
+							statusTypeId,
+							Integer.parseInt(queryInstance.getQueryInstanceId()) });
+				}
+				return queryInstance;
+			}
+
+		} else {
+			messageUpdate = " MESSAGE = ?";
+		}
+
+		if (queryInstance.getEndDate() != null) {
+			String sql = "UPDATE "
+					+ getDbSchemaName()
+					+ "QT_QUERY_INSTANCE set USER_ID = ?, GROUP_ID = ?,BATCH_MODE = ?,END_DATE = ? ,STATUS_TYPE_ID = ?, "
+					+ messageUpdate + " where query_instance_id = ? ";
+
+			jdbcTemplate.update(sql, new Object[] {
+					queryInstance.getUserId(),
+					queryInstance.getGroupId(),
+					queryInstance.getBatchMode(),
+					queryInstance.getEndDate(),
+					statusTypeId,
+					(queryInstance.getMessage() == null) ? "" : queryInstance
+							.getMessage(), Integer.parseInt(queryInstance.getQueryInstanceId()) });
+		} else {
+			String sql = "UPDATE "
+					+ getDbSchemaName()
+					+ "QT_QUERY_INSTANCE set USER_ID = ?, GROUP_ID = ?,BATCH_MODE = ?,STATUS_TYPE_ID = ?, "
+					+ messageUpdate + " where query_instance_id = ? ";
+
+			jdbcTemplate.update(sql, new Object[] {
+					queryInstance.getUserId(),
+					queryInstance.getGroupId(),
+					queryInstance.getBatchMode(),
+					statusTypeId,
+					(queryInstance.getMessage() == null) ? "" : queryInstance
+							.getMessage(), Integer.parseInt(queryInstance.getQueryInstanceId()) });
+		}
+		return queryInstance;
 	}
 
 

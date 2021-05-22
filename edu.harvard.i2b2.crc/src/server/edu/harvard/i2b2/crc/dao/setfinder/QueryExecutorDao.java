@@ -533,7 +533,7 @@ public class QueryExecutorDao extends CRCDAO implements IQueryExecutorDao {
 				} catch(Exception e) {
 					e.printStackTrace();
 				}
-				queryMasterDao.updateQueryAfterRun(masterId, generatedSql, queryType);
+//				queryMasterDao.updateQueryAfterRun(masterId, generatedSql, queryType);
 
 
 

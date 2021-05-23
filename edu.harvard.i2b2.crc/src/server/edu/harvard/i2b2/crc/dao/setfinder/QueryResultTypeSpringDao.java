@@ -120,6 +120,13 @@ IQueryResultTypeDao {
 
 		if (roles != null)
 		{
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("getQueryResultTypeByName :: 1.1" + "\n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 			String sql = "select * from " + getDbSchemaName()
 			+ "qt_query_result_type where name = '" + resultName + "' and (user_role_cd = '@' or user_role_cd is null or user_role_cd in (:roleCd))";
 			Map myRoles = Collections.singletonMap("roleCd", roles);
@@ -128,6 +135,13 @@ IQueryResultTypeDao {
 					queryResultTypeMapper);
 		} else
 		{
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("getQueryResultTypeByName :: 1.2" + "\n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 			String sql = "select * from " + getDbSchemaName()
 			+ "qt_query_result_type where name = ?";
 			queryResultType = jdbcTemplate.query(sql,

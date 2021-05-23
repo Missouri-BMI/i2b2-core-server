@@ -118,7 +118,7 @@ IQueryResultTypeDao {
 
 		List<QtQueryResultType> queryResultType = null;
 
-		if (false) //Arun's madness
+		if (roles != null)
 		{
 			try {
 				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));

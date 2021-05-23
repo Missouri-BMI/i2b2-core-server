@@ -14,6 +14,9 @@
  */
 package edu.harvard.i2b2.crc.dao.setfinder;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
@@ -104,6 +107,14 @@ IQueryResultTypeDao {
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<QtQueryResultType> getQueryResultTypeByName(String resultName,List<String> roles) {
+
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+			bw.write("getQueryResultTypeByName :: 1" + "\n");
+			bw.flush();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 
 		List<QtQueryResultType> queryResultType = null;
 

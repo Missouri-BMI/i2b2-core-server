@@ -186,6 +186,7 @@ public class QueryResultPatientCountGenerator extends CRCDAO implements
 				List<QtQueryResultType> resultTypeList = resultTypeDao
 						.getQueryResultTypeByName(resultTypeName, roles);
 
+
 				try {
 					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
 					bw.write("generateResult :: 9" + "\n");

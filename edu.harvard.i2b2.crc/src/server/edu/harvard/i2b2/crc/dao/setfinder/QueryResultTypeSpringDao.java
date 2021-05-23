@@ -134,6 +134,13 @@ IQueryResultTypeDao {
 					new Object[] { resultName.toUpperCase() },
 					queryResultTypeMapper);
 		}
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+			bw.write("getQueryResultTypeByName :: queryResultType" +  queryResultType + "\n");
+			bw.flush();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 		return queryResultType;
 	}
 

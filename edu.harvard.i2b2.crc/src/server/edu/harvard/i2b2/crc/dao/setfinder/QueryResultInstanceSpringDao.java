@@ -114,10 +114,10 @@ IQueryResultInstanceDao {
 		savePatientSetResult = new SavePatientSetResult(getDataSource(),
 				getDbSchemaName(), dataSourceLookup);
 		// Arun's Madness - Start
-//		savePatientSetResult.save(resultInstance);
-//		return resultInstance.getResultInstanceId();
+		savePatientSetResult.save(resultInstance);
+		return resultInstance.getResultInstanceId();
 		// Arun's Madness - End
-		return null;
+//		return null;
 	}
 
 	/**
@@ -223,6 +223,16 @@ IQueryResultInstanceDao {
 	@SuppressWarnings("unchecked")
 	public QtQueryResultInstance getResultInstanceByQueryInstanceIdAndName(
 			String queryInstanceId, String resultName) {
+
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+			bw.write("QtQueryResultInstance :: 1 :: queryInstanceId" +  queryInstanceId + " \n");
+			bw.flush();
+
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+
 		String sql = "select *  from "
 				+ getDbSchemaName()
 				+ "qt_query_result_instance ri, "
@@ -232,6 +242,14 @@ IQueryResultInstanceDao {
 				.queryForObject(sql,
 						new Object[] { Integer.parseInt(queryInstanceId), resultName },
 						patientSetMapper);
+
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+			bw.write("QtQueryResultInstance :: 2 :: queryResultInstanceList :: " + queryResultInstanceList + "\n");
+			bw.flush();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 		return queryResultInstanceList;
 	}
 
@@ -393,6 +411,16 @@ IQueryResultInstanceDao {
 		public SavePatientSetResult(DataSource dataSource, String dbSchemaName,
 				DataSourceLookup dataSourceLookup) {
 			super();
+
+
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("Entering SavePatientSetResult 1" + "\n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+
 			setDataSource(dataSource);
 			if (dataSourceLookup.getServerType().equalsIgnoreCase(
 					DAOFactoryHelper.ORACLE)) {
@@ -416,14 +444,22 @@ IQueryResultInstanceDao {
 				setSql(INSERT_SQLSERVER);
 			} else if (dataSourceLookup.getServerType().equalsIgnoreCase(
 					DAOFactoryHelper.POSTGRESQL)) {
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("Entering SavePatientSetResult 2" + "\n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 				INSERT_POSTGRESQL = "INSERT INTO "
 						+ dbSchemaName
 						+ "QT_QUERY_RESULT_INSTANCE "
 						+ "(RESULT_INSTANCE_ID, QUERY_INSTANCE_ID, RESULT_TYPE_ID, SET_SIZE,START_DATE,END_DATE,STATUS_TYPE_ID,DELETE_FLAG) "
 						+ "VALUES (?,?,?,?,?,?,?,?)";
 				setSql(INSERT_POSTGRESQL);
+
 				SEQUENCE_POSTGRESQL = "select " //+ dbSchemaName
-						+ "nextval('qt_query_result_instance_result_instance_id_seq') ";
+						+ "qt_query_result_instance_result_instance_id_seq.nextval from dual ";
 				declareParameter(new SqlParameter(Types.INTEGER));
 
 
@@ -520,7 +556,7 @@ IQueryResultInstanceDao {
 		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
 
 			try {
-				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log")));
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
 				bw.write("Enteirng mapRow");
 				bw.flush();
 			} catch(Exception e) {

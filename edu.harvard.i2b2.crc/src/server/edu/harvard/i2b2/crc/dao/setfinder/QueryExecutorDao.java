@@ -8,6 +8,9 @@
  ******************************************************************************/
 package edu.harvard.i2b2.crc.dao.setfinder;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -522,7 +525,25 @@ public class QueryExecutorDao extends CRCDAO implements IQueryExecutorDao {
 					log.debug("Setfinder skip temp table missing item message " +  missingItemMessage);
 					log.debug("Setfinder skip temp table process timing message " + processTimingMessage);
 				}
+
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("Entering here \n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+
 				queryMasterDao.updateQueryAfterRun(masterId, generatedSql, queryType);
+
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("Entering after 1 \n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+
 
 				if (missingItemMessage != null
 						&& missingItemMessage.trim().length() > 1) {
@@ -541,6 +562,15 @@ public class QueryExecutorDao extends CRCDAO implements IQueryExecutorDao {
 
 				}
 
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("Entering after 2 \n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+
+
 				if (processTimingMessage != null && processTimingMessage.trim().length()>0) {
 
 					setQueryInstanceProcessTimingXml(sfDAOFactory,
@@ -548,9 +578,27 @@ public class QueryExecutorDao extends CRCDAO implements IQueryExecutorDao {
 
 				}
 
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("Entering after 3 \n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+
+
 			}
 			log.debug("Setfinder before executor helper dao missingItemFlag " + missingItemFlag);
 			if (missingItemFlag == false) {
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("Entering after 4 \n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+
+
 				QueryExecutorHelperDao helperDao = new QueryExecutorHelperDao(
 						dataSource, dataSourceLookup, originalDataSourceLookup);
 				helperDao.setProcessTimingFlag(processTimingFlag);
@@ -562,6 +610,14 @@ public class QueryExecutorDao extends CRCDAO implements IQueryExecutorDao {
 						queryInstanceId, patientSetId, resultOutputList,
 						generatedSql, pmXml);
 
+			}
+
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("Entering after 5 \n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
 			}
 		} catch (NamingException e) {
 			exception = e;
@@ -606,6 +662,15 @@ public class QueryExecutorDao extends CRCDAO implements IQueryExecutorDao {
 				log.error("Error closing statement/resultset ", sqle);
 			}
 		}
+
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+			bw.write("Entering patientSetId :: " + patientSetId + "\n");
+			bw.flush();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+
 		return patientSetId;
 	}
 

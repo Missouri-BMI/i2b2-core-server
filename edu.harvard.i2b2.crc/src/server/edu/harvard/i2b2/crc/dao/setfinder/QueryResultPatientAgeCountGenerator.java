@@ -157,7 +157,25 @@ public class QueryResultPatientAgeCountGenerator extends CRCDAO implements
 			IQueryResultInstanceDao resultInstanceDao = sfDAOFactory
 					.getPatientSetResultDAO();
 
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("QueryResultPatientAgeCountGenerator :: 0" + "\n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+
 			if (errorFlag) {
+
+
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("QueryResultPatientAgeCountGenerator :: 1" + "\n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+
 				resultInstanceDao.updatePatientSet(resultInstanceId,
 						QueryStatusTypeId.STATUSTYPE_ID_ERROR, 0);
 			} else {

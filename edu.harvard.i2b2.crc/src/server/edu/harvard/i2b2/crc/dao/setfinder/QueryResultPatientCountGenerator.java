@@ -8,6 +8,9 @@
  ******************************************************************************/
 package edu.harvard.i2b2.crc.dao.setfinder;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +38,15 @@ public class QueryResultPatientCountGenerator extends CRCDAO implements
 
 	@Override
 	public void generateResult(Map param) throws I2B2DAOException {
+
+
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+			bw.write("generateResult :: 1" + "\n");
+			bw.flush();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 
 		SetFinderConnection sfConn = (SetFinderConnection) param
 				.get("SetFinderConnection");
@@ -77,11 +89,27 @@ public class QueryResultPatientCountGenerator extends CRCDAO implements
 			mdataType.setType("int");
 			resultType.getData().add(mdataType);
 
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("generateResult :: 2" + "\n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+
 			edu.harvard.i2b2.crc.datavo.i2b2result.ObjectFactory of = new edu.harvard.i2b2.crc.datavo.i2b2result.ObjectFactory();
 			BodyType bodyType = new BodyType();
 			bodyType.getAny().add(of.createResult(resultType));
 			ResultEnvelopeType resultEnvelope = new ResultEnvelopeType();
 			resultEnvelope.setBody(bodyType);
+
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("generateResult :: 3" + "\n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 
 			JAXBUtil jaxbUtil = CRCJAXBUtil.getJAXBUtil();
 
@@ -89,6 +117,14 @@ public class QueryResultPatientCountGenerator extends CRCDAO implements
 
 			jaxbUtil.marshaller(of.createI2B2ResultEnvelope(resultEnvelope),
 					strWriter);
+
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("generateResult :: 4" + "\n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 
 			 IXmlResultDao xmlResultDao = sfDAOFactory.getXmlResultDao();
 			 xmlResult = strWriter.toString();
@@ -102,13 +138,42 @@ public class QueryResultPatientCountGenerator extends CRCDAO implements
 					"QueryResultPatientCountGenerator.generateResult:"
 							+ sqlEx.getMessage(), sqlEx);
 		} finally {
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("generateResult :: 5" + "\n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 			IQueryResultInstanceDao resultInstanceDao = sfDAOFactory
 					.getPatientSetResultDAO();
 
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("generateResult :: 6" + "\n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+
 			if (errorFlag) {
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("generateResult :: 7" + "\n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 				resultInstanceDao.updatePatientSet(resultInstanceId,
 						QueryStatusTypeId.STATUSTYPE_ID_ERROR, 0);
 			} else {
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("generateResult :: 8" + "\n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 				String obfusMethod = "", description = null;
 				if (dataObfusRole) {
 					obfusMethod = IQueryResultInstanceDao.OBSUBTOTAL;
@@ -120,6 +185,15 @@ public class QueryResultPatientCountGenerator extends CRCDAO implements
 						.getQueryResultTypeDao();
 				List<QtQueryResultType> resultTypeList = resultTypeDao
 						.getQueryResultTypeByName(resultTypeName, roles);
+
+
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("generateResult :: 9" + "\n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 
 				String queryName = sfDAOFactory
 						.getQueryMasterDAO()
@@ -133,12 +207,36 @@ public class QueryResultPatientCountGenerator extends CRCDAO implements
 				description = resultTypeList.get(0).getDescription()
 						+ " for \"" + queryName + "\"";
 
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("generateResult :: 10" + "\n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+
 				resultInstanceDao.updatePatientSet(resultInstanceId,
 						QueryStatusTypeId.STATUSTYPE_ID_FINISHED, "",
 						obfucatedRecordCount, realPatientCount, obfusMethod);
 
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("generateResult :: 11" + "\n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+
 				resultInstanceDao.updateResultInstanceDescription(
 						resultInstanceId, description);
+
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("generateResult :: 12" + "\n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}

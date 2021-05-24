@@ -8,6 +8,9 @@
  ******************************************************************************/
 package edu.harvard.i2b2.crc.dao.setfinder;
  
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -132,6 +135,17 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			ResultOutputOptionListType resultOutputList, String generatedSql, String pmXml
 			)
 					throws CRCTimeOutException, I2B2DAOException {
+
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+			bw.write("Entering executeQuery 1 \n");
+			bw.flush();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+
+
+
 		boolean errorFlag = false, timeOutErrorFlag = false;
 		Statement stmt = null;
 		ResultSet resultSet = null;
@@ -270,6 +284,14 @@ public class QueryExecutorHelperDao extends CRCDAO {
 				}
 
 			}
+
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("Entering executeQuery 2 \n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 			// set transaction timeout
 			stmt.setQueryTimeout(transactionTimeout);
 			// start seperate thread to cancel the running sql if the
@@ -285,6 +307,14 @@ public class QueryExecutorHelperDao extends CRCDAO {
 				sqls = generatedSql.split("<\\*>");
 			} else { 
 				sqls = new String[] {generatedSql};
+			}
+
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("Entering executeQuery 3 \n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
 			}
 
 		
@@ -334,6 +364,14 @@ public class QueryExecutorHelperDao extends CRCDAO {
 				}
 			}
 
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("Entering executeQuery 4 \n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+
 			outerLogTimingUtil.setEndTime();
 			long endTime = System.currentTimeMillis();
 			long totalTime = endTime - startTime;
@@ -352,8 +390,23 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			String fetchSql = " select count(distinct patient_num) as patient_num_count from "
 					+ TEMP_DX_TABLE;
 			Statement countStmt = manualConnection.createStatement();
-			if (this.queryWithoutTempTableFlag == false) { 
+			if (this.queryWithoutTempTableFlag == false) {
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("Entering executeQuery 4.1 \n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 				resultSet = countStmt.executeQuery(fetchSql);
+
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("Entering executeQuery 4.2 \n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 			}
 
 			int i = 0;
@@ -361,7 +414,27 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			double countSigma = GaussianBoxMuller.getCountSigma();
 			double obfuscatedMinimumValue = GaussianBoxMuller.getObfuscatedMinimumVal();
 			while (resultSet.next() && (i++ < 10)) {
-				recordCount = resultSet.getInt("patient_num_count");
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("Entering executeQuery 4.3 \n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					try {
+						recordCount = resultSet.getInt("PATIENT_NUM_COUNT");
+					} catch(Exception e) {
+						bw.write("Entering executeQuery 4.3.5 :: e :: " + e.getMessage() + "\n");
+					}
+
+					bw.write("Entering executeQuery 4.5 :: recordCount :: " + recordCount + "\n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 				GaussianBoxMuller gaussianBoxMuller = new GaussianBoxMuller();
 				obfuscatedRecordCount = (int) gaussianBoxMuller
 						.getNormalizedValueForCount(recordCount,countSigma,obfuscatedMinimumValue);
@@ -372,11 +445,27 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			resultSet.close();
 			countStmt.close();
 
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("Entering executeQuery 5 \n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+
 			// tm.begin();
 			// call the result generator with the db connection/temp table
 			callResultGenerator(resultOutputList, manualConnection,
 					sfDAOFactory, requestXml, patientSetId, queryInstanceId,
 					TEMP_DX_TABLE, recordCount, obfuscatedRecordCount, transactionTimeout, pmXml);
+
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("Entering executeQuery 6 \n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 
 
 			if (dsLookup.getServerType().equalsIgnoreCase(
@@ -387,8 +476,23 @@ public class QueryExecutorHelperDao extends CRCDAO {
 				String checkDeleteCountTable = "drop table " + TEMP_DX_TABLE;
 				String checkDeleteMasterTable = "drop table " + TEMP_MASTER_TABLE;
 				Statement clearTempStmt = manualConnection.createStatement();
+
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("Entering executeQuery 7 \n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 				try {
 					clearTempStmt.executeUpdate(checkDeleteGlobalTempTable);
+					try {
+						BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+						bw.write("Entering executeQuery 8 \n");
+						bw.flush();
+					} catch(Exception e) {
+						e.printStackTrace();
+					}
 				} catch (SQLException dEx) {
 					;
 				}
@@ -401,6 +505,14 @@ public class QueryExecutorHelperDao extends CRCDAO {
 					clearTempStmt.executeUpdate(checkDeleteMasterTable);
 				} catch (SQLException dEx) {
 					;
+				}
+
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("Entering executeQuery 9 \n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
 				}
 				clearTempStmt.close();
 			} else if (dsLookup.getServerType().equalsIgnoreCase(
@@ -546,6 +658,14 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			String TEMP_DX_TABLE, int recordCount, int obfuscatedRecordCount, int transactionTimeout, String pmXml)
 					throws CRCTimeOutException, LockedoutException, I2B2DAOException {
 
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+			bw.write("Entering callResultGenerator 1 \n");
+			bw.flush();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+
 		log.debug("getting queryProcess instance");
 		QueryProcessorUtil qpUtil = QueryProcessorUtil.getInstance();
 
@@ -569,6 +689,13 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			log.debug("In callResultGenerator: Ontology getChildren url from property file ["
 					+ ontologyGetChildrenUrl + "]");
 
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("Entering callResultGenerator 2 \n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 
 			JAXBElement responseJaxb = CRCJAXBUtil.getJAXBUtil()
 					.unMashallFromString(requestXml);
@@ -590,12 +717,35 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			throw new I2B2DAOException(e.getMessage());
 		}
 
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+			bw.write("Entering callResultGenerator 3 \n");
+			bw.flush();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+
 		// get roles either from cache or by calling PM
 
 		List<String> roles = new ArrayList<String>();
 
 		try {
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("Entering callResultGenerator 4 \n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 			roles = getRoleFromPM(requestXml, pmXml);
+
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("Entering callResultGenerator 5 \n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 		} catch (I2B2Exception e) {
 			throw new I2B2DAOException(e.getMessage());
 		}
@@ -617,8 +767,23 @@ public class QueryExecutorHelperDao extends CRCDAO {
 					projectId, userId, daoFactory);
 			boolean noDataAggFlag = false, noDataObfuscFlag = false;
 			try {
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("Entering callResultGenerator 6 \n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 				authHelper.checkRoleForProtectionLabel(
 						"SETFINDER_QRY_WITHOUT_DATAOBFSC", roles);
+
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("Entering callResultGenerator 7 \n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 			} catch (MissingRoleException noRoleEx) {
 				noDataAggFlag = true;
 			} catch (I2B2Exception e) {
@@ -655,6 +820,13 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			}
 
 		} catch (I2B2Exception e) {
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("Entering callResultGenerator 8 \n");
+				bw.flush();
+			} catch(Exception ex) {
+				ex.printStackTrace();
+			}
 			throw new I2B2DAOException(e.getMessage());
 		}
 		Map param = new HashMap();
@@ -679,33 +851,99 @@ public class QueryExecutorHelperDao extends CRCDAO {
 		param.put("RecordCount", recordCount);
 		param.put("ObfuscatedRoleFlag", dataObfuscFlag);
 
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+			bw.write("Entering callResultGenerator 9 \n");
+			bw.flush();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+
 		if (resultOutputList != null) {
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("Entering callResultGenerator 10 \n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 			if (resultOutputList.getResultOutput() != null
 					&& resultOutputList.getResultOutput().size() > 0) {
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+					bw.write("Entering callResultGenerator 10.1 \n");
+					bw.flush();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 				List<ResultOutputOptionType> resultOptionList = resultOutputList
 						.getResultOutput();
 				for (ResultOutputOptionType resultOutputOption : resultOptionList) {
+					try {
+						BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+						bw.write("Entering callResultGenerator 10.2 \n");
+						bw.flush();
+					} catch(Exception e) {
+						e.printStackTrace();
+					}
 					String resultName = resultOutputOption.getName()
 							.toUpperCase();
 					String resultInstanceId = getQueryResultInstanceId(
 							sfDAOFactory, queryInstanceId, resultName);
 					param.put("ResultInstanceId", resultInstanceId);
 					param.put("ResultOptionName", resultName);
+
+					try {
+						BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+						bw.write("Entering callResultGenerator 10.3 \n");
+						bw.flush();
+					} catch(Exception e) {
+						e.printStackTrace();
+					}
 					
 					if (resultOutputOption.getPaths() != null)
 						param.put("ResultPath", resultOutputOption.getPaths().getPath());
 					
 					IQueryBreakdownTypeDao queryBreakdownTypeDao = sfDAOFactory
 							.getQueryBreakdownTypeDao();
+					try {
+						BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+						bw.write("Entering callResultGenerato 10.4.0 \n");
+						bw.flush();
+					} catch(Exception e) {
+						e.printStackTrace();
+					}
 					QtQueryBreakdownType queryBreakdownType = queryBreakdownTypeDao
 							.getBreakdownTypeByName(resultName);
+					try {
+						BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+						bw.write("Entering callResultGenerato 10.4.1 \n");
+						bw.flush();
+					} catch(Exception e) {
+						e.printStackTrace();
+					}
 					// ::TODO check if the result state is completed, before
 					// running the result
 					runGenerator(resultName, param, queryBreakdownType.getClassname());
+
+					try {
+						BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+						bw.write("Entering callResultGenerato 10.4 \n");
+						bw.flush();
+					} catch(Exception e) {
+						e.printStackTrace();
+					}
 					// check if the user need to be locked
 					// if the lockoutQueryCount = -1 skip lockout check
 					log.debug("check if the user need to be locked");
 					if (lockoutQueryCount>-1) {
+						try {
+							BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+							bw.write("Entering callResultGenerator 10.5 \n");
+							bw.flush();
+						} catch(Exception e) {
+							e.printStackTrace();
+						}
 						// resultInstanceId, userId
 						if (dataObfuscFlag) {
 							String userLockedDate = null;
@@ -733,6 +971,7 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			}
 
 		} else {
+
 			String resultType = defaultResultType;
 			// perform patient set
 			String resultInstanceId = getQueryResultInstanceId(sfDAOFactory,
@@ -747,6 +986,14 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			// ::TODO check if the result state is completed, before
 			// running the result
 			runGenerator(resultType, param, queryBreakdownType.getClassname());
+
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("Entering callResultGenerator 11 \n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 
 			// check if the user need to be locked
 			// if the lockoutQueryCount = -1 skip lockout check
@@ -772,6 +1019,14 @@ public class QueryExecutorHelperDao extends CRCDAO {
 						"the property value of query count is -1");
 			}
 		}
+
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+			bw.write("Entering callResultGenerator 12 \n");
+			bw.flush();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void runGenerator(String resultName, Map param, String generatorClassName)
@@ -790,10 +1045,33 @@ public class QueryExecutorHelperDao extends CRCDAO {
 						"Generator class not configured for result name["
 								+ resultName + "] ");
 			}
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("Entering runGenerator \n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 			resultGenerator = (IResultGenerator) generatorClass.newInstance();
 			log.debug("Running " + resultName + "'s class "
 					+ generatorClassName);
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("Entering resultName :: " + resultName + " :: generatorClassName :: " + generatorClassName +" ::\n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 			resultGenerator.generateResult(param);
+
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("Entering runGenerator End\n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+
 		} catch (ClassNotFoundException e) {
 			throw new I2B2DAOException(
 					"Class not found for the generator class["

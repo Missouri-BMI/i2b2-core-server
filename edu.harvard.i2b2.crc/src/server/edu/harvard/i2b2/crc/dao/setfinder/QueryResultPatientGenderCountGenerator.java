@@ -43,7 +43,7 @@ public class QueryResultPatientGenderCountGenerator extends CRCDAO implements
 	public void generateResult(Map param) throws I2B2DAOException {
 
 		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log")));
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
 			bw.write("Entering QueryResultPatientGenderCountGenerator");
 			bw.flush();
 		} catch(Exception e) {

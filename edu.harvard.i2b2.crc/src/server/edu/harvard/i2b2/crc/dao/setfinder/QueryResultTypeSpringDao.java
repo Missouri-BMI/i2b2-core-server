@@ -14,6 +14,9 @@
  */
 package edu.harvard.i2b2.crc.dao.setfinder;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
@@ -105,10 +108,25 @@ IQueryResultTypeDao {
 	@SuppressWarnings("unchecked")
 	public List<QtQueryResultType> getQueryResultTypeByName(String resultName,List<String> roles) {
 
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+			bw.write("getQueryResultTypeByName :: 1" + "\n");
+			bw.flush();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+
 		List<QtQueryResultType> queryResultType = null;
 
-		if (roles != null)
+		if (false)
 		{
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("getQueryResultTypeByName :: 1.1" + "\n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 			String sql = "select * from " + getDbSchemaName()
 			+ "qt_query_result_type where name = '" + resultName + "' and (user_role_cd = '@' or user_role_cd is null or user_role_cd in (:roleCd))";
 			Map myRoles = Collections.singletonMap("roleCd", roles);
@@ -117,11 +135,25 @@ IQueryResultTypeDao {
 					queryResultTypeMapper);
 		} else
 		{
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+				bw.write("getQueryResultTypeByName :: 1.2" + "\n");
+				bw.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 			String sql = "select * from " + getDbSchemaName()
 			+ "qt_query_result_type where name = ?";
 			queryResultType = jdbcTemplate.query(sql,
 					new Object[] { resultName.toUpperCase() },
 					queryResultTypeMapper);
+		}
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+			bw.write("getQueryResultTypeByName :: queryResultType" +  queryResultType + "\n");
+			bw.flush();
+		} catch(Exception e) {
+			e.printStackTrace();
 		}
 		return queryResultType;
 	}

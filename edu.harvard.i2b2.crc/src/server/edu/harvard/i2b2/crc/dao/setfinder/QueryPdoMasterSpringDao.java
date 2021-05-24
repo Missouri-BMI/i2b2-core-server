@@ -105,15 +105,14 @@ public class QueryPdoMasterSpringDao extends CRCDAO implements
 				this.setSql(INSERT_SQLSERVER);
 			} else if ( dataSourceLookup.getServerType().equalsIgnoreCase(
 					DAOFactoryHelper.POSTGRESQL)) {
-				this.setReturnGeneratedKeys(true);
+				//this.setReturnGeneratedKeys(true);
 				INSERT_POSTGRESQL = "INSERT INTO "
 						+ dbSchemaName
 						+ "QT_PDO_QUERY_MASTER "
 						+ "(QUERY_MASTER_ID,  USER_ID, GROUP_ID,CREATE_DATE,REQUEST_XML,I2B2_REQUEST_XML) "
 						+ "VALUES (?,?,?,?,?,?)";
 				setSql(INSERT_POSTGRESQL);
-				SEQUENCE_POSTGRESQL = "select "// + dbSchemaName
-						+ "nextval('qt_pdo_query_master_query_master_id_seq') ";
+				SEQUENCE_POSTGRESQL = "select qt_pdo_query_master_query_master_id_seq.nextval from dual";
 				declareParameter(new SqlParameter(Types.INTEGER));
 			}
 			this.dataSourceLookup = dataSourceLookup;

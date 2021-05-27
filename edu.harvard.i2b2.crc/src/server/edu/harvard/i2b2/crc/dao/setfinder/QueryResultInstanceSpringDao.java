@@ -224,14 +224,7 @@ IQueryResultInstanceDao {
 	public QtQueryResultInstance getResultInstanceByQueryInstanceIdAndName(
 			String queryInstanceId, String resultName) {
 
-		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
-			bw.write("QtQueryResultInstance :: 1 :: queryInstanceId" +  queryInstanceId + " \n");
-			bw.flush();
-
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
+		
 
 		String sql = "select *  from "
 				+ getDbSchemaName()
@@ -243,13 +236,7 @@ IQueryResultInstanceDao {
 						new Object[] { Integer.parseInt(queryInstanceId), resultName },
 						patientSetMapper);
 
-		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
-			bw.write("QtQueryResultInstance :: 2 :: queryResultInstanceList :: " + queryResultInstanceList + "\n");
-			bw.flush();
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
+		
 		return queryResultInstanceList;
 	}
 
@@ -413,13 +400,7 @@ IQueryResultInstanceDao {
 			super();
 
 
-			try {
-				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
-				bw.write("Entering SavePatientSetResult 1" + "\n");
-				bw.flush();
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
+			
 
 			setDataSource(dataSource);
 			if (dataSourceLookup.getServerType().equalsIgnoreCase(
@@ -444,13 +425,7 @@ IQueryResultInstanceDao {
 				setSql(INSERT_SQLSERVER);
 			} else if (dataSourceLookup.getServerType().equalsIgnoreCase(
 					DAOFactoryHelper.POSTGRESQL)) {
-				try {
-					BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
-					bw.write("Entering SavePatientSetResult 2" + "\n");
-					bw.flush();
-				} catch(Exception e) {
-					e.printStackTrace();
-				}
+				
 				INSERT_POSTGRESQL = "INSERT INTO "
 						+ dbSchemaName
 						+ "QT_QUERY_RESULT_INSTANCE "
@@ -555,13 +530,7 @@ IQueryResultInstanceDao {
 		@Override
 		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
 
-			try {
-				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
-				bw.write("Enteirng mapRow");
-				bw.flush();
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
+			
 
 			QtQueryResultInstance resultInstance = new QtQueryResultInstance();
 			resultInstance.setResultInstanceId(rs

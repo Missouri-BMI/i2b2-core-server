@@ -453,10 +453,10 @@ class getHiveCellParam implements RowMapper<ParamType> {
 	public ParamType mapRow(ResultSet rs, int rowNum) throws SQLException {
 
 			ParamType param = new ParamType();
-			param.setId(rs.getInt("id"));
-			param.setName(rs.getString("param_name_cd"));
-			param.setValue(rs.getString("value"));
-			param.setDatatype(rs.getString("datatype_cd"));
+			param.setId(rs.getInt("ID"));
+			param.setName(rs.getString("PARAM_NAME_CD"));
+			param.setValue(rs.getString("VALUE"));
+			param.setDatatype(rs.getString("DATATYPE_CD"));
 			return param;
 		} 
 }

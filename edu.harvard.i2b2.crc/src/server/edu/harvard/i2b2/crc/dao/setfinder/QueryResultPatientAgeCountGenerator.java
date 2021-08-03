@@ -8,6 +8,9 @@
  ******************************************************************************/
 package edu.harvard.i2b2.crc.dao.setfinder;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.StringWriter;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -38,6 +41,11 @@ public class QueryResultPatientAgeCountGenerator extends CRCDAO implements
 
 	@Override
 	public void generateResult(Map param) throws I2B2DAOException {
+
+
+		
+
+		System.out.println("generateResultgenerateResultgenerateResultgenerateResult");
 
 		SetFinderConnection sfConn = (SetFinderConnection) param
 				.get("SetFinderConnection");
@@ -143,7 +151,12 @@ public class QueryResultPatientAgeCountGenerator extends CRCDAO implements
 			IQueryResultInstanceDao resultInstanceDao = sfDAOFactory
 					.getPatientSetResultDAO();
 
+			
+
 			if (errorFlag) {
+
+
+				
 				resultInstanceDao.updatePatientSet(resultInstanceId,
 						QueryStatusTypeId.STATUSTYPE_ID_ERROR, 0);
 			} else {

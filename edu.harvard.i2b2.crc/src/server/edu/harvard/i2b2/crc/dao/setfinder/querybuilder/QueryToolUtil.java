@@ -14,8 +14,7 @@
  */
 package edu.harvard.i2b2.crc.dao.setfinder.querybuilder;
 
-import java.io.IOException;
-import java.io.StringReader;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
@@ -142,6 +141,7 @@ public class QueryToolUtil extends CRCDAO {
 	}
 
 	private void SetQueryDatabaseConstants(DatabaseType dbType) {
+		
 		if (dbType == DatabaseType.SqlServer) {
 			FACT_TABLE = "dw_f_conc_noval";
 			PATIENT_TABLE = "dw_dim_patient";
@@ -195,6 +195,8 @@ public class QueryToolUtil extends CRCDAO {
 			METADATA_OPERATOR = "c_operator";
 			METADATA_FULLNAME = "c_fullname";
 		} else if (dbType == DatabaseType.Oracle) {
+
+			
 			FACT_TABLE = "observation_fact";
 			PATIENT_TABLE = "patient_dimension";
 			ENCOUNTER_TABLE = "visit_dimension";

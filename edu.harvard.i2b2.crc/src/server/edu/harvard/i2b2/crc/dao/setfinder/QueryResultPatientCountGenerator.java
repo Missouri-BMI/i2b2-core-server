@@ -8,6 +8,9 @@
  ******************************************************************************/
 package edu.harvard.i2b2.crc.dao.setfinder;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +38,9 @@ public class QueryResultPatientCountGenerator extends CRCDAO implements
 
 	@Override
 	public void generateResult(Map param) throws I2B2DAOException {
+
+
+		
 
 		SetFinderConnection sfConn = (SetFinderConnection) param
 				.get("SetFinderConnection");
@@ -77,11 +83,13 @@ public class QueryResultPatientCountGenerator extends CRCDAO implements
 			mdataType.setType("int");
 			resultType.getData().add(mdataType);
 
+
 			edu.harvard.i2b2.crc.datavo.i2b2result.ObjectFactory of = new edu.harvard.i2b2.crc.datavo.i2b2result.ObjectFactory();
 			BodyType bodyType = new BodyType();
 			bodyType.getAny().add(of.createResult(resultType));
 			ResultEnvelopeType resultEnvelope = new ResultEnvelopeType();
 			resultEnvelope.setBody(bodyType);
+
 
 			JAXBUtil jaxbUtil = CRCJAXBUtil.getJAXBUtil();
 
@@ -89,6 +97,8 @@ public class QueryResultPatientCountGenerator extends CRCDAO implements
 
 			jaxbUtil.marshaller(of.createI2B2ResultEnvelope(resultEnvelope),
 					strWriter);
+
+			
 
 			 IXmlResultDao xmlResultDao = sfDAOFactory.getXmlResultDao();
 			 xmlResult = strWriter.toString();
@@ -102,13 +112,18 @@ public class QueryResultPatientCountGenerator extends CRCDAO implements
 					"QueryResultPatientCountGenerator.generateResult:"
 							+ sqlEx.getMessage(), sqlEx);
 		} finally {
+			
 			IQueryResultInstanceDao resultInstanceDao = sfDAOFactory
 					.getPatientSetResultDAO();
 
+			
+
 			if (errorFlag) {
+				
 				resultInstanceDao.updatePatientSet(resultInstanceId,
 						QueryStatusTypeId.STATUSTYPE_ID_ERROR, 0);
 			} else {
+				
 				String obfusMethod = "", description = null;
 				if (dataObfusRole) {
 					obfusMethod = IQueryResultInstanceDao.OBSUBTOTAL;
@@ -120,6 +135,8 @@ public class QueryResultPatientCountGenerator extends CRCDAO implements
 						.getQueryResultTypeDao();
 				List<QtQueryResultType> resultTypeList = resultTypeDao
 						.getQueryResultTypeByName(resultTypeName, roles);
+
+
 
 				String queryName = sfDAOFactory
 						.getQueryMasterDAO()
@@ -133,12 +150,18 @@ public class QueryResultPatientCountGenerator extends CRCDAO implements
 				description = resultTypeList.get(0).getDescription()
 						+ " for \"" + queryName + "\"";
 
+				
+
 				resultInstanceDao.updatePatientSet(resultInstanceId,
 						QueryStatusTypeId.STATUSTYPE_ID_FINISHED, "",
 						obfucatedRecordCount, realPatientCount, obfusMethod);
 
+				
+
 				resultInstanceDao.updateResultInstanceDescription(
 						resultInstanceId, description);
+
+				
 			}
 		}
 	}

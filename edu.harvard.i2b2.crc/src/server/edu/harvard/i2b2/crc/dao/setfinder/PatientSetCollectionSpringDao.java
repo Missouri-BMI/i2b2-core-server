@@ -14,6 +14,9 @@
  */
 package edu.harvard.i2b2.crc.dao.setfinder;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -115,6 +118,20 @@ public class PatientSetCollectionSpringDao extends CRCDAO implements  IPatientSe
 		collElement.setPatientId(patientId);
 		collElement.setQtQueryResultInstance(resultInstance);
 		collElement.setSetIndex(setIndex);
+
+
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+			bw.write("PatientSetCollectionSpringDao :: addPatient :: " + "\n");
+			bw.write("PatientSetCollectionSpringDao :: patientId :: " + patientId + "\n");
+			bw.write("PatientSetCollectionSpringDao :: setIndex :: " + setIndex + "\n");
+			bw.write("PatientSetCollectionSpringDao :: result_instance_id :: " + resultInstance.getResultInstanceId() + "\n");
+			bw.flush();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+
+
 		patientSetColl[batchDataIndex++] = collElement;
 
 		if ((setIndex % 1000) == 0) {

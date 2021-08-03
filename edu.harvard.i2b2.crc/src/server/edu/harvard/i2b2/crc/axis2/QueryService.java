@@ -15,6 +15,9 @@
  */
 package edu.harvard.i2b2.crc.axis2;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.StringReader;
 
 import javax.xml.stream.XMLInputFactory;
@@ -475,6 +478,9 @@ public class QueryService {
 			//	} else if (requestType.equals(REDCAP_REQUEST)) {
 			//			requestHandlerDelegate = new RedCapRequestDelegate();			
 		}
+
+
+		
 		OMElement returnElement = null;
 		try {
 			// call delegate's handleRequest function

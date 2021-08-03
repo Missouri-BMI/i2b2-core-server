@@ -8,6 +8,9 @@
  ******************************************************************************/
 package edu.harvard.i2b2.crc.dao.setfinder;
  
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -132,6 +135,11 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			ResultOutputOptionListType resultOutputList, String generatedSql, String pmXml
 			)
 					throws CRCTimeOutException, I2B2DAOException {
+
+		
+
+
+
 		boolean errorFlag = false, timeOutErrorFlag = false;
 		Statement stmt = null;
 		ResultSet resultSet = null;
@@ -270,6 +278,8 @@ public class QueryExecutorHelperDao extends CRCDAO {
 				}
 
 			}
+
+			
 			// set transaction timeout
 			stmt.setQueryTimeout(transactionTimeout);
 			// start seperate thread to cancel the running sql if the
@@ -286,6 +296,8 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			} else { 
 				sqls = new String[] {generatedSql};
 			}
+
+			
 
 		
 			log.info("Transaction timeout in sec " + transactionTimeout);
@@ -334,6 +346,8 @@ public class QueryExecutorHelperDao extends CRCDAO {
 				}
 			}
 
+			
+
 			outerLogTimingUtil.setEndTime();
 			long endTime = System.currentTimeMillis();
 			long totalTime = endTime - startTime;
@@ -352,8 +366,11 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			String fetchSql = " select count(distinct patient_num) as patient_num_count from "
 					+ TEMP_DX_TABLE;
 			Statement countStmt = manualConnection.createStatement();
-			if (this.queryWithoutTempTableFlag == false) { 
+			if (this.queryWithoutTempTableFlag == false) {
+				
 				resultSet = countStmt.executeQuery(fetchSql);
+
+				
 			}
 
 			int i = 0;
@@ -361,7 +378,9 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			double countSigma = GaussianBoxMuller.getCountSigma();
 			double obfuscatedMinimumValue = GaussianBoxMuller.getObfuscatedMinimumVal();
 			while (resultSet.next() && (i++ < 10)) {
-				recordCount = resultSet.getInt("patient_num_count");
+				
+
+				
 				GaussianBoxMuller gaussianBoxMuller = new GaussianBoxMuller();
 				obfuscatedRecordCount = (int) gaussianBoxMuller
 						.getNormalizedValueForCount(recordCount,countSigma,obfuscatedMinimumValue);
@@ -372,11 +391,15 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			resultSet.close();
 			countStmt.close();
 
+			
+
 			// tm.begin();
 			// call the result generator with the db connection/temp table
 			callResultGenerator(resultOutputList, manualConnection,
 					sfDAOFactory, requestXml, patientSetId, queryInstanceId,
 					TEMP_DX_TABLE, recordCount, obfuscatedRecordCount, transactionTimeout, pmXml);
+
+			
 
 
 			if (dsLookup.getServerType().equalsIgnoreCase(
@@ -387,8 +410,11 @@ public class QueryExecutorHelperDao extends CRCDAO {
 				String checkDeleteCountTable = "drop table " + TEMP_DX_TABLE;
 				String checkDeleteMasterTable = "drop table " + TEMP_MASTER_TABLE;
 				Statement clearTempStmt = manualConnection.createStatement();
+
+				
 				try {
 					clearTempStmt.executeUpdate(checkDeleteGlobalTempTable);
+					
 				} catch (SQLException dEx) {
 					;
 				}
@@ -402,6 +428,8 @@ public class QueryExecutorHelperDao extends CRCDAO {
 				} catch (SQLException dEx) {
 					;
 				}
+
+				
 				clearTempStmt.close();
 			} else if (dsLookup.getServerType().equalsIgnoreCase(
 					DAOFactoryHelper.ORACLE) ) {
@@ -546,6 +574,8 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			String TEMP_DX_TABLE, int recordCount, int obfuscatedRecordCount, int transactionTimeout, String pmXml)
 					throws CRCTimeOutException, LockedoutException, I2B2DAOException {
 
+		
+
 		log.debug("getting queryProcess instance");
 		QueryProcessorUtil qpUtil = QueryProcessorUtil.getInstance();
 
@@ -569,6 +599,7 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			log.debug("In callResultGenerator: Ontology getChildren url from property file ["
 					+ ontologyGetChildrenUrl + "]");
 
+			
 
 			JAXBElement responseJaxb = CRCJAXBUtil.getJAXBUtil()
 					.unMashallFromString(requestXml);
@@ -590,12 +621,17 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			throw new I2B2DAOException(e.getMessage());
 		}
 
+		
+
 		// get roles either from cache or by calling PM
 
 		List<String> roles = new ArrayList<String>();
 
 		try {
+			
 			roles = getRoleFromPM(requestXml, pmXml);
+
+			
 		} catch (I2B2Exception e) {
 			throw new I2B2DAOException(e.getMessage());
 		}
@@ -617,8 +653,11 @@ public class QueryExecutorHelperDao extends CRCDAO {
 					projectId, userId, daoFactory);
 			boolean noDataAggFlag = false, noDataObfuscFlag = false;
 			try {
+				
 				authHelper.checkRoleForProtectionLabel(
 						"SETFINDER_QRY_WITHOUT_DATAOBFSC", roles);
+
+				
 			} catch (MissingRoleException noRoleEx) {
 				noDataAggFlag = true;
 			} catch (I2B2Exception e) {
@@ -655,6 +694,7 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			}
 
 		} catch (I2B2Exception e) {
+			
 			throw new I2B2DAOException(e.getMessage());
 		}
 		Map param = new HashMap();
@@ -679,33 +719,45 @@ public class QueryExecutorHelperDao extends CRCDAO {
 		param.put("RecordCount", recordCount);
 		param.put("ObfuscatedRoleFlag", dataObfuscFlag);
 
+		
+
 		if (resultOutputList != null) {
+			
 			if (resultOutputList.getResultOutput() != null
 					&& resultOutputList.getResultOutput().size() > 0) {
+				
 				List<ResultOutputOptionType> resultOptionList = resultOutputList
 						.getResultOutput();
 				for (ResultOutputOptionType resultOutputOption : resultOptionList) {
+					
 					String resultName = resultOutputOption.getName()
 							.toUpperCase();
 					String resultInstanceId = getQueryResultInstanceId(
 							sfDAOFactory, queryInstanceId, resultName);
 					param.put("ResultInstanceId", resultInstanceId);
 					param.put("ResultOptionName", resultName);
+
+					
 					
 					if (resultOutputOption.getPaths() != null)
 						param.put("ResultPath", resultOutputOption.getPaths().getPath());
 					
 					IQueryBreakdownTypeDao queryBreakdownTypeDao = sfDAOFactory
 							.getQueryBreakdownTypeDao();
+					
 					QtQueryBreakdownType queryBreakdownType = queryBreakdownTypeDao
 							.getBreakdownTypeByName(resultName);
+					
 					// ::TODO check if the result state is completed, before
 					// running the result
 					runGenerator(resultName, param, queryBreakdownType.getClassname());
+
+					
 					// check if the user need to be locked
 					// if the lockoutQueryCount = -1 skip lockout check
 					log.debug("check if the user need to be locked");
 					if (lockoutQueryCount>-1) {
+						
 						// resultInstanceId, userId
 						if (dataObfuscFlag) {
 							String userLockedDate = null;
@@ -733,6 +785,7 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			}
 
 		} else {
+
 			String resultType = defaultResultType;
 			// perform patient set
 			String resultInstanceId = getQueryResultInstanceId(sfDAOFactory,
@@ -747,6 +800,8 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			// ::TODO check if the result state is completed, before
 			// running the result
 			runGenerator(resultType, param, queryBreakdownType.getClassname());
+
+			
 
 			// check if the user need to be locked
 			// if the lockoutQueryCount = -1 skip lockout check
@@ -772,6 +827,8 @@ public class QueryExecutorHelperDao extends CRCDAO {
 						"the property value of query count is -1");
 			}
 		}
+
+		
 	}
 
 	private void runGenerator(String resultName, Map param, String generatorClassName)
@@ -790,10 +847,15 @@ public class QueryExecutorHelperDao extends CRCDAO {
 						"Generator class not configured for result name["
 								+ resultName + "] ");
 			}
+			
 			resultGenerator = (IResultGenerator) generatorClass.newInstance();
 			log.debug("Running " + resultName + "'s class "
 					+ generatorClassName);
+			
 			resultGenerator.generateResult(param);
+
+			
+
 		} catch (ClassNotFoundException e) {
 			throw new I2B2DAOException(
 					"Class not found for the generator class["

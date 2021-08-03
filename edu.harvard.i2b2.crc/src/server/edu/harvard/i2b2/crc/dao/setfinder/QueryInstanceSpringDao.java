@@ -9,7 +9,7 @@
 /*
 
  * 
- * Contributors: 
+ * Contributors:
  *     Rajesh Kuttan
  */
 package edu.harvard.i2b2.crc.dao.setfinder;
@@ -365,8 +365,9 @@ public class QueryInstanceSpringDao extends CRCDAO implements IQueryInstanceDao 
 						+ "(QUERY_INSTANCE_ID, QUERY_MASTER_ID, USER_ID, GROUP_ID,BATCH_MODE,START_DATE,END_DATE,STATUS_TYPE_ID,DELETE_FLAG) "
 						+ "VALUES (?,?,?,?,?,?,?,?,?)";
 				setSql(INSERT_POSTGRESQL);
-				SEQUENCE_POSTGRESQL = "select " // + dbSchemaName
-						+ "nextval('qt_query_instance_query_instance_id_seq') ";
+//				SEQUENCE_POSTGRESQL = "select " // + dbSchemaName
+//						+ "nextval('qt_query_instance_query_instance_id_seq') ";
+				SEQUENCE_POSTGRESQL = "select qt_query_instance_query_instance_id_seq.nextval from dual";
 				declareParameter(new SqlParameter(Types.INTEGER));
 
 			} 

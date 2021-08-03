@@ -8,6 +8,9 @@
  ******************************************************************************/
 package edu.harvard.i2b2.crc.loader.dao;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -66,6 +69,7 @@ public class PatientDAO extends CRCLoaderDAO implements IPatientDAO {
 	@Override
 	public void createTempTable(String tempPatientTableName,
 			String tempPatientMappingTableName) throws I2B2Exception {
+
 		Connection conn = null;
 		try {
 			conn = getDataSource().getConnection();
@@ -121,6 +125,15 @@ public class PatientDAO extends CRCLoaderDAO implements IPatientDAO {
 	@Override
 	public void createPatientFromTempTable(String tempTableName,
 			String tempMapTableName, int uploadId) throws I2B2Exception {
+
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/opt/jboss/my_server.log"), true));
+			bw.write("PatientDAO ::  PatientDAO");
+			bw.flush();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+
 		Connection conn = null;
 		try {
 			conn = getDataSource().getConnection();
@@ -166,6 +179,7 @@ public class PatientDAO extends CRCLoaderDAO implements IPatientDAO {
 		 */
 		protected TempPatientInsert(DataSource ds, String tableName,
 				String schemaName) {
+
 			super(ds, "INSERT INTO " + schemaName + tableName + "  ("
 					+ "patient_id," + "patient_id_source,"
 					+ "age_in_years_num, " + "birth_date, " + "death_date, "

@@ -8,6 +8,9 @@
  ******************************************************************************/
 package edu.harvard.i2b2.crc.dao.setfinder;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -522,7 +525,13 @@ public class QueryExecutorDao extends CRCDAO implements IQueryExecutorDao {
 					log.debug("Setfinder skip temp table missing item message " +  missingItemMessage);
 					log.debug("Setfinder skip temp table process timing message " + processTimingMessage);
 				}
+
+				
+
 				queryMasterDao.updateQueryAfterRun(masterId, generatedSql, queryType);
+
+				
+
 
 				if (missingItemMessage != null
 						&& missingItemMessage.trim().length() > 1) {
@@ -541,6 +550,9 @@ public class QueryExecutorDao extends CRCDAO implements IQueryExecutorDao {
 
 				}
 
+				
+
+
 				if (processTimingMessage != null && processTimingMessage.trim().length()>0) {
 
 					setQueryInstanceProcessTimingXml(sfDAOFactory,
@@ -548,9 +560,15 @@ public class QueryExecutorDao extends CRCDAO implements IQueryExecutorDao {
 
 				}
 
+				
+
+
 			}
 			log.debug("Setfinder before executor helper dao missingItemFlag " + missingItemFlag);
 			if (missingItemFlag == false) {
+				
+
+
 				QueryExecutorHelperDao helperDao = new QueryExecutorHelperDao(
 						dataSource, dataSourceLookup, originalDataSourceLookup);
 				helperDao.setProcessTimingFlag(processTimingFlag);
@@ -563,6 +581,8 @@ public class QueryExecutorDao extends CRCDAO implements IQueryExecutorDao {
 						generatedSql, pmXml);
 
 			}
+
+			
 		} catch (NamingException e) {
 			exception = e;
 			errorFlag = true;
@@ -606,6 +626,9 @@ public class QueryExecutorDao extends CRCDAO implements IQueryExecutorDao {
 				log.error("Error closing statement/resultset ", sqle);
 			}
 		}
+
+		
+
 		return patientSetId;
 	}
 

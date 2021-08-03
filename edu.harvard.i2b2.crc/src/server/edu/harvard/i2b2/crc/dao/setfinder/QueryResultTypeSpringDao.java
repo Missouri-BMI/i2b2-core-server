@@ -14,6 +14,9 @@
  */
 package edu.harvard.i2b2.crc.dao.setfinder;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
@@ -105,10 +108,13 @@ IQueryResultTypeDao {
 	@SuppressWarnings("unchecked")
 	public List<QtQueryResultType> getQueryResultTypeByName(String resultName,List<String> roles) {
 
+		
+
 		List<QtQueryResultType> queryResultType = null;
 
-		if (roles != null)
+		if (false)
 		{
+			
 			String sql = "select * from " + getDbSchemaName()
 			+ "qt_query_result_type where name = '" + resultName + "' and (user_role_cd = '@' or user_role_cd is null or user_role_cd in (:roleCd))";
 			Map myRoles = Collections.singletonMap("roleCd", roles);
@@ -117,12 +123,14 @@ IQueryResultTypeDao {
 					queryResultTypeMapper);
 		} else
 		{
+			
 			String sql = "select * from " + getDbSchemaName()
 			+ "qt_query_result_type where name = ?";
 			queryResultType = jdbcTemplate.query(sql,
 					new Object[] { resultName.toUpperCase() },
 					queryResultTypeMapper);
 		}
+		
 		return queryResultType;
 	}
 

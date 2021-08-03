@@ -14,6 +14,9 @@
  */
 package edu.harvard.i2b2.crc.dao.setfinder;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -107,11 +110,14 @@ IQueryResultInstanceDao {
 
 		Date startDate = new Date(System.currentTimeMillis());
 		resultInstance.setStartDate(startDate);
+
 		savePatientSetResult = new SavePatientSetResult(getDataSource(),
 				getDbSchemaName(), dataSourceLookup);
+		// Arun's Madness - Start
 		savePatientSetResult.save(resultInstance);
-
 		return resultInstance.getResultInstanceId();
+		// Arun's Madness - End
+//		return null;
 	}
 
 	/**
@@ -217,6 +223,9 @@ IQueryResultInstanceDao {
 	@SuppressWarnings("unchecked")
 	public QtQueryResultInstance getResultInstanceByQueryInstanceIdAndName(
 			String queryInstanceId, String resultName) {
+
+		
+
 		String sql = "select *  from "
 				+ getDbSchemaName()
 				+ "qt_query_result_instance ri, "
@@ -226,6 +235,8 @@ IQueryResultInstanceDao {
 				.queryForObject(sql,
 						new Object[] { Integer.parseInt(queryInstanceId), resultName },
 						patientSetMapper);
+
+		
 		return queryResultInstanceList;
 	}
 
@@ -387,6 +398,10 @@ IQueryResultInstanceDao {
 		public SavePatientSetResult(DataSource dataSource, String dbSchemaName,
 				DataSourceLookup dataSourceLookup) {
 			super();
+
+
+			
+
 			setDataSource(dataSource);
 			if (dataSourceLookup.getServerType().equalsIgnoreCase(
 					DAOFactoryHelper.ORACLE)) {
@@ -410,14 +425,16 @@ IQueryResultInstanceDao {
 				setSql(INSERT_SQLSERVER);
 			} else if (dataSourceLookup.getServerType().equalsIgnoreCase(
 					DAOFactoryHelper.POSTGRESQL)) {
+				
 				INSERT_POSTGRESQL = "INSERT INTO "
 						+ dbSchemaName
 						+ "QT_QUERY_RESULT_INSTANCE "
 						+ "(RESULT_INSTANCE_ID, QUERY_INSTANCE_ID, RESULT_TYPE_ID, SET_SIZE,START_DATE,END_DATE,STATUS_TYPE_ID,DELETE_FLAG) "
 						+ "VALUES (?,?,?,?,?,?,?,?)";
 				setSql(INSERT_POSTGRESQL);
+
 				SEQUENCE_POSTGRESQL = "select " //+ dbSchemaName
-						+ "nextval('qt_query_result_instance_result_instance_id_seq') ";
+						+ "qt_query_result_instance_result_instance_id_seq.nextval from dual ";
 				declareParameter(new SqlParameter(Types.INTEGER));
 
 
@@ -512,6 +529,9 @@ IQueryResultInstanceDao {
 
 		@Override
 		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+
+			
+
 			QtQueryResultInstance resultInstance = new QtQueryResultInstance();
 			resultInstance.setResultInstanceId(rs
 					.getString("RESULT_INSTANCE_ID"));

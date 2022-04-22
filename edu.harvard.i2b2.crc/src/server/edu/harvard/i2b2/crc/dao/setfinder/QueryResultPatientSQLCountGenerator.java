@@ -48,6 +48,7 @@ import edu.harvard.i2b2.common.exception.I2B2DAOException;
 import edu.harvard.i2b2.common.util.db.JDBCUtil;
 import edu.harvard.i2b2.common.util.jaxb.JAXBUtil;
 import edu.harvard.i2b2.crc.dao.CRCDAO;
+import edu.harvard.i2b2.crc.dao.DAOFactoryHelper;
 import edu.harvard.i2b2.crc.dao.SetFinderDAOFactory;
 import edu.harvard.i2b2.crc.dao.setfinder.querybuilder.ProcessTimingReportUtil;
 import edu.harvard.i2b2.crc.datavo.CRCJAXBUtil;
@@ -102,8 +103,8 @@ public class QueryResultPatientSQLCountGenerator extends CRCDAO implements IResu
 		boolean obfscDataRoleFlag = (Boolean)param.get("ObfuscatedRoleFlag");
 
 		this
-		.setDbSchemaName(sfDAOFactory.getDataSourceLookup()
-				.getFullSchema());
+				.setDbSchemaName(sfDAOFactory.getDataSourceLookup()
+						.getFullSchema());
 		//Map ontologyKeyMap = (Map) param.get("setFinderResultOntologyKeyMap");
 		String serverType = (String) param.get("ServerType");
 		//		CallOntologyUtil ontologyUtil = (CallOntologyUtil) param
@@ -180,7 +181,8 @@ public class QueryResultPatientSQLCountGenerator extends CRCDAO implements IResu
 				throw new CRCTimeOutException("The query was canceled.");
 			}
 			while (resultSet.next()) {
-				int demoCount = resultSet.getInt("patient_count");
+				int demoCount = resultSet.getInt("patient_count".toUpperCase());
+
 				subLogTimingUtil.setEndTime();
 				if (processTimingFlag != null) {
 					if (processTimingFlag.trim().equalsIgnoreCase(ProcessTimingReportUtil.DEBUG) ) {
@@ -199,7 +201,7 @@ public class QueryResultPatientSQLCountGenerator extends CRCDAO implements IResu
 				}
 				DataType mdataType = new DataType();
 
-				String rangeCd = resultSet.getString("patient_range");
+				String rangeCd = resultSet.getString("patient_range".toUpperCase());
 
 				mdataType.setValue(String.valueOf(demoCount));
 				mdataType.setColumn(rangeCd);
@@ -287,7 +289,7 @@ public class QueryResultPatientSQLCountGenerator extends CRCDAO implements IResu
 								// add () to the result type description
 								// read the description from result type
 
-							} else { 
+							} else {
 								obfuscatedRecordCount = recordCount;
 							}
 							IQueryResultTypeDao resultTypeDao = sfDAOFactory.getQueryResultTypeDao();

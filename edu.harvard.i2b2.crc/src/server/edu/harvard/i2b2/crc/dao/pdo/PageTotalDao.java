@@ -66,6 +66,11 @@ public class PageTotalDao extends CRCDAO implements IPageDao {
 					&& inputOptionListHandler.isEnumerationSet()) {
 				inputOptionListHandler.uploadEnumerationValueToTempTable(conn);
 				// sqlserverLoadTempTable(conn, inputOptionListHandler);
+			} else if (dataSourceLookup.getServerType().equalsIgnoreCase(
+					DAOFactoryHelper.SNOWFLAKE)
+					&& inputOptionListHandler.isEnumerationSet()) {
+				inputOptionListHandler.uploadEnumerationValueToTempTable(conn);
+				// sqlserverLoadTempTable(conn, inputOptionListHandler);
 			}
 			long startTime = System.currentTimeMillis();
 
@@ -137,6 +142,12 @@ public class PageTotalDao extends CRCDAO implements IPageDao {
 				// upLoadTempTableForMin(conn, inputOptionListHandler);
 				// sqlserverLoadTempTable(conn, inputOptionListHandler);
 				inputOptionListHandler.uploadEnumerationValueToTempTable(conn);
+			} else 	if (dataSourceLookup.getServerType().equalsIgnoreCase(
+					DAOFactoryHelper.SNOWFLAKE)
+					&& inputOptionListHandler.isEnumerationSet()) {
+				// upLoadTempTableForMin(conn, inputOptionListHandler);
+				// sqlserverLoadTempTable(conn, inputOptionListHandler);
+				inputOptionListHandler.uploadEnumerationValueToTempTable(conn);
 			}
 
 			boolean firstTimeFlag = true;
@@ -184,7 +195,6 @@ public class PageTotalDao extends CRCDAO implements IPageDao {
 	private ResultSet executeTotalSql(String totalSql, Connection conn,
 			int sqlParamCount, IInputOptionListHandler inputOptionListHandler)
 			throws SQLException {
-
 		PreparedStatement stmt = conn.prepareStatement(totalSql);
 		ResultSet resultSet = null;
 
@@ -195,9 +205,7 @@ public class PageTotalDao extends CRCDAO implements IPageDao {
 						.getCollectionId()));
 			}
 		}
-
 		resultSet = stmt.executeQuery();
-
 		return resultSet;
 	}
 

@@ -351,7 +351,7 @@ public class CallOntologyUtil {
 		JAXBElement responseJaxb =// CRCJAXBUtil.getJAXBUtil()
 				jaxbUtil.unMashallFromString(response);
 		ResponseMessageType r = (ResponseMessageType) responseJaxb.getValue();
-		logesapi.info(null,"CRC's ontology call response xml from getFactColumnsFromResponse2: " + response);
+		logesapi.debug(null,"CRC's ontology call response xml from getFactColumnsFromResponse2: " + response);
 		if (r.getResponseHeader() != null && r.getResponseHeader().getResultStatus() !=null) { 
 			if (r.getResponseHeader().getResultStatus().getStatus().getType().equalsIgnoreCase("ERROR")) {
 				throw new I2B2DAOException("Error when getting factColumns/concepts by code from ontology [" + r.getResponseHeader().getResultStatus().getStatus().getValue() +"]");

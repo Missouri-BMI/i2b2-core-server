@@ -87,25 +87,25 @@ public class I2B2PdoFactory {
 				throws SQLException, IOException {
 			ObservationType observationFactType = new ObservationType();
 			PatientIdType patientIdType = new PatientIdType();
-			patientIdType.setValue(rowSet.getString("obs_patient_num"));
+			patientIdType.setValue(rowSet.getString("obs_patient_num".toUpperCase()));
 
 			observationFactType.setPatientId(patientIdType);
 			ObservationType.EventId eventId = new ObservationType.EventId();
-			eventId.setValue(rowSet.getString("obs_encounter_num"));
+			eventId.setValue(rowSet.getString("obs_encounter_num".toUpperCase()));
 			observationFactType.setEventId(eventId);
 			ObservationType.ConceptCd conceptCd = new ObservationType.ConceptCd();
-			conceptCd.setValue(rowSet.getString("obs_concept_cd"));
+			conceptCd.setValue(rowSet.getString("obs_concept_cd".toUpperCase()));
 			observationFactType.setConceptCd(conceptCd);
 
 			ObservationType.ModifierCd modifierCd = new ObservationType.ModifierCd();
-			modifierCd.setValue(rowSet.getString("obs_modifier_cd"));
+			modifierCd.setValue(rowSet.getString("obs_modifier_cd".toUpperCase()));
 			observationFactType.setModifierCd(modifierCd);
 
 			ObservationType.InstanceNum instanceNum = new ObservationType.InstanceNum();
-			instanceNum.setValue(rowSet.getString("obs_instance_num"));
+			instanceNum.setValue(rowSet.getString("obs_instance_num".toUpperCase()));
 			observationFactType.setInstanceNum(instanceNum);
 
-			Date startDate = rowSet.getTimestamp("obs_start_date");
+			Date startDate = rowSet.getTimestamp("obs_start_date".toUpperCase());
 
 			if (startDate != null) {
 				observationFactType.setStartDate(dtoFactory
@@ -114,13 +114,13 @@ public class I2B2PdoFactory {
 
 			ObservationType.ObserverCd observerCd = new ObservationType.ObserverCd();
 			observerCd
-			.setValue(((rowSet.getString("obs_provider_id") != null) ? rowSet
-					.getString("obs_provider_id")
+			.setValue(((rowSet.getString("obs_provider_id".toUpperCase()) != null) ? rowSet
+					.getString("obs_provider_id".toUpperCase())
 					: ""));
 			observationFactType.setObserverCd(observerCd);
 
 			if (obsFactDetailFlag) {
-				Date endDate = rowSet.getTimestamp("obs_end_date");
+				Date endDate = rowSet.getTimestamp("obs_end_date".toUpperCase());
 
 				if (endDate != null) {
 					observationFactType.setEndDate(dtoFactory
@@ -128,30 +128,30 @@ public class I2B2PdoFactory {
 				}
 
 				observationFactType.setValuetypeCd(rowSet
-						.getString("obs_valtype_cd"));
+						.getString("obs_valtype_cd".toUpperCase()));
 				observationFactType.setTvalChar((rowSet
-						.getString("obs_tval_char") != null) ? rowSet
-								.getString("obs_tval_char") : "");
+						.getString("obs_tval_char".toUpperCase()) != null) ? rowSet
+								.getString("obs_tval_char".toUpperCase()) : "");
 
 				ObservationType.NvalNum valNum = new ObservationType.NvalNum();
-				valNum.setValue(rowSet.getBigDecimal("obs_nval_num"));
+				valNum.setValue(rowSet.getBigDecimal("obs_nval_num".toUpperCase()));
 				observationFactType.setNvalNum(valNum);
 
 				ObservationType.ValueflagCd valueFlagCd = new ObservationType.ValueflagCd();
-				valueFlagCd.setValue(rowSet.getString("obs_valueflag_cd"));
+				valueFlagCd.setValue(rowSet.getString("obs_valueflag_cd".toUpperCase()));
 				observationFactType.setValueflagCd(valueFlagCd);
 
 				observationFactType.setQuantityNum(rowSet
-						.getBigDecimal("obs_quantity_num"));
+						.getBigDecimal("obs_quantity_num".toUpperCase()));
 
 				observationFactType
-				.setUnitsCd(rowSet.getString("obs_units_cd"));
+				.setUnitsCd(rowSet.getString("obs_units_cd".toUpperCase()));
 
 				ObservationType.LocationCd locationCd = new ObservationType.LocationCd();
-				locationCd.setValue(rowSet.getString("obs_location_cd"));
+				locationCd.setValue(rowSet.getString("obs_location_cd".toUpperCase()));
 				observationFactType.setLocationCd(locationCd);
 				observationFactType.setConfidenceNum(rowSet
-						.getBigDecimal("obs_confidence_num"));
+						.getBigDecimal("obs_confidence_num".toUpperCase()));
 				// Double confidenceNum =
 				// rowSet.getDouble("obs_confidence_num");
 			}
@@ -159,7 +159,7 @@ public class I2B2PdoFactory {
 			if (obsFactBlobFlag) {
 				if (dbType.equalsIgnoreCase("POSTGRESQL"))
 				{
-					String clob = rowSet.getString("obs_observation_blob");
+					String clob = rowSet.getString("obs_observation_blob".toUpperCase());
 					if (clob !=null)
 					{
 						BlobType blobType = new BlobType();
@@ -168,8 +168,17 @@ public class I2B2PdoFactory {
 
 					}
 
+				} else if (dbType.equalsIgnoreCase("SNOWFLAKE")) {
+					String clob = rowSet.getString("obs_observation_blob".toUpperCase());
+					if (clob !=null)
+					{
+						BlobType blobType = new BlobType();
+						blobType.getContent().add(clob);
+						observationFactType.setObservationBlob(blobType);
+
+					}
 				} else {
-					Clob observationClob = rowSet.getClob("obs_observation_blob");
+					Clob observationClob = rowSet.getClob("obs_observation_blob".toUpperCase());
 
 					if (observationClob != null) {
 						BlobType blobType = new BlobType();
@@ -181,28 +190,28 @@ public class I2B2PdoFactory {
 			}
 
 			if (obsFactStatusFlag) {
-				if (rowSet.getTimestamp("obs_update_date") != null) {
+				if (rowSet.getTimestamp("obs_update_date".toUpperCase()) != null) {
 					observationFactType.setUpdateDate(dtoFactory
 							.getXMLGregorianCalendar(rowSet.getTimestamp(
-									"obs_update_date").getTime()));
+									"obs_update_date".toUpperCase()).getTime()));
 				}
 
-				if (rowSet.getTimestamp("obs_download_date") != null) {
+				if (rowSet.getTimestamp("obs_download_date".toUpperCase()) != null) {
 					observationFactType.setDownloadDate(dtoFactory
 							.getXMLGregorianCalendar(rowSet.getTimestamp(
-									"obs_download_date").getTime()));
+									"obs_download_date".toUpperCase()).getTime()));
 				}
 
-				if (rowSet.getTimestamp("obs_import_date") != null) {
+				if (rowSet.getTimestamp("obs_import_date".toUpperCase()) != null) {
 					observationFactType.setImportDate(dtoFactory
 							.getXMLGregorianCalendar(rowSet.getTimestamp(
-									"obs_import_date").getTime()));
+									"obs_import_date".toUpperCase()).getTime()));
 				}
 
 				observationFactType.setSourcesystemCd(rowSet
-						.getString("obs_sourcesystem_cd"));
+						.getString("obs_sourcesystem_cd".toUpperCase()));
 				observationFactType.setUploadId(rowSet
-						.getString("obs_upload_id"));
+						.getString("obs_upload_id".toUpperCase()));
 			}
 
 			return observationFactType;
@@ -246,7 +255,7 @@ public class I2B2PdoFactory {
 				throws SQLException, IOException {
 			PatientType patientDimensionType = new PatientType();
 			PatientIdType patientIdType = new PatientIdType();
-			patientIdType.setValue(rowSet.getString("patient_patient_num"));
+			patientIdType.setValue(rowSet.getString("patient_patient_num".toUpperCase()));
 			patientDimensionType.setPatientId(patientIdType);
 
 			List<ParamType> paramTypeList = patientDimensionType.getParam();
@@ -268,7 +277,17 @@ public class I2B2PdoFactory {
 			if (patientBlobFlag) {
 				if (dbType.equalsIgnoreCase("POSTGRESQL"))
 				{
-					String clob = rowSet.getString("patient_patient_blob");
+					String clob = rowSet.getString("patient_patient_blob".toUpperCase());
+					if (clob !=null)
+					{
+						BlobType blobType = new BlobType();
+						blobType.getContent().add(clob);
+						patientDimensionType.setPatientBlob(blobType);
+
+					}
+
+				} else if (dbType.equalsIgnoreCase("SNOWFLAKE")) {
+					String clob = rowSet.getString("patient_patient_blob".toUpperCase());
 					if (clob !=null)
 					{
 						BlobType blobType = new BlobType();
@@ -278,7 +297,7 @@ public class I2B2PdoFactory {
 					}
 
 				} else {
-					Clob patientClob = rowSet.getClob("patient_patient_blob");
+					Clob patientClob = rowSet.getClob("patient_patient_blob".toUpperCase());
 
 					if (patientClob != null) {
 						BlobType patientBlobType = new BlobType();
@@ -290,28 +309,28 @@ public class I2B2PdoFactory {
 			}
 
 			if (patientStatusFlag) {
-				if (rowSet.getTimestamp("patient_update_date") != null) {
+				if (rowSet.getTimestamp("patient_update_date".toUpperCase()) != null) {
 					patientDimensionType.setUpdateDate(dtoFactory
 							.getXMLGregorianCalendar(rowSet.getTimestamp(
-									"patient_update_date").getTime()));
+									"patient_update_date".toUpperCase()).getTime()));
 				}
 
-				if (rowSet.getTimestamp("patient_download_date") != null) {
+				if (rowSet.getTimestamp("patient_download_date".toUpperCase()) != null) {
 					patientDimensionType.setDownloadDate(dtoFactory
 							.getXMLGregorianCalendar(rowSet.getTimestamp(
-									"patient_download_date").getTime()));
+									"patient_download_date".toUpperCase()).getTime()));
 				}
 
-				if (rowSet.getTimestamp("patient_import_date") != null) {
+				if (rowSet.getTimestamp("patient_import_date".toUpperCase()) != null) {
 					patientDimensionType.setImportDate(dtoFactory
 							.getXMLGregorianCalendar(rowSet.getTimestamp(
-									"patient_import_date").getTime()));
+									"patient_import_date".toUpperCase()).getTime()));
 				}
 
 				patientDimensionType.setSourcesystemCd(rowSet
-						.getString("patient_sourcesystem_cd"));
+						.getString("patient_sourcesystem_cd".toUpperCase()));
 				patientDimensionType.setUploadId(rowSet
-						.getString("patient_upload_id"));
+						.getString("patient_upload_id".toUpperCase()));
 			}
 
 			return patientDimensionType;
@@ -354,19 +373,29 @@ public class I2B2PdoFactory {
 				throws SQLException, IOException {
 			ObserverType providerDimensionType = new ObserverType();
 			providerDimensionType.setObserverCd(rowSet
-					.getString("provider_provider_id"));
+					.getString("provider_provider_id".toUpperCase()));
 			providerDimensionType.setObserverPath(rowSet
-					.getString("provider_provider_path"));
+					.getString("provider_provider_path".toUpperCase()));
 
 			if (providerDetailFlag) {
 				providerDimensionType.setNameChar(rowSet
-						.getString("provider_name_char"));
+						.getString("provider_name_char".toUpperCase()));
 			}
 
 			if (providerBlobFlag) {
 				if (dbType.equalsIgnoreCase("POSTGRESQL"))
 				{
-					String clob = rowSet.getString("provider_provider_blob");
+					String clob = rowSet.getString("provider_provider_blob".toUpperCase());
+					if (clob !=null)
+					{
+						BlobType blobType = new BlobType();
+						blobType.getContent().add(clob);
+						providerDimensionType.setObserverBlob(blobType);
+
+					}
+
+				} else if (dbType.equalsIgnoreCase("SNOWFLAKE")) {
+					String clob = rowSet.getString("provider_provider_blob".toUpperCase());
 					if (clob !=null)
 					{
 						BlobType blobType = new BlobType();
@@ -376,7 +405,7 @@ public class I2B2PdoFactory {
 					}
 
 				} else {
-					Clob providerClob = rowSet.getClob("provider_provider_blob");
+					Clob providerClob = rowSet.getClob("provider_provider_blob".toUpperCase());
 
 					if (providerClob != null) {
 						BlobType providerBlobType = new BlobType();
@@ -388,28 +417,28 @@ public class I2B2PdoFactory {
 			}
 
 			if (providerStatusFlag) {
-				if (rowSet.getTimestamp("provider_update_date") != null) {
+				if (rowSet.getTimestamp("provider_update_date".toUpperCase()) != null) {
 					providerDimensionType.setUpdateDate(dtoFactory
 							.getXMLGregorianCalendar(rowSet.getTimestamp(
-									"provider_update_date").getTime()));
+									"provider_update_date".toUpperCase()).getTime()));
 				}
 
-				if (rowSet.getTimestamp("provider_download_date") != null) {
+				if (rowSet.getTimestamp("provider_download_date".toUpperCase()) != null) {
 					providerDimensionType.setDownloadDate(dtoFactory
 							.getXMLGregorianCalendar(rowSet.getTimestamp(
-									"provider_download_date").getTime()));
+									"provider_download_date".toUpperCase()).getTime()));
 				}
 
-				if (rowSet.getTimestamp("provider_import_date") != null) {
+				if (rowSet.getTimestamp("provider_import_date".toUpperCase()) != null) {
 					providerDimensionType.setImportDate(dtoFactory
 							.getXMLGregorianCalendar(rowSet.getTimestamp(
-									"provider_import_date").getTime()));
+									"provider_import_date".toUpperCase()).getTime()));
 				}
 
 				providerDimensionType.setSourcesystemCd(rowSet
-						.getString("provider_sourcesystem_cd"));
+						.getString("provider_sourcesystem_cd".toUpperCase()));
 				providerDimensionType.setUploadId(rowSet
-						.getString("provider_upload_id"));
+						.getString("provider_upload_id".toUpperCase()));
 			}
 
 			return providerDimensionType;
@@ -452,21 +481,31 @@ public class I2B2PdoFactory {
 			ConceptType conceptDimensionType = new ConceptType();
 
 			conceptDimensionType.setConceptCd(rowSet
-					.getString("concept_concept_cd"));
+					.getString("concept_concept_cd".toUpperCase()));
 
 			if (conceptDetailFlag) {
 				conceptDimensionType.setConceptCd(rowSet
-						.getString("concept_concept_cd"));
+						.getString("concept_concept_cd".toUpperCase()));
 				conceptDimensionType.setConceptPath(rowSet
-						.getString("concept_concept_path"));
+						.getString("concept_concept_path".toUpperCase()));
 				conceptDimensionType.setNameChar(rowSet
-						.getString("concept_name_char"));
+						.getString("concept_name_char".toUpperCase()));
 			}
 
 			if (conceptBlobFlag) {
 				if (dbType.equalsIgnoreCase("POSTGRESQL"))
 				{
-					String clob = rowSet.getString("concept_concept_blob");
+					String clob = rowSet.getString("concept_concept_blob".toUpperCase());
+					if (clob !=null)
+					{
+						BlobType blobType = new BlobType();
+						blobType.getContent().add(clob);
+						conceptDimensionType.setConceptBlob(blobType);
+
+					}
+
+				} else if (dbType.equalsIgnoreCase("SNOWFLAKE")) {
+					String clob = rowSet.getString("concept_concept_blob".toUpperCase());
 					if (clob !=null)
 					{
 						BlobType blobType = new BlobType();
@@ -477,7 +516,7 @@ public class I2B2PdoFactory {
 
 				} else {
 
-					Clob conceptClob = rowSet.getClob("concept_concept_blob");
+					Clob conceptClob = rowSet.getClob("concept_concept_blob".toUpperCase());
 
 					if (conceptClob != null) {
 						BlobType conceptBlobType = new BlobType();
@@ -489,28 +528,28 @@ public class I2B2PdoFactory {
 			}
 
 			if (conceptStatusFlag) {
-				if (rowSet.getTimestamp("concept_update_date") != null) {
+				if (rowSet.getTimestamp("concept_update_date".toUpperCase()) != null) {
 					conceptDimensionType.setUpdateDate(dtoFactory
 							.getXMLGregorianCalendar(rowSet.getTimestamp(
-									"concept_update_date").getTime()));
+									"concept_update_date".toUpperCase()).getTime()));
 				}
 
-				if (rowSet.getTimestamp("concept_download_date") != null) {
+				if (rowSet.getTimestamp("concept_download_date".toUpperCase()) != null) {
 					conceptDimensionType.setDownloadDate(dtoFactory
 							.getXMLGregorianCalendar(rowSet.getTimestamp(
-									"concept_download_date").getTime()));
+									"concept_download_date".toUpperCase()).getTime()));
 				}
 
-				if (rowSet.getTimestamp("concept_import_date") != null) {
+				if (rowSet.getTimestamp("concept_import_date".toUpperCase()) != null) {
 					conceptDimensionType.setImportDate(dtoFactory
 							.getXMLGregorianCalendar(rowSet.getTimestamp(
-									"concept_import_date").getTime()));
+									"concept_import_date".toUpperCase()).getTime()));
 				}
 
 				conceptDimensionType.setSourcesystemCd(rowSet
-						.getString("concept_sourcesystem_cd"));
+						.getString("concept_sourcesystem_cd".toUpperCase()));
 				conceptDimensionType.setUploadId(rowSet
-						.getString("concept_upload_id"));
+						.getString("concept_upload_id".toUpperCase()));
 			}
 
 			return conceptDimensionType;
@@ -555,21 +594,21 @@ public class I2B2PdoFactory {
 			ModifierType modifierDimensionType = new ModifierType();
 
 			modifierDimensionType.setModifierCd(rowSet
-					.getString("modifier_modifier_cd"));
+					.getString("modifier_modifier_cd".toUpperCase()));
 
 			if (modifierDetailFlag) {
 				modifierDimensionType.setModifierCd(rowSet
-						.getString("modifier_modifier_cd"));
+						.getString("modifier_modifier_cd".toUpperCase()));
 				modifierDimensionType.setModifierPath(rowSet
-						.getString("modifier_modifier_path"));
+						.getString("modifier_modifier_path".toUpperCase()));
 				modifierDimensionType.setNameChar(rowSet
-						.getString("modifier_name_char"));
+						.getString("modifier_name_char".toUpperCase()));
 			}
 
 			if (modifierBlobFlag) {
 				if (dbType.equalsIgnoreCase("POSTGRESQL"))
 				{
-					String clob = rowSet.getString("modifier_modifier_blob");
+					String clob = rowSet.getString("modifier_modifier_blob".toUpperCase());
 					if (clob !=null)
 					{
 						BlobType blobType = new BlobType();
@@ -578,9 +617,18 @@ public class I2B2PdoFactory {
 
 					}
 
+				} else if (dbType.equalsIgnoreCase("SNOWFLAKE")) {
+					String clob = rowSet.getString("modifier_modifier_blob".toUpperCase());
+					if (clob !=null)
+					{
+						BlobType blobType = new BlobType();
+						blobType.getContent().add(clob);
+						modifierDimensionType.setModifierBlob(blobType);
+
+					}
 				} else {
 
-					Clob modifierClob = rowSet.getClob("modifier_modifier_blob");
+					Clob modifierClob = rowSet.getClob("modifier_modifier_blob".toUpperCase());
 
 					if (modifierClob != null) {
 						BlobType modifierBlobType = new BlobType();
@@ -592,28 +640,28 @@ public class I2B2PdoFactory {
 			}
 
 			if (modifierStatusFlag) {
-				if (rowSet.getTimestamp("modifier_update_date") != null) {
+				if (rowSet.getTimestamp("modifier_update_date".toUpperCase()) != null) {
 					modifierDimensionType.setUpdateDate(dtoFactory
 							.getXMLGregorianCalendar(rowSet.getTimestamp(
-									"modifier_update_date").getTime()));
+									"modifier_update_date".toUpperCase()).getTime()));
 				}
 
-				if (rowSet.getTimestamp("modifier_download_date") != null) {
+				if (rowSet.getTimestamp("modifier_download_date".toUpperCase()) != null) {
 					modifierDimensionType.setDownloadDate(dtoFactory
 							.getXMLGregorianCalendar(rowSet.getTimestamp(
-									"modifier_download_date").getTime()));
+									"modifier_download_date".toUpperCase()).getTime()));
 				}
 
-				if (rowSet.getTimestamp("modifier_import_date") != null) {
+				if (rowSet.getTimestamp("modifier_import_date".toUpperCase()) != null) {
 					modifierDimensionType.setImportDate(dtoFactory
 							.getXMLGregorianCalendar(rowSet.getTimestamp(
-									"modifier_import_date").getTime()));
+									"modifier_import_date".toUpperCase()).getTime()));
 				}
 
 				modifierDimensionType.setSourcesystemCd(rowSet
-						.getString("modifier_sourcesystem_cd"));
+						.getString("modifier_sourcesystem_cd".toUpperCase()));
 				modifierDimensionType.setUploadId(rowSet
-						.getString("modifier_upload_id"));
+						.getString("modifier_upload_id".toUpperCase()));
 			}
 
 			return modifierDimensionType;
@@ -650,23 +698,23 @@ public class I2B2PdoFactory {
 			EventType visitDimensionType = new EventType();
 
 			PatientIdType patientIdType = new PatientIdType();
-			patientIdType.setValue(rowSet.getString("visit_patient_num"));
+			patientIdType.setValue(rowSet.getString("visit_patient_num".toUpperCase()));
 			visitDimensionType.setPatientId(patientIdType);
 			EventType.EventId eventId = new EventType.EventId();
-			eventId.setValue(rowSet.getString("visit_encounter_num"));
+			eventId.setValue(rowSet.getString("visit_encounter_num".toUpperCase()));
 			visitDimensionType.setEventId(eventId);
 
 			if (eventDetailFlag) {
 
 
-				Date startDate = rowSet.getTimestamp("visit_start_date");
+				Date startDate = rowSet.getTimestamp("visit_start_date".toUpperCase());
 
 				if (startDate != null) {
 					visitDimensionType.setStartDate(dtoFactory
 							.getXMLGregorianCalendar(startDate.getTime()));
 				}
 
-				Date endDate = rowSet.getTimestamp("visit_end_date");
+				Date endDate = rowSet.getTimestamp("visit_end_date".toUpperCase());
 
 				if (endDate != null) {
 					visitDimensionType.setEndDate(dtoFactory
@@ -683,7 +731,17 @@ public class I2B2PdoFactory {
 			if (eventBlobFlag) {
 				if (dbType.equalsIgnoreCase("POSTGRESQL"))
 				{
-					String clob = rowSet.getString("visit_visit_blob");
+					String clob = rowSet.getString("visit_visit_blob".toUpperCase());
+					if (clob !=null)
+					{
+						BlobType blobType = new BlobType();
+						blobType.getContent().add(clob);
+						visitDimensionType.setEventBlob(blobType);
+
+					}
+
+				} else if (dbType.equalsIgnoreCase("SNOWFLAKE")) {
+					String clob = rowSet.getString("visit_visit_blob".toUpperCase());
 					if (clob !=null)
 					{
 						BlobType blobType = new BlobType();
@@ -694,7 +752,7 @@ public class I2B2PdoFactory {
 
 				} else {
 
-					Clob visitClob = rowSet.getClob("visit_visit_blob");
+					Clob visitClob = rowSet.getClob("visit_visit_blob".toUpperCase());
 
 					if (visitClob != null) {
 						BlobType visitBlobType = new BlobType();
@@ -709,28 +767,28 @@ public class I2B2PdoFactory {
 
 
 			if (eventStatusFlag) {
-				if (rowSet.getTimestamp("visit_update_date") != null) {
+				if (rowSet.getTimestamp("visit_update_date".toUpperCase()) != null) {
 					visitDimensionType.setUpdateDate(dtoFactory
 							.getXMLGregorianCalendar(rowSet.getTimestamp(
-									"visit_update_date").getTime()));
+									"visit_update_date".toUpperCase()).getTime()));
 				}
 
-				if (rowSet.getTimestamp("visit_download_date") != null) {
+				if (rowSet.getTimestamp("visit_download_date".toUpperCase()) != null) {
 					visitDimensionType.setDownloadDate(dtoFactory
 							.getXMLGregorianCalendar(rowSet.getTimestamp(
-									"visit_download_date").getTime()));
+									"visit_download_date".toUpperCase()).getTime()));
 				}
 
-				if (rowSet.getTimestamp("visit_import_date") != null) {
+				if (rowSet.getTimestamp("visit_import_date".toUpperCase()) != null) {
 					visitDimensionType.setImportDate(dtoFactory
 							.getXMLGregorianCalendar(rowSet.getTimestamp(
-									"visit_import_date").getTime()));
+									"visit_import_date".toUpperCase()).getTime()));
 				}
 
 				visitDimensionType.setSourcesystemCd(rowSet
-						.getString("visit_sourcesystem_cd"));
+						.getString("visit_sourcesystem_cd".toUpperCase()));
 				visitDimensionType.setUploadId(rowSet
-						.getString("visit_upload_id"));
+						.getString("visit_upload_id".toUpperCase()));
 			}
 
 			return visitDimensionType;

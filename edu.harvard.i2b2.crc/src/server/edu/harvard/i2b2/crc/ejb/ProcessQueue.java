@@ -203,12 +203,12 @@ public class ProcessQueue implements Runnable{
 						queryInstanceId = 0;
 						resultSet = preparedStmt.executeQuery();
 						if (resultSet.next()) {
-							queryInstanceId = resultSet.getInt("query_instance_id");
-							ownerId = resultSet.getString("user_id");
-							sqlString = resultSet.getString("generated_sql");
-							projectId = resultSet.getString("group_id");
-							xmlRequest = resultSet.getString("i2b2_request_xml");
-							pmXml = resultSet.getString("pm_xml");
+							queryInstanceId = resultSet.getInt("query_instance_id".toUpperCase());
+							ownerId = resultSet.getString("user_id".toUpperCase());
+							sqlString = resultSet.getString("generated_sql".toUpperCase());
+							projectId = resultSet.getString("group_id".toUpperCase());
+							xmlRequest = resultSet.getString("i2b2_request_xml".toUpperCase());
+							pmXml = resultSet.getString("pm_xml".toUpperCase());
 				//			log.info("ProcessQueue found instance: " + queryInstanceId + " for " + dslookup.getDataSource());
 						}
 						

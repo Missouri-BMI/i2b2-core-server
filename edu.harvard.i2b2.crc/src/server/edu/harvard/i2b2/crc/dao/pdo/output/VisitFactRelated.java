@@ -102,6 +102,6 @@ public class VisitFactRelated extends FactRelated {
 
 	public int getEncounterNumFromResultSet(ResultSet resultSet)
 			throws SQLException {
-		return resultSet.getInt("obs_encounter_num");
+		return resultSet.getInt("obs_encounter_num".toUpperCase());
 	}
 }

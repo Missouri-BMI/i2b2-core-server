@@ -30,7 +30,7 @@ public class ParamTypeValueBuilder {
 		paramType.setColumnDescriptor(metaParamType.getColumnDescriptor());
 		
 		if (lookupFieldSuffix != null && !metaParamType.getType().startsWith("defaulted:")) { 
-			paramType.setName(rowSet.getString(metaParamType.getColumn() + lookupFieldSuffix  ));
+			paramType.setName(rowSet.getString((metaParamType.getColumn() + lookupFieldSuffix).toUpperCase()));
 		} 
 		if (metaParamType.getType().startsWith("defaulted:")) { 
 			paramType.setType(metaParamType.getType().substring(10));
@@ -40,12 +40,12 @@ public class ParamTypeValueBuilder {
 		//paramType.setValue(rowSet.getString(fieldPrefix + metaParamType.getColumn()));
 		
 		if (metaParamType.getType().equalsIgnoreCase("dateTime")) { 
-			Date paramDate = rowSet.getTimestamp(fieldPrefix + metaParamType.getColumn());
+			Date paramDate = rowSet.getTimestamp((fieldPrefix + metaParamType.getColumn()).toUpperCase());
 			if (paramDate != null) { 
 				paramType.setValue(dtoFactory.getXMLGregorianCalendar(paramDate.getTime()).toXMLFormat());
 			}
 		} else { 
-			paramType.setValue(rowSet.getString(fieldPrefix + metaParamType.getColumn()));
+			paramType.setValue(rowSet.getString((fieldPrefix + metaParamType.getColumn()).toUpperCase()));
 		}
 		
 		return paramType;

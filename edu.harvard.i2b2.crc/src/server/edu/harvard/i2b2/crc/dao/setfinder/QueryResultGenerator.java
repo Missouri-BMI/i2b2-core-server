@@ -59,7 +59,7 @@ public class QueryResultGenerator extends CRCDAO implements IResultGenerator {
 	 */
 	@Override
 	public void generateResult(Map param) throws CRCTimeOutException,
-	I2B2DAOException {
+			I2B2DAOException {
 
 		SetFinderConnection sfConn = (SetFinderConnection) param
 				.get("SetFinderConnection");
@@ -79,8 +79,8 @@ public class QueryResultGenerator extends CRCDAO implements IResultGenerator {
 		boolean obfscDataRoleFlag = (Boolean)param.get("ObfuscatedRoleFlag");
 
 		this
-		.setDbSchemaName(sfDAOFactory.getDataSourceLookup()
-				.getFullSchema());
+				.setDbSchemaName(sfDAOFactory.getDataSourceLookup()
+						.getFullSchema());
 		Map ontologyKeyMap = (Map) param.get("setFinderResultOntologyKeyMap");
 		String serverType = (String) param.get("ServerType");
 		//		CallOntologyUtil ontologyUtil = (CallOntologyUtil) param
@@ -105,7 +105,7 @@ public class QueryResultGenerator extends CRCDAO implements IResultGenerator {
 			LogTimingUtil subLogTimingUtil = new LogTimingUtil();
 			subLogTimingUtil.setStartTime();
 			ConceptsType conceptsType = CallOntologyUtil.callGetChildren(itemKey, (SecurityType) param.get("securityType"), (String) param.get("projectId"),  (String) param.get("ontologyGetChildrenUrl"));
-			if (conceptsType != null && conceptsType.getConcept().size()<1) { 
+			if (conceptsType != null && conceptsType.getConcept().size()<1) {
 				throw new I2B2DAOException("Could not fetch children result type " + resultTypeName + " item key [ " + itemKey + " ]" );
 			}
 			subLogTimingUtil.setEndTime();
@@ -117,7 +117,7 @@ public class QueryResultGenerator extends CRCDAO implements IResultGenerator {
 			}
 
 			String itemCountSql = " select count(distinct PATIENT_NUM) as item_count  from "
-					+ this.getDbSchemaName() 
+					+ this.getDbSchemaName()
 					+ "observation_fact obs_fact  "
 					+ " where obs_fact.patient_num in (select patient_num from "
 					+ TEMP_DX_TABLE
@@ -162,18 +162,17 @@ public class QueryResultGenerator extends CRCDAO implements IResultGenerator {
 				String joinTableName = factTable;
 
 				if (conceptType.getTablename().equalsIgnoreCase(
-						"patient_dimension")) { 
+						"patient_dimension")) {
 					joinTableName = "patient_dimension";
 				} else if (conceptType.getTablename().equalsIgnoreCase(
-						"visit_dimension")) { 
-					joinTableName = "visit_dimension"; 
+						"visit_dimension")) {
+					joinTableName = "visit_dimension";
 				}
 
 				String dimCode = this.getDimCodeInSqlFormat(conceptType);
-
-				if (serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL)) 
+				if (serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) || serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE))
 					dimCode = dimCode.replaceAll("\\\\", "\\\\\\\\");
-				itemCountSql = " select count(distinct PATIENT_NUM) as item_count  from " +  this.getDbSchemaName() + joinTableName +  
+				itemCountSql = " select count(distinct PATIENT_NUM) as item_count  from " +  this.getDbSchemaName() + joinTableName +
 						" where " + " patient_num in (select patient_num from "
 						+ TEMP_DX_TABLE
 
@@ -199,7 +198,7 @@ public class QueryResultGenerator extends CRCDAO implements IResultGenerator {
 					throw new CRCTimeOutException("The query was canceled.");
 				}
 				resultSet.next();
-				int demoCount = resultSet.getInt("item_count");
+				int demoCount = resultSet.getInt("item_count".toUpperCase());
 				subLogTimingUtil.setEndTime();
 				if (processTimingFlag != null) {
 					if (processTimingFlag.trim().equalsIgnoreCase(ProcessTimingReportUtil.DEBUG) ) {
@@ -300,7 +299,7 @@ public class QueryResultGenerator extends CRCDAO implements IResultGenerator {
 							// add () to the result type description
 							// read the description from result type
 
-						} else { 
+						} else {
 							obfuscatedRecordCount = recordCount;
 						}
 						IQueryResultTypeDao resultTypeDao = sfDAOFactory.getQueryResultTypeDao();
@@ -344,7 +343,7 @@ public class QueryResultGenerator extends CRCDAO implements IResultGenerator {
 	}
 
 	private String getItemKeyFromResultType(SetFinderDAOFactory sfDAOFactory,
-			String resultTypeKey, List<String> roles) throws I2B2Exception {
+											String resultTypeKey, List<String> roles) throws I2B2Exception {
 		//
 		IQueryBreakdownTypeDao queryBreakdownTypeDao = sfDAOFactory
 				.getQueryBreakdownTypeDao();

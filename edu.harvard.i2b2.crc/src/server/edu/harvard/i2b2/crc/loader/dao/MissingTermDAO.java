@@ -140,7 +140,11 @@ public class MissingTermDAO extends CRCLoaderDAO implements IMissingTermDAO {
 			}
 			conn = getDataSource().getConnection();
 			if (dataSourceLookup.getServerType().equalsIgnoreCase(
-					DataSourceLookupDAOFactory.SQLSERVER)) {
+					DataSourceLookupDAOFactory.SQLSERVER) ||
+					dataSourceLookup.getServerType().equalsIgnoreCase(
+					DataSourceLookupDAOFactory.POSTGRESQL) ||
+					dataSourceLookup.getServerType().equalsIgnoreCase(
+					DataSourceLookupDAOFactory.SNOWFLAKE)) {
 				sql = " select tot,concept_cd, rnum  from ( "
 						+ " select count(*) tot, obs1.concept_cd, row_number() over (order by obs1.concept_cd asc)  rnum from "
 						+ this.getDbSchemaName() + "observation_fact obs1 where concept_cd not in ( "
@@ -169,8 +173,8 @@ public class MissingTermDAO extends CRCLoaderDAO implements IMissingTermDAO {
 
 			while (resultSet.next()) {
 				concept = new MissingCodesConceptSetType.Concept();
-				concept.setConceptCd(resultSet.getString("concept_cd"));
-				concept.setMissingTotal(resultSet.getInt("tot"));
+				concept.setConceptCd(resultSet.getString("concept_cd".toUpperCase()));
+				concept.setMissingTotal(resultSet.getInt("tot".toUpperCase()));
 				missConceptSetType.getConcept().add(concept);
 			}
 			resultSet.close();
@@ -211,7 +215,11 @@ public class MissingTermDAO extends CRCLoaderDAO implements IMissingTermDAO {
 			}
 			conn = getDataSource().getConnection();
 			if (dataSourceLookup.getServerType().equalsIgnoreCase(
-					DataSourceLookupDAOFactory.SQLSERVER)) {
+					DataSourceLookupDAOFactory.SQLSERVER) ||
+					dataSourceLookup.getServerType().equalsIgnoreCase(
+							DataSourceLookupDAOFactory.POSTGRESQL) ||
+					dataSourceLookup.getServerType().equalsIgnoreCase(
+							DataSourceLookupDAOFactory.SNOWFLAKE)) {
 				sql = " select tot,modifier_cd, rnum  from ( "
 					+ " select count(*) tot, obs1.modifier_cd, row_number() over (order by obs1.modifier_cd asc)  rnum from "
 					+ this.getDbSchemaName() + "observation_fact obs1 where modifier_cd not in ( "
@@ -240,8 +248,8 @@ public class MissingTermDAO extends CRCLoaderDAO implements IMissingTermDAO {
 
 			while (resultSet.next()) {
 				modifier = new MissingCodesModifierSetType.Modifier();
-				modifier.setModifierCd(resultSet.getString("modifier_cd"));
-				modifier.setMissingTotal(resultSet.getInt("tot"));
+				modifier.setModifierCd(resultSet.getString("modifier_cd".toUpperCase()));
+				modifier.setMissingTotal(resultSet.getInt("tot".toUpperCase()));
 				missModifierSetType.getModifier().add(modifier);
 			}
 			resultSet.close();
@@ -282,7 +290,11 @@ public class MissingTermDAO extends CRCLoaderDAO implements IMissingTermDAO {
 			}
 			conn = getDataSource().getConnection();
 			if (dataSourceLookup.getServerType().equalsIgnoreCase(
-					DataSourceLookupDAOFactory.SQLSERVER)) {
+					DataSourceLookupDAOFactory.SQLSERVER) ||
+					dataSourceLookup.getServerType().equalsIgnoreCase(
+							DataSourceLookupDAOFactory.POSTGRESQL) ||
+					dataSourceLookup.getServerType().equalsIgnoreCase(
+							DataSourceLookupDAOFactory.SNOWFLAKE)) {
 				sql = " select tot,provider_id, rnum  from ( "
 					+ " select count(*) tot, obs1.provider_id, row_number() over (order by obs1.provider_id asc)  rnum from "
 					+ this.getDbSchemaName() + "observation_fact obs1 where provider_id not in ( "
@@ -311,8 +323,8 @@ public class MissingTermDAO extends CRCLoaderDAO implements IMissingTermDAO {
 
 			while (resultSet.next()) {
 				observer = new MissingCodesObserverSetType.Observer();
-				observer.setObserverCd(resultSet.getString("provider_id"));
-				observer.setMissingTotal(resultSet.getInt("tot"));
+				observer.setObserverCd(resultSet.getString("provider_id".toUpperCase()));
+				observer.setMissingTotal(resultSet.getInt("tot".toUpperCase()));
 				missObserverSetType.getObserver().add(observer);
 			}
 			resultSet.close();

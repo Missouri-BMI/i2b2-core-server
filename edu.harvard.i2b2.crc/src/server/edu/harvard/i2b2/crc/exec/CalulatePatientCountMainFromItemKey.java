@@ -228,7 +228,7 @@ public class CalulatePatientCountMainFromItemKey extends CRCDAO {
 						.println("Executing count sql [" + itemCountSql + "]");
 				ResultSet resultSet = stmt.executeQuery();
 				resultSet.next();
-				String demoCount = resultSet.getString("item_count");
+				String demoCount = resultSet.getString("item_count".toUpperCase());
 				DataType mdataType = new DataType();
 				mdataType.setValue(demoCount);
 				mdataType.setColumn(conceptType.getName());

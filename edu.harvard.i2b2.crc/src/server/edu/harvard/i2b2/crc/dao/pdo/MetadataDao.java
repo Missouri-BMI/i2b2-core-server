@@ -167,8 +167,8 @@ public class MetadataDao extends CRCDAO implements IMetadataDao {
 		ResultSet resultSet = pStmt.executeQuery();
 		String columnCd = null, columnDescriptor = null;
 		while (resultSet.next()) { 
-			columnCd = resultSet.getString("column_cd"); 
-			columnDescriptor = resultSet.getString("name_char");
+			columnCd = resultSet.getString("column_cd".toUpperCase());
+			columnDescriptor = resultSet.getString("name_char".toUpperCase());
 			if (columnCd != null && columnDescriptor != null) { 
 				columnDescriptorMap.put(columnCd.trim().toLowerCase() , columnDescriptor);
 			}

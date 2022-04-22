@@ -88,6 +88,6 @@ public class PatientFactRelated extends FactRelated {
 
     public int getPatientNumFromResultSet(ResultSet resultSet)
         throws SQLException {
-        return resultSet.getInt("obs_patient_num");
+        return resultSet.getInt("obs_patient_num".toUpperCase());
     }
 }

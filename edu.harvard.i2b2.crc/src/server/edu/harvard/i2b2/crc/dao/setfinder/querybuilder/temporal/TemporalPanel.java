@@ -8,13 +8,13 @@
  ******************************************************************************/
 /*
 
- * 
+ *
  * Contributors:
  * 		Christopher Herrick
  */
 
 package edu.harvard.i2b2.crc.dao.setfinder.querybuilder.temporal;
- 
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -54,16 +54,16 @@ import edu.harvard.i2b2.crc.util.QueryProcessorUtil;
 
 /**
  * Temporal Panel Object
- * 
+ *
  * <P>
  * Panel query object that wraps the panel tag found in the query definition
  * xml. It roughly corresponds to a panel in the query UI. Panel is responsible
  * for organizing the sql that comes back from individual panel items - sql from
  * items should be logically or'd together. It is also the container that holds
  * the panel constraint types - occurrence, dates, and exclude.
- * 
+ *
  * @author Christopher Herrick
- * 
+ *
  */
 public class TemporalPanel implements Comparable<Object> {
 
@@ -90,7 +90,7 @@ public class TemporalPanel implements Comparable<Object> {
 	}
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param parent
 	 *            reference to the temporal panel group to which this panel
 	 *            belongs
@@ -110,12 +110,12 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Parse Panel
-	 * 
+	 *
 	 * Parses through the paneltype object passed in through the constructor.
 	 * Evaluates each panel item and casts them to the appropriate type.
 	 * Calculates the estimated return size of the times in the panel which will
 	 * then be used when sorting panel items
-	 * 
+	 *
 	 * @throws I2B2Exception
 	 *             thrown when an i2b2 specific error is found
 	 */
@@ -151,11 +151,11 @@ public class TemporalPanel implements Comparable<Object> {
 							&& panelItem.getConceptType() != null
 							&& panelItem.getConceptType().getDimcode() != null
 							&& panelItem.getConceptType().getDimcode()
-									.toLowerCase().trim()
-									.startsWith(ItemKeyUtil.ITEM_KEY_CELLID)) {
+							.toLowerCase().trim()
+							.startsWith(ItemKeyUtil.ITEM_KEY_CELLID)) {
 						panelItem = new TemporalPanelCellQueryItem(this, itemType,
 								panelItem.getConceptType());
-							
+
 					}
 					if (parent.isProtectedQuery() == false)
 						parent.setProtectedQuery(panelItem.getConceptType().getProtectedAccess().equalsIgnoreCase("Y")?true:false);
@@ -163,42 +163,42 @@ public class TemporalPanel implements Comparable<Object> {
 					 * check for derived table parameter and look for other views for this item.
 					 * ...  i.e. item is found in multiple views.
 					 * ... if others found, then add them to the panel item list individually.
-					 */		
-					if (this.parent.getQueryOptions()!=null&&this.parent.getQueryOptions().useDerivedFactTable()) 
-					 {
-						 if(panelItem.getConceptType().getFacttablecolumn().contains("."))
-						 {
-							 String baseItemFactColumn = panelItem.getConceptType().getFacttablecolumn();
-							 DerivedFactColumnsType columns = getFactColumnsFromOntologyCell(itemType.getItemKey());
-							 if(columns.getDerivedFactTableColumn().size() > 1) {
+					 */
+					if (this.parent.getQueryOptions()!=null&&this.parent.getQueryOptions().useDerivedFactTable())
+					{
+						if(panelItem.getConceptType().getFacttablecolumn().contains("."))
+						{
+							String baseItemFactColumn = panelItem.getConceptType().getFacttablecolumn();
+							DerivedFactColumnsType columns = getFactColumnsFromOntologyCell(itemType.getItemKey());
+							if(columns.getDerivedFactTableColumn().size() > 1) {
 
-								 for (String column : columns.getDerivedFactTableColumn()) {
-									 // look for non-null fact table columns that are not equal to the base item's column
-									 if((column != null) && !(column.equals(baseItemFactColumn))){
-										 if(column.contains(".")){
-											 TemporalPanelItem	derivedPanelItem = new TemporalPanelConceptItem(this, itemType);
-											 if(derivedPanelItem.getConceptType() == null)
-												 derivedPanelItem.getConceptType();
+								for (String column : columns.getDerivedFactTableColumn()) {
+									// look for non-null fact table columns that are not equal to the base item's column
+									if((column != null) && !(column.equals(baseItemFactColumn))){
+										if(column.contains(".")){
+											TemporalPanelItem	derivedPanelItem = new TemporalPanelConceptItem(this, itemType);
+											if(derivedPanelItem.getConceptType() == null)
+												derivedPanelItem.getConceptType();
 
-											 if (derivedPanelItem != null
-													 && derivedPanelItem.getConceptType() != null
-													 && derivedPanelItem.getConceptType().getDimcode() != null
-													 && derivedPanelItem.getConceptType().getDimcode()
-													 .toLowerCase().trim()
-													 .startsWith(ItemKeyUtil.ITEM_KEY_CELLID)) {
-												 derivedPanelItem = new TemporalPanelCellQueryItem(this, itemType,
-														 derivedPanelItem.getConceptType());
-											 }
-											 log.debug("setting a new fact column: " + column);
-											 derivedPanelItem.parseFactColumn(column);
-											 panelItemList.add(derivedPanelItem);
-										 }
-									 }
-								 }
-							 }
+											if (derivedPanelItem != null
+													&& derivedPanelItem.getConceptType() != null
+													&& derivedPanelItem.getConceptType().getDimcode() != null
+													&& derivedPanelItem.getConceptType().getDimcode()
+													.toLowerCase().trim()
+													.startsWith(ItemKeyUtil.ITEM_KEY_CELLID)) {
+												derivedPanelItem = new TemporalPanelCellQueryItem(this, itemType,
+														derivedPanelItem.getConceptType());
+											}
+											log.debug("setting a new fact column: " + column);
+											derivedPanelItem.parseFactColumn(column);
+											panelItemList.add(derivedPanelItem);
+										}
+									}
+								}
+							}
 
-						 }
-					 }
+						}
+					}
 				}
 				Integer conceptTotal = panelItem.getConceptTotal();
 				if (conceptTotal != null) {
@@ -207,7 +207,7 @@ public class TemporalPanel implements Comparable<Object> {
 					missingItemTotals++;
 				panelItemList.add(panelItem);
 
-				
+
 			}
 			catch (ConceptNotFoundException ce){
 				log.debug("Concept not found error: " + ce.getMessage());
@@ -220,7 +220,7 @@ public class TemporalPanel implements Comparable<Object> {
 			throws ConceptNotFoundException, OntologyException {
 		DerivedFactColumnsType factColumns = new DerivedFactColumnsType();
 		try {
-			
+
 			QueryProcessorUtil qpUtil = QueryProcessorUtil.getInstance();
 			String ontologyUrl = qpUtil
 					.getCRCPropertyValue(QueryProcessorUtil.ONTOLOGYCELL_ROOT_WS_URL_PROPERTIES);
@@ -262,12 +262,12 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Build Sql
-	 * 
+	 *
 	 * Main method for generating the sql string that will be run on the
 	 * database for this panel item. Iterates through each item contained in the
 	 * panel and appends sql together to form sql string for all items in the
 	 * panel
-	 * 
+	 *
 	 * @param currentIndex
 	 *            int value that represents the panel position in the query
 	 * @return String sql representation of the items in the query
@@ -306,16 +306,16 @@ public class TemporalPanel implements Comparable<Object> {
 		}
 		else if (this.isPanelInverted()){
 			//no items and inverted panel means this is a get everyone query
-			
+
 			String schema = getDatabaseSchema();
 			if (schema == null)
 				schema = "";
 			else if (!schema.endsWith("."))
 				schema += ".";
-			
-			panelSqlBuffer.append("insert into " + parent.getTempTableName() + " (patient_num, panel_count ) " + 
+
+			panelSqlBuffer.append("insert into " + parent.getTempTableName() + " (patient_num, panel_count ) " +
 					"select distinct patient_num, 0 from " + schema + "patient_dimension pat ");
-			
+
 		}
 
 		return panelSqlBuffer.toString();
@@ -323,10 +323,10 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Get Item Sql
-	 * 
+	 *
 	 * Gets the sql for each of the items in the panel and returns the results
 	 * in an List
-	 * 
+	 *
 	 * @return List<String> list of sql statements for all the times contained in the panel
 	 * @throws I2B2DAOException
 	 */
@@ -369,10 +369,10 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Union Item Sql
-	 * 
+	 *
 	 * Takes the list of individual sql statements and constructs one sql statement by unioning
 	 * individual statements together. Submitted statements are assumed to have the same select list
-	 * 
+	 *
 	 * @param itemSqlList List of individual sql statements
 	 * @return String one sql statement that unions individual statement together
 	 */
@@ -399,16 +399,16 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Consolidate Item Sql
-	 * 
+	 *
 	 * Takes in list of individual sql statements and combines them by consolidating statements with the same from clause
 	 * into one statement with multiple constraints. Statements with different from clauses are unioned together
-	 * 
+	 *
 	 * @param itemSql List of individual sql statements
 	 * @return String one sql statement that combines all statements from the individual list
 	 */
 	//OMOP WAS..
 //	private String consolidateItemSql(List<String> itemSql) {
-	private String consolidateItemSql(List<TemporalPanelItemSql> itemSqlList) {	
+	private String consolidateItemSql(List<TemporalPanelItemSql> itemSqlList) {
 		StringBuilder itemSqlBuffer = new StringBuilder();
 
 		HashMap<String, List<TemporalQuerySimpleSqlParser>> tableMatch = new HashMap<String, List<TemporalQuerySimpleSqlParser>>();
@@ -430,8 +430,8 @@ public class TemporalPanel implements Comparable<Object> {
 					+ fromClause
 					+ "|"
 					+ (groupByClause != null
-							&& groupByClause.trim().length() > 0 ? "|"
-							+ groupByClause : "");
+					&& groupByClause.trim().length() > 0 ? "|"
+					+ groupByClause : "");
 
 			if (havingClause != null && havingClause.trim().length() > 0) {
 				consolidatedKey += "|" + String.valueOf(index);
@@ -511,10 +511,10 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Build Item Union Sql
-	 * 
+	 *
 	 * Used to return the proper sql syntax for unioning two sql statements
 	 * together
-	 * 
+	 *
 	 * @return String with sql building block used to union to sql statements
 	 *         together
 	 * @throws I2B2DAOException
@@ -539,11 +539,11 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * First Panel Item Sql
-	 * 
+	 *
 	 * Processes an item from the first panel of a panel group. First panel
 	 * items are processed as an insert statement into a temporary table rather
 	 * than an update
-	 * 
+	 *
 	 * @param itemSqlList
 	 *           List of individual sql statements found in this panel
 	 * @return String sql representation that joins the item sql to the panel
@@ -605,7 +605,7 @@ public class TemporalPanel implements Comparable<Object> {
 						tableStatement.append("(" + itemSql + ") ");
 					}
 					tableStatement
-					.append(" i where i.patient_num = f.patient_num ");
+							.append(" i where i.patient_num = f.patient_num ");
 					if (innerGroupByClause != null
 							&& innerGroupByClause.trim().length() > 0
 							&& parent.getQueryOptions().useItemGroupByStatement()) {
@@ -624,7 +624,7 @@ public class TemporalPanel implements Comparable<Object> {
 						tableStatement.append("(" + itemSql + ") ");
 					}
 					tableStatement
-					.append(" i where i.patient_num = v.patient_num ");
+							.append(" i where i.patient_num = v.patient_num ");
 					if (innerGroupByClause != null
 							&& innerGroupByClause.trim().length() > 0
 							&& parent.getQueryOptions().useItemGroupByStatement()) {
@@ -703,7 +703,8 @@ public class TemporalPanel implements Comparable<Object> {
 
 			if (parent.getServerType().equalsIgnoreCase(
 					DAOFactoryHelper.ORACLE) || parent.getServerType()
-					.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL)) {
+					.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) || parent.getServerType()
+					.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) {
 				firstPanelItemSql = "insert into "
 						+ parent.getTempTableName() + " ("
 						+ insertValuesClause + ")" + "\n"
@@ -733,16 +734,16 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Build Select Into Statement
-	 * 
+	 *
 	 * Takes a sql statement and creates sql statement that selects the results into a temporary table. This method should only be used on
 	 * Sql Server or other database that supports the select into sybntax
-	 * 
+	 *
 	 * @param sqlStatement String that contains the sql statements to be saved into a temporary table
 	 * @param tempTableName String that contains the name of the temporary table
 	 * @return String properly formated sql statement that stores the result of the select statement into a temporary table
 	 */
 	private String buildSelectIntoStatement(String sqlStatement,
-			String tempTableName) {
+											String tempTableName) {
 		TemporalQuerySimpleSqlParser sqlParser = new TemporalQuerySimpleSqlParser(
 				sqlStatement);
 		String select = sqlParser.getSelectClause();
@@ -761,28 +762,28 @@ public class TemporalPanel implements Comparable<Object> {
 				+ from
 				+ " \n"
 				+ (where != null && where.trim().length() > 0 ? "where "
-						+ where + " \n" : "")
+				+ where + " \n" : "")
 				+ (groupBy != null && groupBy.trim().length() > 0 ? "group by "
-						+ groupBy + " \n" : "")
+				+ groupBy + " \n" : "")
 				+ (having != null && having.trim().length() > 0 ? "having "
-						+ having + " \n" : "")
+				+ having + " \n" : "")
 				+ (orderBy != null && orderBy.trim().length() > 0 ? "order by "
-						+ orderBy + " \n" : "");
+				+ orderBy + " \n" : "");
 		return selectIntoSql;
 	}
 
 	/**
 	 * Build First Panel Invert Sql
-	 * 
+	 *
 	 * Take in the list of individual sql statements from this panel and creates a sql statement that is inverted. Current invert options are 
 	 * limited to either using a minus/except syntax or a not exists/not in syntax.  
-	 * 
+	 *
 	 * @param itemSqlList List of individual sql statements for all items in this panel
 	 * @return String sql statement that applies invert clause to all items in first panel
 	 */
-		//OMOP WAS...
+	//OMOP WAS...
 	//	private String buildFirstPanelInvertSql(List<String> itemSqlList) {
-		private String buildFirstPanelInvertSql(List<TemporalPanelItemSql> itemSqlList) {
+	private String buildFirstPanelInvertSql(List<TemporalPanelItemSql> itemSqlList) {
 
 		String insertValuesClause = buildInsertValuesClause();
 		StringBuilder withItemSql = new StringBuilder();
@@ -794,13 +795,13 @@ public class TemporalPanel implements Comparable<Object> {
 		String itemSql = unionItemSql(itemSqlList);
 		String itemStatement = "";
 		StringBuilder tableStatement = new StringBuilder(itemSql);
-		
+
 		List<String> factTables = null;
-		if (this.parent.getQueryOptions()!=null&&this.parent.getQueryOptions().useDerivedFactTable()) 
-		 {
+		if (this.parent.getQueryOptions()!=null&&this.parent.getQueryOptions().useDerivedFactTable())
+		{
 			factTables = buildFactTableList(itemSqlList);
-		 }
-		
+		}
+
 
 		boolean useTempTables = false;
 		if (parent.getServerType().equalsIgnoreCase(DAOFactoryHelper.SQLSERVER)
@@ -829,7 +830,7 @@ public class TemporalPanel implements Comparable<Object> {
 				tableStatement = new StringBuilder();
 				if(factTables == null){
 					tableStatement.append("select " + innerSelectClause + " "
-						+ "from " + schema + "observation_fact f, ");
+							+ "from " + schema + "observation_fact f, ");
 				}
 				else{
 					if(factTables.size() == 1) {
@@ -847,7 +848,7 @@ public class TemporalPanel implements Comparable<Object> {
 						}
 					}
 				}
-				
+
 				if (useTempTables) {
 					tableStatement.append("#i" + suffix + " ");
 				} else if (parent.getQueryOptions().getQueryConstraintLogic() == QueryConstraintStrategy.DERIVED_TABLES) {
@@ -889,7 +890,7 @@ public class TemporalPanel implements Comparable<Object> {
 				tableStatement = new StringBuilder();
 				if(factTables == null){
 					tableStatement.append("select " + innerSelectClause + " "
-						+ "from " + schema + "observation_fact f, ");
+							+ "from " + schema + "observation_fact f, ");
 				}
 				else{
 					if(factTables.size() == 1) {
@@ -937,7 +938,7 @@ public class TemporalPanel implements Comparable<Object> {
 					invertClause = buildInvertExceptSql("#y" + suffix);
 				}
 				else {
-					invertClause = buildInvertNotExistsSql("#y" + suffix);					
+					invertClause = buildInvertNotExistsSql("#y" + suffix);
 				}
 				withItemSql.append(parent.buildTempTableCheckDrop("i" + suffix));
 				withItemSql.append(parent.getSqlDelimiter());
@@ -1013,18 +1014,19 @@ public class TemporalPanel implements Comparable<Object> {
 				}
 				String invertInsertSql = buildInvertInsertSelectSql("i");
 				withItemSql.append(" select " +
-						invertInsertSql + " from (" + 
-						invertClause + 
+						invertInsertSql + " from (" +
+						invertClause +
 						") i \n");
 			}
-			
+
 			innerSelectClause = buildInnerSelectClause();
 			tSelect = "select " + innerSelectClause + " " + "from ("
 					+ withItemSql.toString() + ") t ";
 
 			if (parent.getServerType()
 					.equalsIgnoreCase(DAOFactoryHelper.ORACLE) || parent.getServerType()
-					.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL)) {
+					.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) || parent.getServerType()
+					.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) {
 				invertSql = "insert into " + parent.getTempTableName() + " ("
 						+ insertValuesClause + ")" + "\n"
 						+ tSelect;
@@ -1037,7 +1039,7 @@ public class TemporalPanel implements Comparable<Object> {
 			if (itemStatement != null && itemStatement.trim().length() > 0) {
 				withItemSql.append("with y as ( " + "\n" + itemStatement + "\n"
 						+ " ) " + "\n");
-	
+
 				String invertClause = "";
 				if (parent.getQueryOptions().getInvertedConstraintLogic()==InvertedConstraintStrategy.MINUS_CLAUSE){
 					invertClause = buildInvertExceptSql("y");
@@ -1065,10 +1067,11 @@ public class TemporalPanel implements Comparable<Object> {
 				withItemSql.append(", t as ( " + "\n" + " select "
 						+ invertInsertSql + " from i " + "\n" + " ) " + "\n");
 			}
-	
+
 			if (parent.getServerType()
 					.equalsIgnoreCase(DAOFactoryHelper.ORACLE) || parent.getServerType()
-					.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL)) {
+					.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) || parent.getServerType()
+					.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) {
 				invertSql = "insert into " + parent.getTempTableName() + " ("
 						+ insertValuesClause + ")" + "\n"
 						+ withItemSql.toString() + tSelect;
@@ -1077,7 +1080,7 @@ public class TemporalPanel implements Comparable<Object> {
 						+ parent.getTempTableName() + " (" + insertValuesClause
 						+ ")" + "\n" + tSelect;
 			}
-	
+
 		}
 
 		return invertSql;
@@ -1086,20 +1089,20 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * First Panel Item Sql With Occurrence
-	 * 
+	 *
 	 * This method returns the sql representation of all items in a panel when
 	 * the panel is the first panel in a query. This method is only accessed
 	 * when usePanelLevelOccurrence flag is set to true - in which case the
 	 * occurrence is processed on the panel level instead of in an item by item
 	 * basis
-	 * 
+	 *
 	 * @param itemSqlList List of individual sql statements for all items in this panel
 	 * @return String sql representation for the first panel in the query
 	 * @throws I2B2DAOException
 	 *             thrown when an i2b2 data related error is encountered
 	 */
-		//OMOP WAS..
-		//	private String firstPanelItemSqlWithOccurrence(List<String> itemSqlList)
+	//OMOP WAS..
+	//	private String firstPanelItemSqlWithOccurrence(List<String> itemSqlList)
 	private String firstPanelItemSqlWithOccurrence(List<TemporalPanelItemSql> itemSqlList)
 			throws I2B2DAOException {
 
@@ -1160,10 +1163,10 @@ public class TemporalPanel implements Comparable<Object> {
 								+ "from y "
 								+ "where y.patient_num = f.patient_num) "
 								+ (innerGroupByClause != null
-										&& innerGroupByClause.trim().length() > 0
-										&& parent.getQueryOptions().useItemGroupByStatement() ? "group by "
-										+ innerGroupByClause
-										: "") + ") " + "\n");
+								&& innerGroupByClause.trim().length() > 0
+								&& parent.getQueryOptions().useItemGroupByStatement() ? "group by "
+								+ innerGroupByClause
+								: "") + ") " + "\n");
 			} else if (returnEncounterToParent()) {
 
 				withItemSql
@@ -1197,10 +1200,10 @@ public class TemporalPanel implements Comparable<Object> {
 								+ "from y "
 								+ "where y.patient_num = v.patient_num) "
 								+ (innerGroupByClause != null
-										&& innerGroupByClause.trim().length() > 0
-										&& parent.getQueryOptions().useItemGroupByStatement() ? "group by "
-										+ innerGroupByClause
-										: "") + ") " + "\n");
+								&& innerGroupByClause.trim().length() > 0
+								&& parent.getQueryOptions().useItemGroupByStatement() ? "group by "
+								+ innerGroupByClause
+								: "") + ") " + "\n");
 			}
 		} else if (getPanelTiming().equals(QueryTimingHandler.SAME)
 				|| getPanelTiming().equals(QueryTimingHandler.SAMEVISIT)) {
@@ -1237,10 +1240,10 @@ public class TemporalPanel implements Comparable<Object> {
 								+ "where y.patient_num = f.patient_num "
 								+ "and y.encounter_num = f.encounter_num) "
 								+ (innerGroupByClause != null
-										&& innerGroupByClause.trim().length() > 0
-										&& parent.getQueryOptions().useItemGroupByStatement() ? "group by "
-										+ innerGroupByClause
-										: "") + ") " + "\n");
+								&& innerGroupByClause.trim().length() > 0
+								&& parent.getQueryOptions().useItemGroupByStatement() ? "group by "
+								+ innerGroupByClause
+								: "") + ") " + "\n");
 			}
 		} else {
 			withItemSql
@@ -1260,7 +1263,8 @@ public class TemporalPanel implements Comparable<Object> {
 		}
 
 		if (parent.getServerType().equalsIgnoreCase(DAOFactoryHelper.ORACLE) || parent.getServerType()
-				.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL)) {
+				.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) || parent.getServerType()
+				.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) {
 			firstPanelItemSql = "insert into " + parent.getTempTableName()
 					+ " (" + insertValuesClause + ")" + "\n" + withItemSql
 					+ tSelect;
@@ -1275,10 +1279,10 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Build Insert Values Clause
-	 * 
+	 *
 	 * Returns a list of columns from the temporary table that will be populated
 	 * in an insert
-	 * 
+	 *
 	 * @return String sql list of columns from temporary table that will be
 	 *         inserted into
 	 */
@@ -1287,12 +1291,12 @@ public class TemporalPanel implements Comparable<Object> {
 
 		if (returnInstanceToParent()
 				|| getPanelTiming().equalsIgnoreCase(
-						QueryTimingHandler.SAMEINSTANCENUM)) {
+				QueryTimingHandler.SAMEINSTANCENUM)) {
 			insertValuesClause = "provider_id, start_date, concept_cd, instance_num, encounter_num,  patient_num";
 		} else if (returnEncounterToParent()
 				|| getPanelTiming().equalsIgnoreCase(QueryTimingHandler.SAME)
 				|| getPanelTiming().equalsIgnoreCase(
-						QueryTimingHandler.SAMEVISIT)) {
+				QueryTimingHandler.SAMEVISIT)) {
 			insertValuesClause = "encounter_num, patient_num";
 		} else {
 			insertValuesClause = "patient_num";
@@ -1305,10 +1309,10 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Build Inner Select Clause
-	 * 
+	 *
 	 * Returns a list of columns that will be inserted into the temporary table
 	 * for each item
-	 * 
+	 *
 	 * @return String sql statement that specifies the columns that should be
 	 *         returned from the item sql
 	 */
@@ -1318,10 +1322,10 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Build Inner Select Clause
-	 * 
+	 *
 	 * Returns a list of columns that will be inserted into the temporary table
 	 * for each item
-	 * 
+	 *
 	 * @param tableAlias
 	 *            String that specifies the table alias to use when building sql
 	 *            string
@@ -1340,16 +1344,16 @@ public class TemporalPanel implements Comparable<Object> {
 		} else {
 			if (returnInstanceToParent()
 					|| getPanelTiming().equalsIgnoreCase(
-							QueryTimingHandler.SAMEINSTANCENUM)) {
+					QueryTimingHandler.SAMEINSTANCENUM)) {
 				innerSelectClause = "" + tableAlias + "provider_id, "
 						+ tableAlias + "start_date, " + tableAlias
 						+ "concept_cd, " + tableAlias + "instance_num, "
 						+ tableAlias + "encounter_num, ";
 			} else if (returnEncounterToParent()
 					|| getPanelTiming().equalsIgnoreCase(
-							QueryTimingHandler.SAME)
+					QueryTimingHandler.SAME)
 					|| getPanelTiming().equalsIgnoreCase(
-							QueryTimingHandler.SAMEVISIT)) {
+					QueryTimingHandler.SAMEVISIT)) {
 				innerSelectClause = "" + tableAlias + "encounter_num, ";
 			}
 			innerSelectClause += "" + tableAlias
@@ -1360,9 +1364,9 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Build Inner Group By Clause
-	 * 
+	 *
 	 * Returns a list of columns that will be used to group the results of the panel sql statement
-	 * 
+	 *
 	 * @return String sql statement that specifies the columns that should be used to group the results
 	 */
 	public String buildInnerGroupByClause() {
@@ -1371,9 +1375,9 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Build Inner Group By Clause
-	 * 
+	 *
 	 * Returns a list of columns that will be used to group the results of the panel sql statement
-	 * 
+	 *
 	 * @param tableAlias
 	 *            String that specifies the table alias to use when building sql
 	 *            string
@@ -1391,16 +1395,16 @@ public class TemporalPanel implements Comparable<Object> {
 		} else {
 			if (returnInstanceToParent()
 					|| getPanelTiming().equalsIgnoreCase(
-							QueryTimingHandler.SAMEINSTANCENUM)) {
+					QueryTimingHandler.SAMEINSTANCENUM)) {
 				innerSelectClause = "" + tableAlias + "provider_id, "
 						+ tableAlias + "start_date, " + tableAlias
 						+ "concept_cd, " + tableAlias + "instance_num, "
 						+ tableAlias + "encounter_num, ";
 			} else if (returnEncounterToParent()
 					|| getPanelTiming().equalsIgnoreCase(
-							QueryTimingHandler.SAME)
+					QueryTimingHandler.SAME)
 					|| getPanelTiming().equalsIgnoreCase(
-							QueryTimingHandler.SAMEVISIT)) {
+					QueryTimingHandler.SAMEVISIT)) {
 				innerSelectClause = "" + tableAlias + "encounter_num, ";
 			}
 			innerSelectClause += "" + tableAlias + "patient_num ";
@@ -1410,24 +1414,24 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Non First Panel Item Sql With Occurrence
-	 * 
+	 *
 	 * This method returns the sql representation of all items in a panel when
 	 * the panel is not the first panel in a query. This method is only accessed
 	 * when usePanelLevelOccurrence flag is set to true - in which case the
 	 * occurrence is processed on the panel level instead of in an item by item
 	 * basis
-	 * 
+	 *
 	 * @param panelIndex
 	 *            int update index for the given panel
-	* @param itemSqlList 
-	* 			  List of individual sql statements for all items in this panel
+	 * @param itemSqlList
+	 * 			  List of individual sql statements for all items in this panel
 	 * @return String sql representation for updating temporary table with panel
 	 *         information
 	 * @throws I2B2DAOException
 	 *             thrown when an i2b2 data related error is encountered
 	 */
 	private String nonFirstPanelItemSqlWithOccurrence(int panelIndex,
-			List<TemporalPanelItemSql> itemSqlList) throws I2B2DAOException {	
+													  List<TemporalPanelItemSql> itemSqlList) throws I2B2DAOException {
 		String encounterNumClause = " ", instanceNumClause = " ";
 		String tempTableName = parent.getTempTableName();
 		int oldPanelIndex = panelIndex - 1;
@@ -1446,7 +1450,7 @@ public class TemporalPanel implements Comparable<Object> {
 					+ tempTableName + ".provider_id = t.provider_id ";
 		} else if (getPanelTiming().equalsIgnoreCase(QueryTimingHandler.SAME)
 				|| getPanelTiming().equalsIgnoreCase(
-						QueryTimingHandler.SAMEVISIT)) {
+				QueryTimingHandler.SAMEVISIT)) {
 			encounterNumClause = " and " + tempTableName
 					+ ".encounter_num = t.encounter_num ";
 		}
@@ -1468,7 +1472,8 @@ public class TemporalPanel implements Comparable<Object> {
 				+ " ) \n";
 
 		if (parent.getServerType().equalsIgnoreCase(DAOFactoryHelper.ORACLE) || parent.getServerType()
-				.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL)) {
+				.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) || parent.getServerType()
+				.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) {
 			nonFirstPanelItemSql += "update "
 					+ tempTableName
 					+ " set panel_count ="
@@ -1514,11 +1519,11 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Non First Panel Item Sql
-	 * 
+	 *
 	 * Processes item sql from all items in panel that is not the first panel in a subquery. 
 	 * Non first panel items are processed as an update statement to the
 	 * temporary table rather than an insert
-	 * 
+	 *
 	 * @param itemSqlList List of individual sql statements for all items in this panel
 	 * @param panelIndex
 	 *            int update index for the given panel
@@ -1530,7 +1535,7 @@ public class TemporalPanel implements Comparable<Object> {
 		StringBuilder panelSql = new StringBuilder();
 		boolean addDelimiter = false;
 		StringBuilder tempItemSql = new StringBuilder();
-		
+
 		boolean useTempTables = false;
 		if (parent.getServerType().equalsIgnoreCase(DAOFactoryHelper.SQLSERVER)
 				&& parent.getQueryOptions().getQueryConstraintLogic() == QueryConstraintStrategy.TEMP_TABLES) {
@@ -1561,7 +1566,7 @@ public class TemporalPanel implements Comparable<Object> {
 			} else if (getPanelTiming().equalsIgnoreCase(
 					QueryTimingHandler.SAME)
 					|| getPanelTiming().equalsIgnoreCase(
-							QueryTimingHandler.SAMEVISIT)) {
+					QueryTimingHandler.SAMEVISIT)) {
 				encounterNumClause = " and " + tempTableName
 						+ ".encounter_num = t.encounter_num ";
 			}
@@ -1577,44 +1582,44 @@ public class TemporalPanel implements Comparable<Object> {
 
 				if (useTempTables){
 					String suffix = "";
-					
+
 					nonFirstPanelItemSql += parent.buildTempTableCheckDrop("t" + suffix);
 					nonFirstPanelItemSql += parent.getSqlDelimiter();
-			
+
 					nonFirstPanelItemSql += buildSelectIntoStatement(itemSql, "t");
 					nonFirstPanelItemSql += parent.getSqlDelimiter();
-					
+
 					nonFirstPanelItemSql += " update " + tempTableName
 							+ " set panel_count = -1 " + " where " + tempTableName
 							+ ".panel_count =  " + oldPanelIndex + " and exists ( "
 							+ "select 1 " + "from #t t " + "where "
 							+ tempTableName + ".patient_num = t.patient_num "
 							+ encounterNumClause + instanceNumClause + " )  ";
-					
+
 					nonFirstPanelItemSql += parent.getSqlDelimiter();
 					nonFirstPanelItemSql += parent.buildTempTableCheckDrop("t" + suffix);
-			
+
 				}
 				else {
 					nonFirstPanelItemSql += " update " + tempTableName
-						+ " set panel_count = -1 " + " where " + tempTableName
-						+ ".panel_count =  " + oldPanelIndex + " and exists ( "
-						+ "select 1 " + "from (" + itemSql + ") t " + "where "
-						+ tempTableName + ".patient_num = t.patient_num "
-						+ encounterNumClause + instanceNumClause + " )  ";
+							+ " set panel_count = -1 " + " where " + tempTableName
+							+ ".panel_count =  " + oldPanelIndex + " and exists ( "
+							+ "select 1 " + "from (" + itemSql + ") t " + "where "
+							+ tempTableName + ".patient_num = t.patient_num "
+							+ encounterNumClause + instanceNumClause + " )  ";
 				}
 
 			} else {
-				
+
 				if (useTempTables){
 					String suffix = "";
-					
+
 					nonFirstPanelItemSql += parent.buildTempTableCheckDrop("t" + suffix);
 					nonFirstPanelItemSql += parent.getSqlDelimiter();
-			
+
 					nonFirstPanelItemSql += buildSelectIntoStatement(itemSql, "t");
 					nonFirstPanelItemSql += parent.getSqlDelimiter();
-					
+
 					nonFirstPanelItemSql += "update " + tempTableName
 							+ " set panel_count =" + panelIndex + " where "
 							+ tempTableName + ".panel_count =  " + oldPanelIndex
@@ -1622,10 +1627,10 @@ public class TemporalPanel implements Comparable<Object> {
 							+ " t " + "where " + tempTableName
 							+ ".patient_num = t.patient_num " + encounterNumClause
 							+ instanceNumClause + " ) ";
-					
+
 					nonFirstPanelItemSql += parent.getSqlDelimiter();
 					nonFirstPanelItemSql += parent.buildTempTableCheckDrop("t" + suffix);
-			
+
 				}
 				else {
 					nonFirstPanelItemSql += "update " + tempTableName
@@ -1651,10 +1656,10 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Build Invert Main Table Sql
-	 * 
+	 *
 	 * Constructs sql statement that selects the correct columns from the superset of items from which
 	 * an invert can be applied - through either a minus/except or not in/not exists clause
-	 * 
+	 *
 	 * @return String sql statement that contains sql for accessing main table sql
 	 */
 	public String buildInvertMainTableSql() {
@@ -1673,12 +1678,12 @@ public class TemporalPanel implements Comparable<Object> {
 		} catch (I2B2DAOException e) {
 			return null;
 		}
-		if (this.parent.getQueryOptions()!=null&&this.parent.getQueryOptions().useDerivedFactTable()) 
-		 {
+		if (this.parent.getQueryOptions()!=null&&this.parent.getQueryOptions().useDerivedFactTable())
+		{
 			factTables = buildFactTableList(itemSqlList);
-		 }
-		
-		
+		}
+
+
 		String invertTableName = patientTable;
 
 		if (getPanelTiming().equalsIgnoreCase(
@@ -1687,7 +1692,7 @@ public class TemporalPanel implements Comparable<Object> {
 			invertTableName = instanceTable;
 		} else if (getPanelTiming().equalsIgnoreCase(QueryTimingHandler.SAME)
 				|| getPanelTiming().equalsIgnoreCase(
-						QueryTimingHandler.SAMEVISIT)) {
+				QueryTimingHandler.SAMEVISIT)) {
 			invertTableName = visitTable;
 			selectClause = "v.encounter_num, v.patient_num";
 		} else {
@@ -1727,10 +1732,10 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Build Invert Insert Select Sql
-	 * 
+	 *
 	 * Constructs select clause for use in a larger statement. Clause contains the correct columns
 	 * based on panel and query timing models
-	 * 
+	 *
 	 * @param tableAlias String alias for table referenced in from clause
 	 * @return String select clause for inclusion in larger statement
 	 */
@@ -1750,7 +1755,7 @@ public class TemporalPanel implements Comparable<Object> {
 					+ tableAlias + "patient_num";
 		} else if (getPanelTiming().equalsIgnoreCase(QueryTimingHandler.SAME)
 				|| getPanelTiming().equalsIgnoreCase(
-						QueryTimingHandler.SAMEVISIT)) {
+				QueryTimingHandler.SAMEVISIT)) {
 			insertSelectClause = " " + tableAlias + "encounter_num, "
 					+ tableAlias + "patient_num";
 		} else {
@@ -1765,10 +1770,10 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Build Invert Not Except Sql
-	 * 
+	 *
 	 * Constructs with clause for use in larger invert statement. Clause contains proper minus/except
 	 * constraints based on the panel timing
-	 * 
+	 *
 	 * @param withAlias String alias of table or with clause for use in referencing column names
 	 * @return String not exists clause for use in larger sql invert statement
 	 */
@@ -1791,13 +1796,13 @@ public class TemporalPanel implements Comparable<Object> {
 				+ " ");
 		return exceptClause.toString();
 	}
-	
+
 	/**
 	 * Build Invert Not Exists Sql
-	 * 
+	 *
 	 * Constructs with clause for use in larger invert statement. Clause contains proper
 	 * constraints based on the panel timing
-	 * 
+	 *
 	 * @param withAlias String alias of table or with clause for use in referencing column names
 	 * @return String not exists clause for use in larger sql invert statement
 	 */
@@ -1807,10 +1812,10 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Build Invert Not Exists Sql
-	 * 
+	 *
 	 * Constructs with clause for use in larger invert statement. Clause contains proper not in/not exists
 	 * constraints based on the panel timing
-	 * 
+	 *
 	 * @param withTable String name of table or with clause name
 	 * @param withAlias String alias of table or with clause for use in referencing column names
 	 * @return String not exists clause for use in larger sql invert statement
@@ -1841,7 +1846,7 @@ public class TemporalPanel implements Comparable<Object> {
 					+ ".provider_id = f.provider_id) ");
 		} else if (getPanelTiming().equalsIgnoreCase(QueryTimingHandler.SAME)
 				|| getPanelTiming().equalsIgnoreCase(
-						QueryTimingHandler.SAMEVISIT)) {
+				QueryTimingHandler.SAMEVISIT)) {
 			notExistsClause.append("where " + withAlias
 					+ ".patient_num = v.patient_num ");
 			notExistsClause.append("and " + withAlias
@@ -1888,10 +1893,10 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Get Timing Score
-	 * 
+	 *
 	 * Calculates the timing score of the panel. Timing scores are used to
 	 * properly sort panels so query processing can be optimized
-	 * 
+	 *
 	 * @return int represents the timing score of the panel
 	 */
 	private int getTimingScore() {
@@ -1918,12 +1923,12 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Get Estimated Total
-	 * 
+	 *
 	 * Calculate the estimated number of patients that will be returned by this
 	 * panel. This method accounts for missing values and inverted panels when
 	 * estimated the number of patients returned. Estimated counts are used to
 	 * help sort panels in a way that optimizes query performance
-	 * 
+	 *
 	 * @return int estimated count of patients returned by this panel
 	 */
 	private int getEstimatedTotal() {
@@ -1951,7 +1956,7 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Is Panel Inverted
-	 * 
+	 *
 	 * @return boolean true if the panel has the inverted flag set, otherwise
 	 *         false
 	 */
@@ -1961,9 +1966,9 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Get Sum Of Patient Item Counts
-	 * 
+	 *
 	 * Sum the estimated patient counts for all items in the panel
-	 * 
+	 *
 	 * @return int total of estimated counts from items within the panel
 	 */
 	public int getSumOfPanelItemCounts() {
@@ -1972,10 +1977,10 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Get Panel Timing
-	 * 
+	 *
 	 * Return timing to use for this panel. If no timing is specified on the
 	 * panel level, than the timing for the query is used.
-	 * 
+	 *
 	 * @return String representation of the timing used for this panel
 	 */
 	public String getPanelTiming() {
@@ -1988,7 +1993,7 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Return Encounter To Parent
-	 * 
+	 *
 	 * @return boolean true if panel is needs to return encounter num
 	 *  results to parent query
 	 */
@@ -1998,7 +2003,7 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Return Instance to Parent
-	 * 
+	 *
 	 * @return boolean true if panel is needs to return instance based columns
 	 *  results to parent query
 	 */
@@ -2008,7 +2013,7 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Get Accuracy Scale
-	 * 
+	 *
 	 * @return int accuracy as included in the original query xml
 	 */
 	public int getAccuracyScale() {
@@ -2017,7 +2022,7 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Get Item List
-	 * 
+	 *
 	 * @return List<TemporalPanelItem> list of items in this panel
 	 */
 	public List<TemporalPanelItem> getItemList() {
@@ -2026,7 +2031,7 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Get Security Type
-	 * 
+	 *
 	 * @return SecurityType returns security to use for this query
 	 */
 	protected SecurityType getSecurityType() {
@@ -2036,7 +2041,7 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Get Requestor Security Type
-	 * 
+	 *
 	 * @return SecurityType returns security used by requestor when submitting
 	 *         this query
 	 */
@@ -2046,7 +2051,7 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Get Project Id
-	 * 
+	 *
 	 * @return String project id used for this query
 	 */
 	protected String getProjectId() {
@@ -2055,7 +2060,7 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Get Data Source Lookup
-	 * 
+	 *
 	 * @return DataSourceLookup data source information used for submitting
 	 *         query to database
 	 */
@@ -2065,7 +2070,7 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Get Database Schema
-	 * 
+	 *
 	 * @return String name of schema to use when referencing tables
 	 */
 	protected String getDatabaseSchema() {
@@ -2074,9 +2079,9 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Build Date Constraint Sql
-	 * 
+	 *
 	 * Builds string sql statement that contains the date constraint from the panel leve
-	 * 
+	 *
 	 * @return String sql statement that contains the date constraint from the panel level
 	 */
 	public String buildDateConstraintSql() {
@@ -2085,9 +2090,9 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Build Date Constraint Sql
-	 * 
+	 *
 	 * Builds string sql statement that contains the date constraint from the panel leve
-	 * 
+	 *
 	 * @param tableAlias String alias of the table to use when reference columns
 	 * @return String sql statement that contains the date constraint from the panel level
 	 */
@@ -2100,9 +2105,9 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Get Server Type
-	 * 
+	 *
 	 * Returns name of the underlying database type. Currently, only Oracle and SqlServer are supported
-	 * 
+	 *
 	 * @return String name of the database server type
 	 */
 	public String getServerType() {
@@ -2111,9 +2116,9 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Get Project Parameter Map
-	 * 
+	 *
 	 * Returns the Map of project parameter values passed in when the query was created
-	 * 
+	 *
 	 * @return Map the project parameter map that was passed into the query
 	 */
 	protected Map getProjectParameterMap() {
@@ -2127,9 +2132,9 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Has Panel Date Constraint
-	 * 
+	 *
 	 * Returns whether or not this panel has a panel level date constraint: date from, date to, or both
-	 * 
+	 *
 	 * @return Boolean true if this panel has a panel level date constraint
 	 */
 	public boolean hasPanelDateConstraint() {
@@ -2142,9 +2147,9 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Has Panel Occurrence Constraint
-	 * 
+	 *
 	 * Returns whether or not this panel has an occurrence constraint other than the default
-	 * 
+	 *
 	 * @return Boolean true if the panel has an occurrence constraint > 1, else false
 	 */
 	public boolean hasPanelOccurrenceConstraint() {
@@ -2161,9 +2166,9 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Is First Panel In Query
-	 * 
+	 *
 	 * Determines whether this panel is the first panel in the query
-	 * 
+	 *
 	 * @return Boolean true if panel is first panel in query, otherwise false
 	 */
 	public boolean isFirstPanelInQuery() {
@@ -2172,9 +2177,9 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Get Total Occurrences
-	 * 
+	 *
 	 * Gets the total occurrences constraint for this panel
-	 * 
+	 *
 	 * @return TotalItemOccurrences occurrence constraint from main query
 	 */
 	public TotalItemOccurrences getTotalOccurrences() {
@@ -2183,9 +2188,9 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Get Total Occurrences Operator
-	 * 
+	 *
 	 * Get the operator for the total occurrences constraint for this panel
-	 * 
+	 *
 	 * @return String operator for total occurrences constraint
 	 */
 	public String getTotalOccurrenceOperator() {
@@ -2198,24 +2203,24 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Allow Large Text Value Constrain Flag
-	 * 
+	 *
 	 * Return whether or not constraints on large text values are allowed
-	 * 
+	 *
 	 * @return Boolean true if large text constraints are allowed, otherwise false
 	 */
 	protected boolean allowLargeTextValueConstrainFlag() {
 		return parent.allowLargeTextValueConstrainFlag();
 	}
-	
+
 	protected List<String> getUserRoles() {
 		return parent.getUserRoles();
 	}
 
 	/**
 	 * Appply Occurrence to Panel Level
-	 * 
+	 *
 	 * Return whether or not occurrences should be applied on the panel level instead of on each item **NOTE: This is experimental funcationality and not current supported**
-	 * 
+	 *
 	 * @return Boolean true if occurrence should be applied over all items in a query instead of on an item by item basis, otherwise false
 	 */
 	protected boolean applyOccurrenceToPanelLevel() {
@@ -2224,9 +2229,9 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Get Processing Level
-	 * 
+	 *
 	 * Returns the processing level of the current query. Default value is 1, when processing an embedded query, processing level is incremented
-	 * 
+	 *
 	 * @return int Processing level of current query
 	 */
 	protected int getProcessingLevel() {
@@ -2235,9 +2240,9 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Add Pre Processing Sql
-	 * 
+	 *
 	 * Add sql statement to run before main sql statement is run
-	 * 
+	 *
 	 * @param sql String sql statement to be processed before main sql statement has been run
 	 */
 	protected void addPreProcessingSql(String sql) {
@@ -2246,20 +2251,20 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Add Post Processing Sql
-	 * 
+	 *
 	 * Add sql statement to run after main sql statement has run
-	 * 
+	 *
 	 * @param sql String sql statement to processed after main sql statement has been run
 	 */
 	protected void addPostProcessingSql(String sql) {
 		parent.addPostProcessingSql(sql);
 	}
-	
+
 	/**
 	 * Search For Query In Request Definition
-	 * 
+	 *
 	 * Looks for query defintion with the specified query id in the parent query xml definition
-	 * 
+	 *
 	 * @param subQueryId String specified the query id for the query to look for
 	 * @return QueryDefinitionType if query is found, otherwise returns null
 	 */
@@ -2270,41 +2275,41 @@ public class TemporalPanel implements Comparable<Object> {
 
 	/**
 	 * Is Patient Only Query
-	 * 
+	 *
 	 * @return true if only patient num is required to be returned by this panel
 	 */
 	protected boolean isPatientOnlyQuery() {
 		if (this.returnEncounterToParent()
 				|| this.returnInstanceToParent()
 				|| this.getPanelTiming().equalsIgnoreCase(
-						QueryTimingHandler.SAME)
+				QueryTimingHandler.SAME)
 				|| this.getPanelTiming().equalsIgnoreCase(
-						QueryTimingHandler.SAMEVISIT)
+				QueryTimingHandler.SAMEVISIT)
 				|| this.getPanelTiming().equalsIgnoreCase(
-						QueryTimingHandler.SAMEINSTANCENUM))
+				QueryTimingHandler.SAMEINSTANCENUM))
 			return false;
 		else
 			return true;
 	}
-	
+
 	/**
 	 * Add Ignored Message
-	 * 
+	 *
 	 * @param errorMessage String error m
 	 */
 	public void addIgnoredMessage(String errorMessage) {
 		parent.addIgnoredMessage(errorMessage);
 	}
-	
+
 	/**
 	 * Get Query Options
-	 * 
+	 *
 	 * @return TemporalQueryOptions that are valid for this query
 	 */
 	protected TemporalQueryOptions getQueryOptions() {
 		return parent.getQueryOptions();
 	}
-	
+
 	private List<String> buildFactTableList(List<TemporalPanelItemSql> itemSqlList) {
 		List <String> factTableList = new ArrayList<String>();
 
@@ -2313,7 +2318,7 @@ public class TemporalPanel implements Comparable<Object> {
 			factTableList.add(itemSqlItem.factTable);
 		}
 		return factTableList;
-		
+
 	}
 
 }

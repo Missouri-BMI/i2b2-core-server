@@ -11,18 +11,18 @@ package edu.harvard.i2b2.crc.dao.setfinder;
 
 /**
  * To add Length of Stay (This is for Oracle and Postgresl)  For Sql Server change the sql statement from (DX to #DX)
- * 
+ *
  * Add a entry to QT_BREAKDOWN_PATH
  *     NAME = LENGTH_OF_STAY
  *     VALUE = select length_of_stay as patient_range, count(distinct a.PATIENT_num) as patient_count  from visit_dimension a, DX b where a.patient_num = b.patient_num group by a.length_of_stay order by 1
- * 
+ *
  * Add a entry to QT_QUERY_RESULT_TYPE
  *     RESULT_TYPE_ID = 13 (Or any unused number)
  *     NAME = LENGTH_OF_STAY
  *     DESCRIPTION = Length of Dtay Brealdown
  *     DISPLAY_TYPE_ID = CATNUM
  *     VISUAL_ATTRIBUTE_TYPE_ID = LA
- *         
+ *
  * Add a new <entry> in CRCApplicationContext.xml
  * 	<entry>
  *           <key>
@@ -30,7 +30,7 @@ package edu.harvard.i2b2.crc.dao.setfinder;
  *           </key>
  *           <value>edu.harvard.i2b2.crc.dao.setfinder.QueryResultPatientSQLCountGenerator</value>
  *         </entry>
- * 
+ *
  */
 
 
@@ -62,7 +62,7 @@ import edu.harvard.i2b2.crc.util.LogTimingUtil;
 /**
  * Setfinder's result genertor class. This class calculates patient break down
  * for the result type.
- * 
+ *
  * Calls the ontology to get the children for the result type and then
  * calculates the patient count for each child of the result type.
  */
@@ -82,7 +82,7 @@ public class QueryResultPatientSQLCountGenerator extends CRCDAO implements IResu
 	 */
 	@Override
 	public void generateResult(Map param) throws CRCTimeOutException,
-	I2B2DAOException {
+			I2B2DAOException {
 
 		SetFinderConnection sfConn = (SetFinderConnection) param
 				.get("SetFinderConnection");
@@ -102,8 +102,8 @@ public class QueryResultPatientSQLCountGenerator extends CRCDAO implements IResu
 		boolean obfscDataRoleFlag = (Boolean)param.get("ObfuscatedRoleFlag");
 
 		this
-		.setDbSchemaName(sfDAOFactory.getDataSourceLookup()
-				.getFullSchema());
+				.setDbSchemaName(sfDAOFactory.getDataSourceLookup()
+						.getFullSchema());
 		//Map ontologyKeyMap = (Map) param.get("setFinderResultOntologyKeyMap");
 		String serverType = (String) param.get("ServerType");
 		//		CallOntologyUtil ontologyUtil = (CallOntologyUtil) param
@@ -287,7 +287,7 @@ public class QueryResultPatientSQLCountGenerator extends CRCDAO implements IResu
 								// add () to the result type description
 								// read the description from result type
 
-							} else { 
+							} else {
 								obfuscatedRecordCount = recordCount;
 							}
 							IQueryResultTypeDao resultTypeDao = sfDAOFactory.getQueryResultTypeDao();
@@ -332,7 +332,7 @@ public class QueryResultPatientSQLCountGenerator extends CRCDAO implements IResu
 	}
 
 	private String getItemKeyFromResultType(SetFinderDAOFactory sfDAOFactory,
-			String resultTypeKey) {
+											String resultTypeKey) {
 		//
 		IQueryBreakdownTypeDao queryBreakdownTypeDao = sfDAOFactory
 				.getQueryBreakdownTypeDao();

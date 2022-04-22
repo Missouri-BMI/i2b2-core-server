@@ -8,8 +8,8 @@
  ******************************************************************************/
 /*
 
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Rajesh Kuttan
  */
 package edu.harvard.i2b2.crc.dao.pdo.input;
@@ -29,7 +29,7 @@ import edu.harvard.i2b2.crc.datavo.pdo.query.InclusiveType;
 /**
  * Class to generate date constrains sqls clause. $Id:
  * DateConstrainHandler.java,v 1.4 2008/06/26 03:58:56 rk903 Exp $
- * 
+ *
  * @author rkuttan
  */
 public class DateConstrainHandler {
@@ -46,16 +46,20 @@ public class DateConstrainHandler {
 			dateFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");
 		} else if (dataSourceLookup.getServerType().equalsIgnoreCase(
 				DAOFactoryHelper.SQLSERVER) ||dataSourceLookup.getServerType().equalsIgnoreCase(
-						DAOFactoryHelper.POSTGRESQL)) {
+				DAOFactoryHelper.POSTGRESQL)) {
+			// ISO 8601
+			dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		}	else if (dataSourceLookup.getServerType().equalsIgnoreCase(
+				DAOFactoryHelper.SNOWFLAKE)) {
 			// ISO 8601
 			dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 		}
 	}
 
 	public String constructDateConstrainClause(String fromDateField,
-			String toDateField, InclusiveType fromInclusiveType,
-			InclusiveType toInclusiveType, XMLGregorianCalendar fromDate,
-			XMLGregorianCalendar toDate) throws I2B2Exception {
+											   String toDateField, InclusiveType fromInclusiveType,
+											   InclusiveType toInclusiveType, XMLGregorianCalendar fromDate,
+											   XMLGregorianCalendar toDate) throws I2B2Exception {
 		String dateConstrainSql = null;
 		String sqlOperator = null;
 
@@ -76,7 +80,11 @@ public class DateConstrainHandler {
 						+ fromDateString + "','DD-MON-YYYY HH24:MI:SS')";
 			} else if (dataSourceLookup.getServerType().equalsIgnoreCase(
 					DAOFactoryHelper.SQLSERVER) || dataSourceLookup.getServerType().equalsIgnoreCase(
-							DAOFactoryHelper.POSTGRESQL)) {
+					DAOFactoryHelper.POSTGRESQL)) {
+				// {ts '2005-06-27 00:00:00'}
+				dateConstrainSql = fromDateField + sqlOperator + " '"
+						+ fromDateString + "'";
+			} else if (dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) {
 				// {ts '2005-06-27 00:00:00'}
 				dateConstrainSql = fromDateField + sqlOperator + " '"
 						+ fromDateString + "'";
@@ -109,7 +117,11 @@ public class DateConstrainHandler {
 						+ toDateString + "','DD-MON-YYYY HH24:MI:SS')");
 			} else if (dataSourceLookup.getServerType().equalsIgnoreCase(
 					DAOFactoryHelper.SQLSERVER) || dataSourceLookup.getServerType().equalsIgnoreCase(
-							DAOFactoryHelper.POSTGRESQL)) {
+					DAOFactoryHelper.POSTGRESQL)) {
+				dateConstrainSql += (toDateField + sqlOperator + " '"
+						+ toDateString + "'");
+			} else if (dataSourceLookup.getServerType().equalsIgnoreCase(
+					DAOFactoryHelper.SNOWFLAKE)) {
 				dateConstrainSql += (toDateField + sqlOperator + " '"
 						+ toDateString + "'");
 			}

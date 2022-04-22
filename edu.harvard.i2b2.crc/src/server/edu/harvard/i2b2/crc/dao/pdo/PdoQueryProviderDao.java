@@ -8,8 +8,8 @@
  ******************************************************************************/
 /*
 
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Rajesh Kuttan
  */
 package edu.harvard.i2b2.crc.dao.pdo;
@@ -43,14 +43,14 @@ import edu.harvard.i2b2.crc.datavo.pdo.ObserverType;
 /**
  * Class to support provider section of plain pdo query $Id:
  * PdoQueryProviderDao.java,v 1.10 2008/03/19 22:42:08 rk903 Exp $
- * 
+ *
  * @author rkuttan
  */
 public class PdoQueryProviderDao extends CRCDAO implements IPdoQueryProviderDao {
 	private DataSourceLookup dataSourceLookup = null;
 
 	public PdoQueryProviderDao(DataSourceLookup dataSourceLookup,
-			DataSource dataSource) {
+							   DataSource dataSource) {
 		this.dataSourceLookup = dataSourceLookup;
 		setDbSchemaName(dataSourceLookup.getFullSchema());
 		setDataSource(dataSource);
@@ -59,7 +59,7 @@ public class PdoQueryProviderDao extends CRCDAO implements IPdoQueryProviderDao 
 	/**
 	 * Function to return provider/observer section of plain pdo for the given
 	 * id list
-	 * 
+	 *
 	 * @param providerIdList
 	 * @param detailFlag
 	 * @param blobFlag
@@ -69,7 +69,7 @@ public class PdoQueryProviderDao extends CRCDAO implements IPdoQueryProviderDao 
 	 */
 	@Override
 	public ObserverSet getProviderById(List<String> providerIdList,
-			boolean detailFlag, boolean blobFlag, boolean statusFlag)
+									   boolean detailFlag, boolean blobFlag, boolean statusFlag)
 			throws I2B2DAOException {
 		ObserverSet providerDimensionSet = new ObserverSet();
 		log.debug("provider list size " + providerIdList.size());
@@ -84,7 +84,7 @@ public class PdoQueryProviderDao extends CRCDAO implements IPdoQueryProviderDao 
 			String serverType = dataSourceLookup.getServerType();
 			if (serverType.equalsIgnoreCase(DAOFactoryHelper.ORACLE)) {
 				oracle.jdbc.driver.OracleConnection conn1 = null;// (oracle.jdbc.driver.OracleConnection) ((WrappedConnection) conn)
-			//			.getUnderlyingConnection();
+				//			.getUnderlyingConnection();
 				String finalSql = "SELECT "
 						+ selectClause
 						+ " FROM "
@@ -99,10 +99,11 @@ public class PdoQueryProviderDao extends CRCDAO implements IPdoQueryProviderDao 
 						providerIdList.toArray(new String[] {}));
 				query.setArray(1, paramArray);
 			} else if (serverType.equalsIgnoreCase(DAOFactoryHelper.SQLSERVER) ||
-					serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL)) {
+					serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) ||
+					serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) {
 				log.debug("creating temp table");
 				java.sql.Statement tempStmt = conn.createStatement();
-				if (serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL))
+				if (serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) || serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE))
 					tempTableName = SQLServerFactRelatedQueryHandler.TEMP_PDO_INPUTLIST_TABLE.substring(1);
 				else
 					tempTableName =  SQLServerFactRelatedQueryHandler.TEMP_PDO_INPUTLIST_TABLE;
@@ -112,7 +113,8 @@ public class PdoQueryProviderDao extends CRCDAO implements IPdoQueryProviderDao 
 					;
 				}
 
-				uploadTempTable(tempStmt, tempTableName, providerIdList, dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL));
+				uploadTempTable(tempStmt, tempTableName, providerIdList, dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) ||
+						dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE));
 				String finalSql = "SELECT "
 						+ selectClause
 						+ " FROM "
@@ -142,7 +144,7 @@ public class PdoQueryProviderDao extends CRCDAO implements IPdoQueryProviderDao 
 		} finally {
 			if (dataSourceLookup.getServerType().equalsIgnoreCase(
 					DAOFactoryHelper.SQLSERVER)) {
-				PdoTempTableUtil tempUtil = new PdoTempTableUtil(); 
+				PdoTempTableUtil tempUtil = new PdoTempTableUtil();
 				tempUtil.deleteTempTableSqlServer(conn, tempTableName);
 			}
 			try {
@@ -155,10 +157,10 @@ public class PdoQueryProviderDao extends CRCDAO implements IPdoQueryProviderDao 
 	}
 
 	private void uploadTempTable(Statement tempStmt, String tempTable,
-			List<String> patientNumList,  boolean isPostgresql) throws SQLException {
+								 List<String> patientNumList,  boolean isPostgresql) throws SQLException {
 		String createTempInputListTable =  "create "
-				 + (isPostgresql ? " temp ": "" ) 
-				 + " table " + tempTable
+				+ (isPostgresql ? " temp ": "" )
+				+ " table " + tempTable
 				+ " ( char_param1 varchar(100) )";
 		tempStmt.executeUpdate(createTempInputListTable);
 		log.debug("created temp table" + tempTable);
@@ -184,13 +186,13 @@ public class PdoQueryProviderDao extends CRCDAO implements IPdoQueryProviderDao 
 		preparedStmt.executeBatch();
 	}
 
-	
+
 
 	@Override
 	public ObserverSet getProviderByFact(List<String> panelSqlList,
-			List<Integer> sqlParamCountList,
-			IInputOptionListHandler inputOptionListHandler, boolean detailFlag,
-			boolean blobFlag, boolean statusFlag) throws I2B2DAOException {
+										 List<Integer> sqlParamCountList,
+										 IInputOptionListHandler inputOptionListHandler, boolean detailFlag,
+										 boolean blobFlag, boolean statusFlag) throws I2B2DAOException {
 
 		ObserverSet observerSet = new ObserverSet();
 		I2B2PdoFactory.ProviderBuilder providerBuilder = new I2B2PdoFactory().new ProviderBuilder(
@@ -208,10 +210,11 @@ public class PdoQueryProviderDao extends CRCDAO implements IPdoQueryProviderDao 
 				factTempTable = this.getDbSchemaName()
 						+ FactRelatedQueryHandler.TEMP_FACT_PARAM_TABLE;
 			} else if (serverType.equalsIgnoreCase(DAOFactoryHelper.SQLSERVER) ||
-					serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL)) {
+					serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) ||
+					serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) {
 				log.debug("creating temp table");
 				java.sql.Statement tempStmt = conn.createStatement();
-				if (serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL))
+				if (serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) || serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE))
 					factTempTable = SQLServerFactRelatedQueryHandler.TEMP_FACT_PARAM_TABLE.substring(1);
 				else
 					factTempTable = SQLServerFactRelatedQueryHandler.TEMP_FACT_PARAM_TABLE;
@@ -275,9 +278,9 @@ public class PdoQueryProviderDao extends CRCDAO implements IPdoQueryProviderDao 
 			log.error("", ioEx);
 			throw new I2B2DAOException("IO exception", ioEx);
 		} finally {
-			PdoTempTableUtil tempUtil = new PdoTempTableUtil(); 
+			PdoTempTableUtil tempUtil = new PdoTempTableUtil();
 			tempUtil.clearTempTable(dataSourceLookup.getServerType(),conn, factTempTable);
-			
+
 			if (inputOptionListHandler != null
 					&& inputOptionListHandler.isEnumerationSet()) {
 				try {
@@ -298,7 +301,7 @@ public class PdoQueryProviderDao extends CRCDAO implements IPdoQueryProviderDao 
 	}
 
 	private void executeUpdateSql(String totalSql, Connection conn,
-			int sqlParamCount, IInputOptionListHandler inputOptionListHandler)
+								  int sqlParamCount, IInputOptionListHandler inputOptionListHandler)
 			throws SQLException {
 
 		PreparedStatement stmt = conn.prepareStatement(totalSql);

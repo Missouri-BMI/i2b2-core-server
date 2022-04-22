@@ -7,7 +7,7 @@
  * the terms of the Healthcare Disclaimer.
  ******************************************************************************/
 package edu.harvard.i2b2.crc. dao.setfinder.querybuilder;
- 
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,7 +49,7 @@ public class QueryToolUtilNew extends CRCDAO {
 
 
 	public QueryToolUtilNew(DataSourceLookup dataSourceLookup, String queryXML,
-			boolean encounterSetOutputFlag) {
+							boolean encounterSetOutputFlag) {
 		this.setDbSchemaName(dataSourceLookup.getFullSchema());
 		this.dataSourceLookup = dataSourceLookup;
 		this.queryXML = queryXML;
@@ -67,7 +67,8 @@ public class QueryToolUtilNew extends CRCDAO {
 			tempDxTableName = "#dx";
 		} else if (this.dataSourceLookup.getServerType().equalsIgnoreCase(
 				DAOFactoryHelper.ORACLE) || this.dataSourceLookup.getServerType().equalsIgnoreCase(
-						DAOFactoryHelper.POSTGRESQL)) {
+				DAOFactoryHelper.POSTGRESQL) || this.dataSourceLookup.getServerType().equalsIgnoreCase(
+				DAOFactoryHelper.SNOWFLAKE)) {
 			tempTableName = "QUERY_GLOBAL_TEMP";
 			tempDxTableName = "DX";
 		}
@@ -79,11 +80,11 @@ public class QueryToolUtilNew extends CRCDAO {
 		return maxPanelNum;
 	}
 
-	public void setProcessTimingFlag(String level) { 
+	public void setProcessTimingFlag(String level) {
 		this.processTimingFlag = level;
 	}
 
-	public void setProjectParamMap(Map projectParamMap) { 
+	public void setProjectParamMap(Map projectParamMap) {
 		this.projectParamMap = projectParamMap;
 	}
 
@@ -91,7 +92,7 @@ public class QueryToolUtilNew extends CRCDAO {
 		return this.processTimingStr.toString();
 	}
 
-	public void setAllowLargeTextValueConstrainFlag(boolean allowLargeTextValueConstrainFlag)  { 
+	public void setAllowLargeTextValueConstrainFlag(boolean allowLargeTextValueConstrainFlag)  {
 		this.allowLargeTextValueConstrainFlag = allowLargeTextValueConstrainFlag;
 	}
 
@@ -140,7 +141,7 @@ public class QueryToolUtilNew extends CRCDAO {
 		//if query timing is null, then take the timing from panel timing 
 		String queryTimingVal = queryDefType.getQueryTiming();
 		if (queryDefType.getQueryTiming() == null) {
-			CalulateQueryTiming calculateTiming = new CalulateQueryTiming(); 
+			CalulateQueryTiming calculateTiming = new CalulateQueryTiming();
 			String calcQueryTiming = calculateTiming.getQueryTiming(queryDefType.getPanel());
 			queryDefType.setQueryTiming(calcQueryTiming);
 			queryTimingVal = calcQueryTiming;
@@ -163,18 +164,18 @@ public class QueryToolUtilNew extends CRCDAO {
 		String panelTiming = "";
 		String validPanelTiming = possibleMap.get(queryTimingVal);
 		String[] valueList = validPanelTiming.split(":");
-		List<String> valList = Arrays.asList(valueList); 
-		for (Iterator<String> i = grpPanelByTimingMap.keySet().iterator();i.hasNext();) { 
+		List<String> valList = Arrays.asList(valueList);
+		for (Iterator<String> i = grpPanelByTimingMap.keySet().iterator();i.hasNext();) {
 			panelTiming = i.next();
 			List<PanelType> pl = grpPanelByTimingMap.get(panelTiming);
-			if (pl.size() == 0) { 
+			if (pl.size() == 0) {
 				continue;
 			}
 
 			log.debug("Checking for valid query timing [" + queryTimingVal + "] with panel timing [" + panelTiming + "]");
 
 
-			if (valList.indexOf(panelTiming)>-1) { 
+			if (valList.indexOf(panelTiming)>-1) {
 				throw new I2B2DAOException("Query timing ["+ queryTimingVal +"] and panel timing [" + panelTiming +"] is not valid");
 			}
 		}
@@ -195,14 +196,14 @@ public class QueryToolUtilNew extends CRCDAO {
 		Map<String, List<PanelType>>  invertGroupPanelByTimingMap =   grpPanelTiming.filterByExcludeFlag(grpPanelByTimingMap,true);
 		Map<String, List<PanelType>>  nonInvertGroupPanelByTimingMap = grpPanelTiming.filterByExcludeFlag(grpPanelByTimingMap,false);
 		ArrayList<Map<String,List<PanelType>>> t = new ArrayList<Map<String, List<PanelType>>>();
-		if (nonInvertGroupPanelByTimingMap.size() > 0) { 
+		if (nonInvertGroupPanelByTimingMap.size() > 0) {
 			t.add(nonInvertGroupPanelByTimingMap);
 		}
 		t.add(invertGroupPanelByTimingMap);
 
 		String firstItemJoinTiming = calculateFirstItemJoin(timingOrder,invertGroupPanelByTimingMap, nonInvertGroupPanelByTimingMap);
 
-		for (Map<String, List<PanelType>> panelGroupByInvertList  : t) { 
+		for (Map<String, List<PanelType>> panelGroupByInvertList  : t) {
 			for (int k = 0; k < timingOrder.length; k++) {
 				groupedPanelList = panelGroupByInvertList.get(timingOrder[k]);
 
@@ -257,9 +258,9 @@ public class QueryToolUtilNew extends CRCDAO {
 	private Map<Integer, String> generateSqlForGroupedPanelList(
 			List<PanelType> panelList, QueryDefinitionType queryDefType,
 			SecurityType securityType, String projectId, boolean encounterFlag,
-			boolean instanceNumFlag, int panelCount, boolean firstPanelFlag, boolean invertQueryFlag, boolean invertOnlyQueryFlag, 
+			boolean instanceNumFlag, int panelCount, boolean firstPanelFlag, boolean invertQueryFlag, boolean invertOnlyQueryFlag,
 			String firstItemJoinTiming)
-					throws I2B2Exception {
+			throws I2B2Exception {
 		SortPanel sortPanel = new SortPanel();
 		LogTimingUtil timingUtil = new LogTimingUtil();
 		timingUtil.setStartTime();
@@ -277,7 +278,7 @@ public class QueryToolUtilNew extends CRCDAO {
 		// build sql for each panel
 		Map<Integer, String> panelSql = tempTableSql.buildTempTableSql(
 				sortedPanelList, encounterFlag, instanceNumFlag, queryDefType
-				.getQueryTiming(), panelCount, firstPanelFlag, invertQueryFlag, invertOnlyQueryFlag,firstItemJoinTiming);
+						.getQueryTiming(), panelCount, firstPanelFlag, invertQueryFlag, invertOnlyQueryFlag,firstItemJoinTiming);
 		this.processTimingStr.append("\n");
 		this.processTimingStr.append(tempTableSql.getProcessTimingXml());
 
@@ -314,7 +315,7 @@ public class QueryToolUtilNew extends CRCDAO {
 
 	/**
 	 * Return the ignored item list
-	 * 
+	 *
 	 * @return
 	 */
 	public String getIgnoredItemMessage() {
@@ -338,25 +339,25 @@ public class QueryToolUtilNew extends CRCDAO {
 	}
 
 	private String calculateFirstItemJoin(String[] timingOrder,Map<String, List<PanelType>> invertGroupPanelByTimingMap,Map<String, List<PanelType>> nonInvertGroupPanelByTimingMap) {
-		String invertTiming = "ANY", nonInvertTiming = "ANY", firstItemJoinTiming = "ANY"; 
-		for (int i=0;i<timingOrder.length;i++) { 
-			if (invertGroupPanelByTimingMap.get(timingOrder[i]) != null) { 
+		String invertTiming = "ANY", nonInvertTiming = "ANY", firstItemJoinTiming = "ANY";
+		for (int i=0;i<timingOrder.length;i++) {
+			if (invertGroupPanelByTimingMap.get(timingOrder[i]) != null) {
 				invertTiming = timingOrder[i];
 				break;
 			}
 		}
-		for (int i=0;i<timingOrder.length;i++) { 
-			if (nonInvertGroupPanelByTimingMap.get(timingOrder[i]) != null) { 
+		for (int i=0;i<timingOrder.length;i++) {
+			if (nonInvertGroupPanelByTimingMap.get(timingOrder[i]) != null) {
 				nonInvertTiming = timingOrder[i];
 				break;
 			}
 		}
-		if (invertTiming.equalsIgnoreCase(QueryTimingHandler.SAMEINSTANCENUM)) { 
-			if (nonInvertTiming.equalsIgnoreCase(QueryTimingHandler.ANY) ||nonInvertTiming.equalsIgnoreCase(QueryTimingHandler.SAMEVISIT)) { 
+		if (invertTiming.equalsIgnoreCase(QueryTimingHandler.SAMEINSTANCENUM)) {
+			if (nonInvertTiming.equalsIgnoreCase(QueryTimingHandler.ANY) ||nonInvertTiming.equalsIgnoreCase(QueryTimingHandler.SAMEVISIT)) {
 				firstItemJoinTiming = QueryTimingHandler.SAMEINSTANCENUM;
-			} 
+			}
 		}
-		if (invertTiming.equalsIgnoreCase(QueryTimingHandler.SAMEVISIT)) { 
+		if (invertTiming.equalsIgnoreCase(QueryTimingHandler.SAMEVISIT)) {
 			if (nonInvertTiming.equalsIgnoreCase(QueryTimingHandler.ANY)) {
 				firstItemJoinTiming = QueryTimingHandler.SAMEVISIT;
 			}

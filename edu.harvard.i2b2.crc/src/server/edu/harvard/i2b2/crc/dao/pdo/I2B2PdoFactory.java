@@ -8,8 +8,8 @@
  ******************************************************************************/
 /*
 
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Rajesh Kuttan
  */
 package edu.harvard.i2b2.crc.dao.pdo;
@@ -37,9 +37,9 @@ import edu.harvard.i2b2.crc.datavo.pdo.PatientType;
 /**
  * Class to build individual sections of plain pdo xml like
  * patient,concept,observationfact from the given {@link java.sql.ResultSet}
- * 
+ *
  * $Id: I2B2PdoFactory.java,v 1.19 2009/11/14 16:53:58 rk903 Exp $
- * 
+ *
  * @author rkuttan
  */
 public class I2B2PdoFactory {
@@ -61,13 +61,13 @@ public class I2B2PdoFactory {
 
 		/**
 		 * Parameter constructor
-		 * 
+		 *
 		 * @param detailFlag
 		 * @param blobFlag
 		 * @param statusFlag
 		 */
 		public ObservationFactBuilder(boolean detailFlag, boolean blobFlag,
-				boolean statusFlag, String dbType) {
+									  boolean statusFlag, String dbType) {
 			this.obsFactDetailFlag = detailFlag;
 			this.obsFactBlobFlag = blobFlag;
 			this.obsFactStatusFlag = statusFlag;
@@ -76,7 +76,7 @@ public class I2B2PdoFactory {
 
 		/**
 		 * Read one record from resultset and build observation fact
-		 * 
+		 *
 		 * @param rowSet
 		 *            resultset
 		 * @return Observation fact set
@@ -114,9 +114,9 @@ public class I2B2PdoFactory {
 
 			ObservationType.ObserverCd observerCd = new ObservationType.ObserverCd();
 			observerCd
-			.setValue(((rowSet.getString("obs_provider_id") != null) ? rowSet
-					.getString("obs_provider_id")
-					: ""));
+					.setValue(((rowSet.getString("obs_provider_id") != null) ? rowSet
+							.getString("obs_provider_id")
+							: ""));
 			observationFactType.setObserverCd(observerCd);
 
 			if (obsFactDetailFlag) {
@@ -131,7 +131,7 @@ public class I2B2PdoFactory {
 						.getString("obs_valtype_cd"));
 				observationFactType.setTvalChar((rowSet
 						.getString("obs_tval_char") != null) ? rowSet
-								.getString("obs_tval_char") : "");
+						.getString("obs_tval_char") : "");
 
 				ObservationType.NvalNum valNum = new ObservationType.NvalNum();
 				valNum.setValue(rowSet.getBigDecimal("obs_nval_num"));
@@ -145,7 +145,7 @@ public class I2B2PdoFactory {
 						.getBigDecimal("obs_quantity_num"));
 
 				observationFactType
-				.setUnitsCd(rowSet.getString("obs_units_cd"));
+						.setUnitsCd(rowSet.getString("obs_units_cd"));
 
 				ObservationType.LocationCd locationCd = new ObservationType.LocationCd();
 				locationCd.setValue(rowSet.getString("obs_location_cd"));
@@ -168,6 +168,15 @@ public class I2B2PdoFactory {
 
 					}
 
+				} else if (dbType.equalsIgnoreCase("SNOWFLAKE")) {
+					String clob = rowSet.getString("obs_observation_blob");
+					if (clob !=null)
+					{
+						BlobType blobType = new BlobType();
+						blobType.getContent().add(clob);
+						observationFactType.setObservationBlob(blobType);
+
+					}
 				} else {
 					Clob observationClob = rowSet.getClob("obs_observation_blob");
 
@@ -220,13 +229,13 @@ public class I2B2PdoFactory {
 
 		/**
 		 * Patameter constructor
-		 * 
+		 *
 		 * @param detailFlag
 		 * @param blobFlag
 		 * @param statusFlag
 		 */
 		public PatientBuilder(boolean detailFlag, boolean blobFlag,
-				boolean statusFlag, String dbType) {
+							  boolean statusFlag, String dbType) {
 			this.patientDetailFlag = detailFlag;
 			this.patientBlobFlag = blobFlag;
 			this.patientStatusFlag = statusFlag;
@@ -236,7 +245,7 @@ public class I2B2PdoFactory {
 		/**
 		 * Function reads single row from the resultset and builds patient
 		 * dimension
-		 * 
+		 *
 		 * @param rowSet
 		 * @return Patient dimension type
 		 * @throws SQLException
@@ -255,7 +264,7 @@ public class I2B2PdoFactory {
 
 
 
-				for (Iterator<ParamType> metaParamIterator = metaDataParamList.iterator(); metaParamIterator.hasNext();) { 
+				for (Iterator<ParamType> metaParamIterator = metaDataParamList.iterator(); metaParamIterator.hasNext();) {
 					ParamType metaParamType = metaParamIterator.next();
 					ParamTypeValueBuilder paramValBuilder = new ParamTypeValueBuilder();
 					paramTypeList.add(paramValBuilder.buildParamType(metaParamType,"patient_",null,rowSet));
@@ -268,6 +277,16 @@ public class I2B2PdoFactory {
 			if (patientBlobFlag) {
 				if (dbType.equalsIgnoreCase("POSTGRESQL"))
 				{
+					String clob = rowSet.getString("patient_patient_blob");
+					if (clob !=null)
+					{
+						BlobType blobType = new BlobType();
+						blobType.getContent().add(clob);
+						patientDimensionType.setPatientBlob(blobType);
+
+					}
+
+				} else if (dbType.equalsIgnoreCase("SNOWFLAKE")) {
 					String clob = rowSet.getString("patient_patient_blob");
 					if (clob !=null)
 					{
@@ -329,13 +348,13 @@ public class I2B2PdoFactory {
 
 		/**
 		 * Parameter constructor
-		 * 
+		 *
 		 * @param detailFlag
 		 * @param blobFlag
 		 * @param statusFlag
 		 */
 		public ProviderBuilder(boolean detailFlag, boolean blobFlag,
-				boolean statusFlag, String dbType) {
+							   boolean statusFlag, String dbType) {
 			this.providerDetailFlag = detailFlag;
 			this.providerBlobFlag = blobFlag;
 			this.providerStatusFlag = statusFlag;
@@ -344,7 +363,7 @@ public class I2B2PdoFactory {
 
 		/**
 		 * Reads single row from resultset and builds provider dimension
-		 * 
+		 *
 		 * @param rowSet
 		 * @return
 		 * @throws SQLException
@@ -366,6 +385,16 @@ public class I2B2PdoFactory {
 			if (providerBlobFlag) {
 				if (dbType.equalsIgnoreCase("POSTGRESQL"))
 				{
+					String clob = rowSet.getString("provider_provider_blob");
+					if (clob !=null)
+					{
+						BlobType blobType = new BlobType();
+						blobType.getContent().add(clob);
+						providerDimensionType.setObserverBlob(blobType);
+
+					}
+
+				} else if (dbType.equalsIgnoreCase("SNOWFLAKE")) {
 					String clob = rowSet.getString("provider_provider_blob");
 					if (clob !=null)
 					{
@@ -426,13 +455,13 @@ public class I2B2PdoFactory {
 		String dbType = null;
 		/**
 		 * Parameter Constuctor
-		 * 
+		 *
 		 * @param detailFlag
 		 * @param blobFlag
 		 * @param statusFlag
 		 */
 		public ConceptBuilder(boolean detailFlag, boolean blobFlag,
-				boolean statusFlag, String dbType) {
+							  boolean statusFlag, String dbType) {
 			this.conceptDetailFlag = detailFlag;
 			this.conceptBlobFlag = blobFlag;
 			this.conceptStatusFlag = statusFlag;
@@ -441,7 +470,7 @@ public class I2B2PdoFactory {
 
 		/**
 		 * Reads one row from result set and builds concept dimension
-		 * 
+		 *
 		 * @param rowSet
 		 * @return
 		 * @throws SQLException
@@ -466,6 +495,16 @@ public class I2B2PdoFactory {
 			if (conceptBlobFlag) {
 				if (dbType.equalsIgnoreCase("POSTGRESQL"))
 				{
+					String clob = rowSet.getString("concept_concept_blob");
+					if (clob !=null)
+					{
+						BlobType blobType = new BlobType();
+						blobType.getContent().add(clob);
+						conceptDimensionType.setConceptBlob(blobType);
+
+					}
+
+				} else if (dbType.equalsIgnoreCase("SNOWFLAKE")) {
 					String clob = rowSet.getString("concept_concept_blob");
 					if (clob !=null)
 					{
@@ -529,13 +568,13 @@ public class I2B2PdoFactory {
 
 		/**
 		 * Parameter Constuctor
-		 * 
+		 *
 		 * @param detailFlag
 		 * @param blobFlag
 		 * @param statusFlag
 		 */
 		public ModifierBuilder(boolean detailFlag, boolean blobFlag,
-				boolean statusFlag, String dbType) {
+							   boolean statusFlag, String dbType) {
 			this.modifierDetailFlag = detailFlag;
 			this.modifierBlobFlag = blobFlag;
 			this.modifierStatusFlag = statusFlag;
@@ -544,7 +583,7 @@ public class I2B2PdoFactory {
 
 		/**
 		 * Reads one row from result set and builds concept dimension
-		 * 
+		 *
 		 * @param rowSet
 		 * @return
 		 * @throws SQLException
@@ -578,6 +617,15 @@ public class I2B2PdoFactory {
 
 					}
 
+				} else if (dbType.equalsIgnoreCase("SNOWFLAKE")) {
+					String clob = rowSet.getString("modifier_modifier_blob");
+					if (clob !=null)
+					{
+						BlobType blobType = new BlobType();
+						blobType.getContent().add(clob);
+						modifierDimensionType.setModifierBlob(blobType);
+
+					}
 				} else {
 
 					Clob modifierClob = rowSet.getClob("modifier_modifier_blob");
@@ -630,7 +678,7 @@ public class I2B2PdoFactory {
 		String dbType = null;
 
 		public EventBuilder(boolean detailFlag, boolean blobFlag,
-				boolean statusFlag, String dbType) {
+							boolean statusFlag, String dbType) {
 			this.eventDetailFlag = detailFlag;
 			this.eventBlobFlag = blobFlag;
 			this.eventStatusFlag = statusFlag;
@@ -639,14 +687,14 @@ public class I2B2PdoFactory {
 
 		/**
 		 * Reads one row from result set and builds visit/event dimension
-		 * 
+		 *
 		 * @param rowSet
 		 * @return
 		 * @throws SQLException
 		 * @throws IOException
 		 */
 		public EventType buildEventSet(ResultSet rowSet,List<ParamType> metaDataParamList) throws SQLException,
-		IOException {
+				IOException {
 			EventType visitDimensionType = new EventType();
 
 			PatientIdType patientIdType = new PatientIdType();
@@ -672,7 +720,7 @@ public class I2B2PdoFactory {
 					visitDimensionType.setEndDate(dtoFactory
 							.getXMLGregorianCalendar(endDate.getTime()));
 				}
-				for (Iterator<ParamType> metaParamIterator = metaDataParamList.iterator(); metaParamIterator.hasNext();) { 
+				for (Iterator<ParamType> metaParamIterator = metaDataParamList.iterator(); metaParamIterator.hasNext();) {
 					ParamType metaParamType = metaParamIterator.next();
 					ParamTypeValueBuilder paramValBuilder = new ParamTypeValueBuilder();
 					visitDimensionType.getParam().add(paramValBuilder.buildParamType(metaParamType,"visit_",null,rowSet));
@@ -683,6 +731,16 @@ public class I2B2PdoFactory {
 			if (eventBlobFlag) {
 				if (dbType.equalsIgnoreCase("POSTGRESQL"))
 				{
+					String clob = rowSet.getString("visit_visit_blob");
+					if (clob !=null)
+					{
+						BlobType blobType = new BlobType();
+						blobType.getContent().add(clob);
+						visitDimensionType.setEventBlob(blobType);
+
+					}
+
+				} else if (dbType.equalsIgnoreCase("SNOWFLAKE")) {
 					String clob = rowSet.getString("visit_visit_blob");
 					if (clob !=null)
 					{

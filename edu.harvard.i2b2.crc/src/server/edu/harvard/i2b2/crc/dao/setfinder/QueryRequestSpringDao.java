@@ -8,12 +8,12 @@
  ******************************************************************************/
 /*
 
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Rajesh Kuttan
  */
 package edu.harvard.i2b2.crc.dao.setfinder;
- 
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -39,7 +39,7 @@ import edu.harvard.i2b2.crc.util.QueryProcessorUtil;
  * Helper class for setfinder operation. Builds sql from query definition,
  * executes the generated sql and create query results instance $Id:
  * QueryRequestSpringDao.java,v 1.5 2008/07/10 20:11:21 rk903 Exp $
- * 
+ *
  * @author rkuttan
  */
 public class QueryRequestSpringDao extends CRCDAO implements IQueryRequestDao {
@@ -57,29 +57,29 @@ public class QueryRequestSpringDao extends CRCDAO implements IQueryRequestDao {
 	boolean queryWithoutTempTableFlag = false;
 	//boolean allowProtectedQueryFlag = false;
 	List<String> userRoles = null;
-	
+
 	public QueryRequestSpringDao(DataSource dataSource,
-			DataSourceLookup dataSourceLookup) {
+								 DataSourceLookup dataSourceLookup) {
 		setDataSource(dataSource);
 		jdbcTemplate = new JdbcTemplate(dataSource);
 		this.dataSourceLookup = dataSourceLookup;
 
 	}
 
-	
-	
-	
+
+
+
 	@Override
 	public void setProjectParam(Map projectParamMap) {
 		this.projectParamMap = projectParamMap;
 		if (projectParamMap != null && projectParamMap.get(ParamUtil.PM_ENABLE_PROCESS_TIMING) != null) {
 			this.processTimingFlag = (String)projectParamMap.get(ParamUtil.PM_ENABLE_PROCESS_TIMING);
 		}
-		
+
 	}
-	
+
 	@Override
-	public void setAllowLargeTextValueConstrainFlag(boolean allowLargeTextValueConstrainFlag)  { 
+	public void setAllowLargeTextValueConstrainFlag(boolean allowLargeTextValueConstrainFlag)  {
 		this.allowLargeTextValueConstrainFlag = allowLargeTextValueConstrainFlag;
 	}
 
@@ -87,15 +87,15 @@ public class QueryRequestSpringDao extends CRCDAO implements IQueryRequestDao {
 //	public void setAllowProtectedQueryFlag(boolean allowProtectedQueryFlag)  { 
 //		this.allowProtectedQueryFlag = allowProtectedQueryFlag;
 //	}
-	
+
 	/**
 	 * Function to build sql from given query definition This function uses
 	 * QueryToolUtil class to build sql
-	 * 
+	 *
 	 * @param queryRequestXml
 	 * @return sql string
-	 * @throws I2B2Exception 
-	 * @throws JAXBUtilException 
+	 * @throws I2B2Exception
+	 * @throws JAXBUtilException
 	 */
 	@Override
 	public String[] buildSql(String queryRequestXml, boolean encounterSetFlag) throws I2B2Exception, JAXBUtilException {
@@ -123,20 +123,20 @@ public class QueryRequestSpringDao extends CRCDAO implements IQueryRequestDao {
 				temporalBuild.setAllowLargeTextValueConstrainFlag(allowLargeTextValueConstrainFlag);
 				temporalBuild.setQueryWithoutTempTableFlag(queryWithoutTempTableFlag);
 				temporalBuild.setUserRoles(userRoles);
-				
+
 				temporalBuild.startSqlBuild();
 				sql = temporalBuild.getSql();
 				ignoredItemMessage = temporalBuild.getIgnoredItemMessage();
 				processTimingMessage = temporalBuild.getProcessTimingMessage();
-				
+
 				//if (temporalBuild.isProtectedQuery() && allowProtectedQueryFlag==false)
 				//	throw new I2B2DAOException("This query contains protected.");
 				//if (temporalBuild.isProtectedQuery() && allowProtectedQueryFlag==false)
-			//		throw new I2B2DAOException("This query contains protected.");
+				//		throw new I2B2DAOException("This query contains protected.");
 				if (temporalBuild.isTemporalQuery())
-						queryType = "TEMPORAL";
+					queryType = "TEMPORAL";
 				if (temporalBuild.isProtectedQuery())
-					queryType = "PROT"; 
+					queryType = "PROT";
 				if (temporalBuild.isProtectedQuery()&&temporalBuild.isTemporalQuery())
 					queryType = "PROT_TEMPORAL";
 			}
@@ -144,8 +144,8 @@ public class QueryRequestSpringDao extends CRCDAO implements IQueryRequestDao {
 				RecursiveBuild recursiveBuild = new RecursiveBuild(dataSourceLookup,queryRequestXml,encounterSetFlag);
 				recursiveBuild.setProjectParamMap(this.projectParamMap);
 				recursiveBuild.setAllowLargeTextValueConstrainFlag(allowLargeTextValueConstrainFlag);
-				
-					recursiveBuild.startSqlBuild();
+
+				recursiveBuild.startSqlBuild();
 				sql = recursiveBuild.getSql();
 				ignoredItemMessage = recursiveBuild.getIgnoredItemMessage();
 				processTimingMessage = recursiveBuild.getProcessTimingMessage();
@@ -170,7 +170,7 @@ public class QueryRequestSpringDao extends CRCDAO implements IQueryRequestDao {
 			log.error("QuieryRequestSptingDAO: Error while building sql I2b2 Error ", e);
 			// TODO Auto-generated catch block
 			throw e;
-		//	e.printStackTrace();
+			//	e.printStackTrace();
 		} catch (JAXBUtilException e) {
 			throw e;
 		} finally {
@@ -180,7 +180,7 @@ public class QueryRequestSpringDao extends CRCDAO implements IQueryRequestDao {
 				e.printStackTrace();
 			}
 		}
-		
+
 		return new String[] { sql, ignoredItemMessage, processTimingMessage, queryType};
 	}
 
@@ -198,8 +198,8 @@ public class QueryRequestSpringDao extends CRCDAO implements IQueryRequestDao {
 	@Override
 	public void setUserRoles(List<String> userRoles) {
 		this.userRoles = userRoles;
-		
+
 	}
 
-	
+
 }

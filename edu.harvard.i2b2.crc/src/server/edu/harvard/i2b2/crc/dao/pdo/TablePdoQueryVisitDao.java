@@ -8,8 +8,8 @@
  ******************************************************************************/
 /*
 
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Rajesh Kuttan
  */
 package edu.harvard.i2b2.crc.dao.pdo;
@@ -49,7 +49,7 @@ import edu.harvard.i2b2.crc.datavo.pdo.query.PatientListType;
 /**
  * Class to support event section of table pdo query $Id:
  * TablePdoQueryVisitDao.java,v 1.11 2008/03/19 22:42:08 rk903 Exp $
- * 
+ *
  * @author rkuttan
  */
 public class TablePdoQueryVisitDao extends CRCDAO implements
@@ -58,23 +58,23 @@ public class TablePdoQueryVisitDao extends CRCDAO implements
 	private DataSourceLookup dataSourceLookup = null;
 	private String schemaName = null;
 	private List<ParamType> metaDataParamList = null;
-	
+
 
 	public TablePdoQueryVisitDao(DataSourceLookup dataSourceLookup,
-			DataSource dataSource) {
+								 DataSource dataSource) {
 		this.dataSourceLookup = dataSourceLookup;
 		setDataSource(dataSource);
 		this.setDbSchemaName(dataSourceLookup.getFullSchema());
 	}
 
 	@Override
-	public void setMetaDataParamList(List<ParamType> metaDataParamList) { 
-		this.metaDataParamList = metaDataParamList; 
+	public void setMetaDataParamList(List<ParamType> metaDataParamList) {
+		this.metaDataParamList = metaDataParamList;
 	}
-	
+
 	/**
 	 * Function to return EventSet from visit information
-	 * 
+	 *
 	 * @param encounterNumList
 	 * @param detailFlag
 	 * @param blobFlag
@@ -84,7 +84,7 @@ public class TablePdoQueryVisitDao extends CRCDAO implements
 	 */
 	@Override
 	public EventSet getVisitsByEncounterNum(List<String> encounterNumList,
-			boolean detailFlag, boolean blobFlag, boolean statusFlag)
+											boolean detailFlag, boolean blobFlag, boolean statusFlag)
 			throws I2B2DAOException {
 		EventSet eventSet = new EventSet();
 
@@ -108,7 +108,7 @@ public class TablePdoQueryVisitDao extends CRCDAO implements
 
 			if (serverType.equalsIgnoreCase(DAOFactoryHelper.ORACLE)) {
 				oracle.jdbc.driver.OracleConnection conn1 = null;//(oracle.jdbc.driver.OracleConnection) ((WrappedConnection) conn)
-		//				.getUnderlyingConnection();
+				//				.getUnderlyingConnection();
 				String finalSql = "SELECT "
 						+ selectClause
 						+ " FROM "
@@ -125,7 +125,8 @@ public class TablePdoQueryVisitDao extends CRCDAO implements
 						encounterNumList.toArray(new String[] {}));
 				query.setArray(1, paramArray);
 			} else if (serverType.equalsIgnoreCase(DAOFactoryHelper.SQLSERVER) ||
-					serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL)) {
+					serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) ||
+					serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) {
 				log.debug("creating temp table");
 				java.sql.Statement tempStmt = conn.createStatement();
 				tempTableName = getDbSchemaName()
@@ -189,7 +190,7 @@ public class TablePdoQueryVisitDao extends CRCDAO implements
 
 	/**
 	 * Function to return EventSet from visit information
-	 * 
+	 *
 	 * @param visitListType
 	 * @param detailFlag
 	 * @param blobFlag
@@ -276,7 +277,7 @@ public class TablePdoQueryVisitDao extends CRCDAO implements
 
 	/**
 	 * Function to return EventSet for given patient set
-	 * 
+	 *
 	 * @param patientListType
 	 * @param detailFlag
 	 * @param blobFlag
@@ -360,40 +361,40 @@ public class TablePdoQueryVisitDao extends CRCDAO implements
 
 		return eventSet;
 	}
-	
-	  private String buildCustomSelectClause(String prefix) {
-	    	String detailSelectClause = " ";
-	    	for (Iterator<ParamType> iterator = this.metaDataParamList.iterator();iterator.hasNext();) { 
-	    		ParamType paramType = iterator.next();
-	    		
-	    			detailSelectClause += prefix + "." + paramType.getColumn() + "  " + prefix + "_" + paramType.getColumn();
-	    			if (iterator.hasNext()) { 
-	    				detailSelectClause += " , ";
-	    			}
-	    		
-	    	}
-	    	return detailSelectClause;
-	    }
-	
-	  private String buildCustomLookupSelectClause() {
-	    	String detailSelectClause = " ";
-	    	for (Iterator<ParamType> iterator = this.metaDataParamList.iterator();iterator.hasNext();) { 
-	    		ParamType paramType = iterator.next();
-	    		if (paramType.getType().equalsIgnoreCase("string")) { 
-	    			detailSelectClause += " , " +   paramType.getColumn() + "_lookup" + ".name_char" +   "  "  + paramType.getColumn() + "_name";
-	    		}
-	    	}
-	    	return detailSelectClause;
-	    }
+
+	private String buildCustomSelectClause(String prefix) {
+		String detailSelectClause = " ";
+		for (Iterator<ParamType> iterator = this.metaDataParamList.iterator();iterator.hasNext();) {
+			ParamType paramType = iterator.next();
+
+			detailSelectClause += prefix + "." + paramType.getColumn() + "  " + prefix + "_" + paramType.getColumn();
+			if (iterator.hasNext()) {
+				detailSelectClause += " , ";
+			}
+
+		}
+		return detailSelectClause;
+	}
+
+	private String buildCustomLookupSelectClause() {
+		String detailSelectClause = " ";
+		for (Iterator<ParamType> iterator = this.metaDataParamList.iterator();iterator.hasNext();) {
+			ParamType paramType = iterator.next();
+			if (paramType.getType().equalsIgnoreCase("string")) {
+				detailSelectClause += " , " +   paramType.getColumn() + "_lookup" + ".name_char" +   "  "  + paramType.getColumn() + "_name";
+			}
+		}
+		return detailSelectClause;
+	}
 
 	private String getSelectClause(boolean detailFlag, boolean blobFlag,
-			boolean statusFlag) {
+								   boolean statusFlag) {
 		String selectClause = "";
 		selectClause = " visit.encounter_num visit_encounter_num, visit.patient_num visit_patient_num ";
 
 		if (detailFlag) {
 			selectClause += " ," + buildCustomSelectClause("visit");
-			selectClause +=   buildCustomLookupSelectClause() ; 
+			selectClause +=   buildCustomLookupSelectClause() ;
 			selectClause += ",  visit.start_date visit_start_date,visit.end_date visit_end_date ";
 			//selectClause += ", inout_lookup.name_char inout_name,location_lookup.name_char location_name, active_status_lookup.name_char active_status_name";
 		}
@@ -410,28 +411,28 @@ public class TablePdoQueryVisitDao extends CRCDAO implements
 	}
 
 	private String getLookupJoinClause(boolean detailFlag, boolean blobFlag,
-			boolean statusFlag) {
+									   boolean statusFlag) {
 		String joinClause = " ";
-	
+
 		if (detailFlag) {
-			for (Iterator<ParamType> iterator = this.metaDataParamList.iterator();iterator.hasNext();) { 
+			for (Iterator<ParamType> iterator = this.metaDataParamList.iterator();iterator.hasNext();) {
 				ParamType paramType = iterator.next();
-				if (paramType.getType().equalsIgnoreCase("string")) { 
-				String columnName = paramType.getColumn();
-				joinClause += " left JOIN " 
-					+ this.getDbSchemaName()
-					+ "code_lookup " + columnName + "_lookup \n"
-					+ " ON (visit." + columnName + " = " + columnName + "_lookup.code_Cd AND  upper(" + columnName +"_lookup.column_cd) = '" + columnName.toUpperCase() + "') \n";
+				if (paramType.getType().equalsIgnoreCase("string")) {
+					String columnName = paramType.getColumn();
+					joinClause += " left JOIN "
+							+ this.getDbSchemaName()
+							+ "code_lookup " + columnName + "_lookup \n"
+							+ " ON (visit." + columnName + " = " + columnName + "_lookup.code_Cd AND  upper(" + columnName +"_lookup.column_cd) = '" + columnName.toUpperCase() + "') \n";
 				}
 			}
-			
+
 		}
 
 		return joinClause;
 	}
 
 	private void uploadTempTable(Statement tempStmt, String tempTableName,
-			List<String> patientNumList) throws SQLException {
+								 List<String> patientNumList) throws SQLException {
 		String createTempInputListTable = "create table " + tempTableName
 				+ " ( char_param1 varchar(100) )";
 		tempStmt.executeUpdate(createTempInputListTable);
@@ -456,13 +457,13 @@ public class TablePdoQueryVisitDao extends CRCDAO implements
 		tempStmt.executeBatch();
 	}
 
-	
+
 
 	@Override
 	public EventSet getVisitByFact(List<String> panelSqlList,
-			List<Integer> sqlParamCountList,
-			IInputOptionListHandler inputOptionListHandler, boolean detailFlag,
-			boolean blobFlag, boolean statusFlag) throws I2B2DAOException {
+								   List<Integer> sqlParamCountList,
+								   IInputOptionListHandler inputOptionListHandler, boolean detailFlag,
+								   boolean blobFlag, boolean statusFlag) throws I2B2DAOException {
 
 		EventSet eventSet = new EventSet();
 		RPDRPdoFactory.EventBuilder eventBuilder = new RPDRPdoFactory.EventBuilder(
@@ -483,7 +484,8 @@ public class TablePdoQueryVisitDao extends CRCDAO implements
 				factTempTable = getDbSchemaName()
 						+ FactRelatedQueryHandler.TEMP_FACT_PARAM_TABLE;
 			} else if (serverType.equalsIgnoreCase(DAOFactoryHelper.SQLSERVER) ||
-					serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL)) {
+					serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) ||
+					serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) {
 				log.debug("creating temp table");
 				java.sql.Statement tempStmt = conn.createStatement();
 				factTempTable = getDbSchemaName()
@@ -532,7 +534,7 @@ public class TablePdoQueryVisitDao extends CRCDAO implements
 					+ " where encounter_num in (select distinct CAST(coalesce(char_param1, '0') as integer) from "
 					+ factTempTable + ") order by encounter_num";
 			log.debug("Executing SQL [" + finalSql + "]");
-			
+
 
 			query = conn.prepareStatement(finalSql);
 
@@ -549,7 +551,7 @@ public class TablePdoQueryVisitDao extends CRCDAO implements
 			log.error("", ioEx);
 			throw new I2B2DAOException("IO exception", ioEx);
 		} finally {
-			
+
 			PdoTempTableUtil tempUtil = new PdoTempTableUtil();
 			tempUtil.clearTempTable(dataSourceLookup.getServerType(), conn, factTempTable);
 			if (inputOptionListHandler != null
@@ -573,7 +575,7 @@ public class TablePdoQueryVisitDao extends CRCDAO implements
 	}
 
 	private void executeUpdateSql(String totalSql, Connection conn,
-			int sqlParamCount, IInputOptionListHandler inputOptionListHandler)
+								  int sqlParamCount, IInputOptionListHandler inputOptionListHandler)
 			throws SQLException {
 
 		PreparedStatement stmt = conn.prepareStatement(totalSql);

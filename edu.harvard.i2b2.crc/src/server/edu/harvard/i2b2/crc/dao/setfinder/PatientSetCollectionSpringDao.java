@@ -8,8 +8,8 @@
  ******************************************************************************/
 /*
 
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Rajesh Kuttan
  */
 package edu.harvard.i2b2.crc.dao.setfinder;
@@ -35,7 +35,7 @@ import edu.harvard.i2b2.crc.datavo.db.QtQueryResultInstance;
  * limited memory usage, it will flush and clear the session manually for every
  * 1000 inserts. $Id: PatientSetCollectionDao.java,v 1.4 2007/08/31 14:44:26
  * rk903 Exp $
- * 
+ *
  * @author rkuttan
  * @see QtPatientSetCollection
  */
@@ -43,21 +43,21 @@ public class PatientSetCollectionSpringDao extends CRCDAO implements  IPatientSe
 	/** patient set collection index * */
 	private int setIndex = 0, batchDataIndex = 0;
 	private JdbcTemplate jdbcTemplate = null;
-	private String insert_sql = ""; 
-	
+	private String insert_sql = "";
+
 
 	QtPatientSetCollection[] patientSetColl = null;
 	/** master table for patient set collection * */
 	QtQueryResultInstance resultInstance = null;
 	String resultInstanceId = null;
-	private static final int INITIAL_ARRAY_SIZE = 1100; 
+	private static final int INITIAL_ARRAY_SIZE = 1100;
 	private DataSourceLookup dataSourceLookup = null;
 
 	private SQLServerSequenceDAO sqlServerSequenceDao = null;
 	/**
 	 * Construc with patientset id Initialize hibernate session and creates
 	 * Query reuslt instance class
-	 * 
+	 *
 	 * @param patientSetId
 	 */
 	public PatientSetCollectionSpringDao(DataSource dataSource,DataSourceLookup dataSourceLookup) {
@@ -65,23 +65,25 @@ public class PatientSetCollectionSpringDao extends CRCDAO implements  IPatientSe
 		setDbSchemaName(dataSourceLookup.getFullSchema());
 		jdbcTemplate = new JdbcTemplate(dataSource);
 		this.dataSourceLookup = dataSourceLookup;
-		if (dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.ORACLE)) { 
-			insert_sql = "insert into " + getDbSchemaName() +"qt_patient_set_collection(patient_set_coll_id,result_instance_id,set_index,patient_num) values ("+getDbSchemaName()+"QT_SQ_QPR_PCID.nextval,?,?,?)"; 
-		} else if (dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.SQLSERVER) || dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL)) { 
+		if (dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.ORACLE)) {
+			insert_sql = "insert into " + getDbSchemaName() +"qt_patient_set_collection(patient_set_coll_id,result_instance_id,set_index,patient_num) values ("+getDbSchemaName()+"QT_SQ_QPR_PCID.nextval,?,?,?)";
+		} else if (dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.SQLSERVER) ||
+				dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) ||
+				dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) {
 			insert_sql = "insert into " + getDbSchemaName() + "qt_patient_set_collection(result_instance_id,set_index,patient_num) values (?,?,?)";
 		}
 		sqlServerSequenceDao  = new SQLServerSequenceDAO(dataSource,dataSourceLookup) ;
 		resultInstance = new QtQueryResultInstance();
 		patientSetColl = new QtPatientSetCollection[INITIAL_ARRAY_SIZE];
-		
+
 	}
-	
-	
+
+
 	@Override
 	public void createPatientSetCollection(String resultInstanceId) {
 		resultInstance = new QtQueryResultInstance();
 		resultInstance.setResultInstanceId(resultInstanceId);
-		
+
 	}
 
 
@@ -103,7 +105,7 @@ public class PatientSetCollectionSpringDao extends CRCDAO implements  IPatientSe
 	/**
 	 * function to add patient to patient set without out creating new db
 	 * session
-	 * 
+	 *
 	 * @param patientId
 	 */
 	@Override
@@ -121,7 +123,7 @@ public class PatientSetCollectionSpringDao extends CRCDAO implements  IPatientSe
 			InsertStatementSetter batchSetter = new InsertStatementSetter(
 					patientSetColl, batchDataIndex);
 			jdbcTemplate.batchUpdate(insert_sql, batchSetter);
-			
+
 			Arrays.fill(patientSetColl, null);
 			batchDataIndex = 0;
 		}
@@ -147,7 +149,7 @@ public class PatientSetCollectionSpringDao extends CRCDAO implements  IPatientSe
 		private int batchSize = 0;
 
 		public InsertStatementSetter(QtPatientSetCollection[] data,
-				int batchSize) {
+									 int batchSize) {
 			this.data = data;
 			this.batchSize = batchSize;
 		}
@@ -160,18 +162,18 @@ public class PatientSetCollectionSpringDao extends CRCDAO implements  IPatientSe
 		// this is called for each row
 		@Override
 		public void setValues(PreparedStatement ps, int i) throws SQLException {
-			
-				//ps.setLong(1, data[i].getPatientSetCollId()); // set first value
-				ps.setInt(1, Integer.parseInt(data[i].getQtQueryResultInstance()
-						.getResultInstanceId()));
-				ps.setInt(2, data[i].getSetIndex());
-				ps.setLong(3, data[i].getPatientId());
-	
-			
+
+			//ps.setLong(1, data[i].getPatientSetCollId()); // set first value
+			ps.setInt(1, Integer.parseInt(data[i].getQtQueryResultInstance()
+					.getResultInstanceId()));
+			ps.setInt(2, data[i].getSetIndex());
+			ps.setLong(3, data[i].getPatientId());
+
+
 		}
 
 	}
 
-	
+
 
 }

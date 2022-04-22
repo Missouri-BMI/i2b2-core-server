@@ -98,7 +98,7 @@ class getSchemesMapper implements RowMapper<ConceptType> {
 		ConceptType scheme = new ConceptType();
 		//TODO fix this for all/+blob
 
-		scheme.setKey(rs.getString("key")); 
+		scheme.setKey(rs.getString("key"));
 		scheme.setName(rs.getString("name"));
 		return scheme;
 	}

@@ -25,7 +25,7 @@ import edu.harvard.i2b2.crc.datavo.i2b2result.ResultType;
 
 public class QueryResultPatientCountGenerator extends CRCDAO implements
 		IResultGenerator {
-	
+
 	@Override
 	public String getResults() {
 		return xmlResult;
@@ -51,23 +51,23 @@ public class QueryResultPatientCountGenerator extends CRCDAO implements
 		Boolean queryWithoutTempTableFlag = (Boolean) param
 				.get("QueryWithoutTempTableFlag");
 		boolean dataObfusRole = (Boolean)param.get("ObfuscatedRoleFlag");
-		
+
 		this.setDbSchemaName(sfDAOFactory.getDataSourceLookup().getFullSchema());
 
 		boolean errorFlag = false;
 		int patientCount = 0, realPatientCount = 0;
-		
+
 		try {
 
-				if (dataObfusRole) {
-					patientCount = obfucatedRecordCount;
-					realPatientCount = recordCount;
-				} else {
-					patientCount = recordCount;
-					realPatientCount = recordCount;
-					obfucatedRecordCount = recordCount;
-				}
-			
+			if (dataObfusRole) {
+				patientCount = obfucatedRecordCount;
+				realPatientCount = recordCount;
+			} else {
+				patientCount = recordCount;
+				realPatientCount = recordCount;
+				obfucatedRecordCount = recordCount;
+			}
+
 			int i = 0;
 			ResultType resultType = new ResultType();
 			resultType.setName("PATIENT_COUNT_XML");
@@ -90,8 +90,8 @@ public class QueryResultPatientCountGenerator extends CRCDAO implements
 			jaxbUtil.marshaller(of.createI2B2ResultEnvelope(resultEnvelope),
 					strWriter);
 
-			 IXmlResultDao xmlResultDao = sfDAOFactory.getXmlResultDao();
-			 xmlResult = strWriter.toString();
+			IXmlResultDao xmlResultDao = sfDAOFactory.getXmlResultDao();
+			xmlResult = strWriter.toString();
 			xmlResultDao.createQueryXmlResult(resultInstanceId,
 					strWriter.toString());
 		} catch (Exception sqlEx) {
@@ -143,5 +143,5 @@ public class QueryResultPatientCountGenerator extends CRCDAO implements
 		}
 	}
 
-	
+
 }

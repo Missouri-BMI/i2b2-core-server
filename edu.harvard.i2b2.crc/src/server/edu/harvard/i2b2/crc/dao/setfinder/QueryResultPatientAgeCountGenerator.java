@@ -17,6 +17,7 @@ import edu.harvard.i2b2.common.exception.I2B2DAOException;
 import edu.harvard.i2b2.common.util.db.JDBCUtil;
 import edu.harvard.i2b2.common.util.jaxb.JAXBUtil;
 import edu.harvard.i2b2.crc.dao.CRCDAO;
+import edu.harvard.i2b2.crc.dao.DAOFactoryHelper;
 import edu.harvard.i2b2.crc.dao.SetFinderDAOFactory;
 import edu.harvard.i2b2.crc.datavo.CRCJAXBUtil;
 import edu.harvard.i2b2.crc.datavo.i2b2result.BodyType;
@@ -33,7 +34,7 @@ public class QueryResultPatientAgeCountGenerator extends CRCDAO implements
 	}
 
 	private String xmlResult = null;
-	
+
 	public static final String RESULT_NAME = "PATIENT_AGE_COUNT_XML";
 
 	@Override
@@ -131,8 +132,8 @@ public class QueryResultPatientAgeCountGenerator extends CRCDAO implements
 			jaxbUtil.marshaller(of.createI2B2ResultEnvelope(resultEnvelop),
 					strWriter);
 
-			 IXmlResultDao xmlResultDao = sfDAOFactory.getXmlResultDao();
-			 xmlResult = strWriter.toString();
+			IXmlResultDao xmlResultDao = sfDAOFactory.getXmlResultDao();
+			xmlResult = strWriter.toString();
 			xmlResultDao.createQueryXmlResult(resultInstanceId, strWriter
 					.toString());
 

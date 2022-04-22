@@ -8,14 +8,15 @@
  ******************************************************************************/
 /*
 
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Rajesh Kuttan
  */
 package edu.harvard.i2b2.crc.dao.setfinder;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 
 import javax.sql.DataSource;
 
@@ -29,12 +30,12 @@ import edu.harvard.i2b2.crc.datavo.db.QtQueryBreakdownType;
 /**
  * Class to manager operation of QtBreakdownPath $Id:
  * QueryBreakdownTypeSpringDao.java,v 1.3 2008/05/07 21:39:08 rk903 Exp $
- * 
+ *
  * @author rkuttan
- * 
+ *
  */
 public class QueryBreakdownTypeSpringDao extends CRCDAO implements
-IQueryBreakdownTypeDao {
+		IQueryBreakdownTypeDao {
 
 	JdbcTemplate jdbcTemplate = null;
 
@@ -43,7 +44,7 @@ IQueryBreakdownTypeDao {
 	private DataSourceLookup dataSourceLookup = null;
 
 	public QueryBreakdownTypeSpringDao(DataSource dataSource,
-			DataSourceLookup dataSourceLookup) {
+									   DataSourceLookup dataSourceLookup) {
 		setDataSource(dataSource);
 		setDbSchemaName(dataSourceLookup.getFullSchema());
 		jdbcTemplate = new JdbcTemplate(dataSource);
@@ -53,7 +54,7 @@ IQueryBreakdownTypeDao {
 
 	/**
 	 * Returns list of query master by user id
-	 * 
+	 *
 	 * @param userId
 	 * @return List<QtQueryMaster>
 	 */
@@ -62,11 +63,14 @@ IQueryBreakdownTypeDao {
 	public QtQueryBreakdownType getBreakdownTypeByName(String name) {
 
 		String sql = "select distinct  b.VALUE  ,   b.CREATE_DATE  ,   b.UPDATE_DATE   ,  b.USER_ID , a.name, a.user_role_cd, a.classname from " + getDbSchemaName()
-		+ "qt_query_result_type a left join " + getDbSchemaName()
-		+ "qt_breakdown_path b on  a.name = b.name where a.name = ? ";
-		QtQueryBreakdownType queryStatusType  = (QtQueryBreakdownType) jdbcTemplate
-				.queryForObject(sql, new Object[] { name },
-						queryBreakdownTypeMapper);
+				+ "qt_query_result_type a left join " + getDbSchemaName()
+				+ "qt_breakdown_path b on  a.name = b.name where a.name = ? ";
+		QtQueryBreakdownType queryStatusType  = (QtQueryBreakdownType) jdbcTemplate.queryForObject(
+				sql,
+				new Object[] { name },
+				new int[] { Types.VARCHAR },
+				queryBreakdownTypeMapper
+		);
 
 		return queryStatusType;
 	}

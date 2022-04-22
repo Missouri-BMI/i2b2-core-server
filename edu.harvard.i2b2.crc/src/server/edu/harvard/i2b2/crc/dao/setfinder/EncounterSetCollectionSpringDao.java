@@ -8,8 +8,8 @@
  ******************************************************************************/
 /*
 
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Rajesh Kuttan
  */
 package edu.harvard.i2b2.crc.dao.setfinder;
@@ -36,7 +36,7 @@ import edu.harvard.i2b2.crc.datavo.db.QtQueryResultInstance;
  * limited memory usage, it will flush and clear the session manually for every
  * 1000 inserts. $Id: PatientSetCollectionDao.java,v 1.4 2007/08/31 14:44:26
  * rk903 Exp $
- * 
+ *
  * @author rkuttan
  * @see QtPatientSetCollection
  */
@@ -60,11 +60,11 @@ public class EncounterSetCollectionSpringDao extends CRCDAO implements
 	/**
 	 * Construc with patientset id Initialize hibernate session and creates
 	 * Query reuslt instance class
-	 * 
+	 *
 	 * @param patientSetId
 	 */
 	public EncounterSetCollectionSpringDao(DataSource dataSource,
-			DataSourceLookup dataSourceLookup) {
+										   DataSourceLookup dataSourceLookup) {
 		setDataSource(dataSource);
 		setDbSchemaName(dataSourceLookup.getFullSchema());
 		jdbcTemplate = new JdbcTemplate(dataSource);
@@ -78,7 +78,8 @@ public class EncounterSetCollectionSpringDao extends CRCDAO implements
 					+ getDbSchemaName() + "QT_SQ_QPER_PECID.nextval,?,?,?,?)";
 		} else if (dataSourceLookup.getServerType().equalsIgnoreCase(
 				DAOFactoryHelper.SQLSERVER) || dataSourceLookup.getServerType().equalsIgnoreCase(
-						DAOFactoryHelper.POSTGRESQL)) {
+				DAOFactoryHelper.POSTGRESQL) || dataSourceLookup.getServerType().equalsIgnoreCase(
+				DAOFactoryHelper.SNOWFLAKE)) {
 			insert_sql = "insert into "
 					+ getDbSchemaName()
 					+ "qt_patient_enc_collection(result_instance_id,set_index,patient_num,encounter_num) values (?,?,?,?)";
@@ -105,7 +106,7 @@ public class EncounterSetCollectionSpringDao extends CRCDAO implements
 	/**
 	 * function to add patient to patient set without out creating new db
 	 * session
-	 * 
+	 *
 	 * @param patientId
 	 */
 	@Override
@@ -151,7 +152,7 @@ public class EncounterSetCollectionSpringDao extends CRCDAO implements
 		private int batchSize = 0;
 
 		public InsertStatementSetter(QtPatientEncCollection[] data,
-				int batchSize) {
+									 int batchSize) {
 			this.data = data;
 			this.batchSize = batchSize;
 		}

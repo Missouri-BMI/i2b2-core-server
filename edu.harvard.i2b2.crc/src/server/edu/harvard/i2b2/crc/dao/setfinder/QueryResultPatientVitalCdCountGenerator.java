@@ -33,7 +33,7 @@ public class QueryResultPatientVitalCdCountGenerator extends CRCDAO implements
 	}
 
 	private String xmlResult = null;
-	
+
 	public static final String RESULT_NAME = "PATIENT_VITALSTATUS_COUNT_XML";
 
 	@Override
@@ -65,7 +65,7 @@ public class QueryResultPatientVitalCdCountGenerator extends CRCDAO implements
 		try {
 
 			log.debug("Executing[ " + demographics_count_sql + " ]");
-			
+
 			String sqlFinal =  demographics_count_sql.replace("<from>",   this.getDbSchemaName()  );
 			sqlFinal = sqlFinal.replace("<TEMP_DX_TABLE>", TEMP_DX_TABLE);
 
@@ -98,8 +98,8 @@ public class QueryResultPatientVitalCdCountGenerator extends CRCDAO implements
 			jaxbUtil.marshaller(of.createI2B2ResultEnvelope(resultEnvelop),
 					strWriter);
 
-			 IXmlResultDao xmlResultDao = sfDAOFactory.getXmlResultDao();
-			 xmlResult = strWriter.toString();
+			IXmlResultDao xmlResultDao = sfDAOFactory.getXmlResultDao();
+			xmlResult = strWriter.toString();
 			xmlResultDao.createQueryXmlResult(resultInstanceId, strWriter
 					.toString());
 

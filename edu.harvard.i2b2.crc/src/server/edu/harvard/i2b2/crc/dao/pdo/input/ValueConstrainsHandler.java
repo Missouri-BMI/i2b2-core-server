@@ -30,7 +30,7 @@ import edu.harvard.i2b2.crc.util.SqlClauseUtil;
 /**
  * Class to handle value constrains. Generates sql where clause based on the
  * list of value constrains.
- * 
+ *
  * @author rkuttan
  */
 public class ValueConstrainsHandler {
@@ -39,22 +39,22 @@ public class ValueConstrainsHandler {
 
 	private boolean unitCdConverstionFlag = false;
 	private String unitCdInClause = "", unitCdSwitchClause = "";
-	
-	public void setUnitCdConversionFlag(boolean unitCdConverstionFlag, String unitCdInClause, String unitCdSwitchClause) { 
+
+	public void setUnitCdConversionFlag(boolean unitCdConverstionFlag, String unitCdInClause, String unitCdSwitchClause) {
 		this.unitCdConverstionFlag = unitCdConverstionFlag;
 		this.unitCdInClause = unitCdInClause;
 		this.unitCdSwitchClause = unitCdSwitchClause;
 	}
-	
+
 	public String[] constructValueConstainClause(
 			List<ItemType.ConstrainByValue> valueConstrainList, String dbServerType,String dbSchemaName,int panelAccuracyScale)
 			throws I2B2Exception {
 		String fullConstrainSql = "",containsJoinSql = "";
 		log.debug("panel accuracy scale" + panelAccuracyScale );
 		panelAccuracyScale = 0;
-		
+
 		boolean oracleFlag = false;
-		if (dbServerType.equalsIgnoreCase(DAOFactoryHelper.ORACLE)) { 
+		if (dbServerType.equalsIgnoreCase(DAOFactoryHelper.ORACLE)) {
 			oracleFlag = true;
 		}
 		int j = 0 ;
@@ -64,57 +64,57 @@ public class ValueConstrainsHandler {
 					.getValueOperator();
 			String value = valueConstrain.getValueConstraint();
 			String unitCd = valueConstrain.getValueUnitOfMeasure();
-			
+
 			String constrainSql = null;
 			// check if value type is not null
 			if (valueType == null) {
 				continue;
 			}
-			if (valueType.equals(ConstrainValueType.LARGETEXT)) { 
+			if (valueType.equals(ConstrainValueType.LARGETEXT)) {
 				String containsSql = "";
 				ContainsUtil containsUtil = new ContainsUtil();
 				if (operatorType.value().equalsIgnoreCase(
 						ConstrainOperatorType.CONTAINS.value())) {
 					containsSql = containsUtil.formatValue(value,dbServerType);
 				} else if(operatorType.value().equalsIgnoreCase(
-						ConstrainOperatorType.CONTAINS_DATABASE.value())) { 
+						ConstrainOperatorType.CONTAINS_DATABASE.value())) {
 					containsSql = containsUtil.formatValue("[" + value + "]",dbServerType);
-				} else { 
+				} else {
 					log.debug("LARGETEXT : Invalid operator skipped [" + operatorType.value() + "]" );
 					continue;
 				}
-					//panelAccuracyScale = 100 - panelAccuracyScale;
-					
-					constrainSql = " valtype_cd = 'B' AND " ;
-					if (dbServerType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL))
-					{
-						
-						constrainSql +=  " observation_blob like '%" + containsSql + "%' ";
+				//panelAccuracyScale = 100 - panelAccuracyScale;
+
+				constrainSql = " valtype_cd = 'B' AND " ;
+				if (dbServerType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) || dbServerType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE))
+				{
+
+					constrainSql +=  " observation_blob like '%" + containsSql + "%' ";
+				}
+				else if (oracleFlag == true) {
+					constrainSql +=  " contains(observation_blob,'" + containsSql + "') ";
+					if (panelAccuracyScale>0) {
+						constrainSql += " >= " + panelAccuracyScale + " ";
+					} else {
+						constrainSql += " > 0 ";
 					}
-					else if (oracleFlag == true) { 
-						constrainSql +=  " contains(observation_blob,'" + containsSql + "') ";
-						if (panelAccuracyScale>0) {
-							constrainSql += " >= " + panelAccuracyScale + " ";
-						} else { 
-							constrainSql += " > 0 ";
-						}
-					} else { 
-						if (panelAccuracyScale>0) {
-							panelAccuracyScale = panelAccuracyScale * 10;
-							j++;
-							containsJoinSql += " INNER JOIN freetexttable(" + dbSchemaName + "observation_fact,observation_blob,'"+  containsSql  + "') " 
-									+ " AS ft" + j + " ON text_search_index = ft" +j+ ".[KEY] ";
-							
-							constrainSql += " ft"+j+".[RANK] >= " + panelAccuracyScale + " ";
-				
-						} else { 
-							constrainSql +=  " CONTAINS(observation_blob,'" + containsSql + "') ";	
-						}
-						
+				} else {
+					if (panelAccuracyScale>0) {
+						panelAccuracyScale = panelAccuracyScale * 10;
+						j++;
+						containsJoinSql += " INNER JOIN freetexttable(" + dbSchemaName + "observation_fact,observation_blob,'"+  containsSql  + "') "
+								+ " AS ft" + j + " ON text_search_index = ft" +j+ ".[KEY] ";
+
+						constrainSql += " ft"+j+".[RANK] >= " + panelAccuracyScale + " ";
+
+					} else {
+						constrainSql +=  " CONTAINS(observation_blob,'" + containsSql + "') ";
 					}
-					
-					
-				
+
+				}
+
+
+
 
 			} else if (valueType.equals(ConstrainValueType.TEXT)) {
 				// check if operator and value not null
@@ -126,33 +126,33 @@ public class ValueConstrainsHandler {
 						ConstrainOperatorType.LIKE.value())) {
 					//call the utility to find the like operation
 					String operatorOption = RegExUtil.getOperatorOption(operatorType.value());
-					if (operatorOption ==null) { 
+					if (operatorOption ==null) {
 						operatorOption = "[begin]";
 					}
 					String likeValueFormat = "";
-					if (operatorOption.equalsIgnoreCase("[begin]")) { 
+					if (operatorOption.equalsIgnoreCase("[begin]")) {
 						likeValueFormat = "'" + value.replaceAll("'", "''") + "%'";
-					} else if (operatorOption.equalsIgnoreCase("[end]")) { 
+					} else if (operatorOption.equalsIgnoreCase("[end]")) {
 						likeValueFormat = "'%" + value.replaceAll("'", "''") + "'";
-					} else if (operatorOption.equalsIgnoreCase("[contains]")) { 
+					} else if (operatorOption.equalsIgnoreCase("[contains]")) {
 						likeValueFormat = "'%" + value.replaceAll("'", "''") + "%'";
-					} else if (operatorOption.equalsIgnoreCase("[exact]")) { 
+					} else if (operatorOption.equalsIgnoreCase("[exact]")) {
 						likeValueFormat = "'" + value.replaceAll("'", "''") + "'";
-						if (oracleFlag) { 
+						if (oracleFlag) {
 							constrainSql = " obs.valtype_cd = 'T' AND upper(obs.tval_char) = " + " upper(" + likeValueFormat + ")";
-						} else { 
+						} else {
 							constrainSql = " obs.valtype_cd = 'T' AND obs.tval_char = " + likeValueFormat;
 						}
 						notLikeFlag = true;
 					}
-					if (notLikeFlag == false) { 
-						if (oracleFlag) { 
+					if (notLikeFlag == false) {
+						if (oracleFlag) {
 							constrainSql = " obs.valtype_cd = 'T' AND upper(obs.tval_char) LIKE " + " upper(" + likeValueFormat + ")";
-						} else { 
+						} else {
 							constrainSql = " obs.valtype_cd = 'T' AND obs.tval_char LIKE " + likeValueFormat;
 						}
 					}
-					
+
 				} else if (operatorType.value().equalsIgnoreCase(
 						ConstrainOperatorType.EQ.value())) {
 					constrainSql = " obs.valtype_cd = 'T' AND obs.tval_char   = '"
@@ -170,11 +170,11 @@ public class ValueConstrainsHandler {
 					constrainSql = " obs.valtype_cd = 'T' AND obs.tval_char   BETWEEN "
 							+ value;
 					*/
-					
+
 				} else if (operatorType.value().equalsIgnoreCase(
 						ConstrainOperatorType.NE.value())) {
 					String emptyStringCheck = " ";
-					if (oracleFlag==false) { 
+					if (oracleFlag==false) {
 						emptyStringCheck = " AND obs.tval_char <> '' ";
 					}
 					constrainSql = " obs.valtype_cd = 'T' AND obs.tval_char   <> '"
@@ -190,9 +190,9 @@ public class ValueConstrainsHandler {
 					continue;
 				}
 				value.replaceAll("'", "''");
-				
+
 				String nvalNum = " nval_num ", unitsCdInClause = "";
-				if (this.unitCdConverstionFlag) { 
+				if (this.unitCdConverstionFlag) {
 					nvalNum = unitCdSwitchClause;
 					//unitsCdInClause = this.unitCdInClause + " AND ";
 					//commented not needed
@@ -201,9 +201,9 @@ public class ValueConstrainsHandler {
 //						unitsCdInClause = " case when '" + unitCd + "' in " +  this.unitCdInClause + " then 1 else 0 end  =1  AND ";	
 //					}
 					unitsCdInClause = " ";
-					
+
 				}
-				
+
 				if (operatorType.value().equalsIgnoreCase(
 						ConstrainOperatorType.GT.value())) {
 					constrainSql = unitsCdInClause + "  ((obs.valtype_cd = 'N' AND "+ nvalNum + " > "
@@ -256,7 +256,7 @@ public class ValueConstrainsHandler {
 				} else if (operatorType.value().equalsIgnoreCase(
 						ConstrainOperatorType.NE.value())) {
 					String emptyStringCheck = " ";
-					if (oracleFlag==false) { 
+					if (oracleFlag==false) {
 						emptyStringCheck = " AND obs.valueflag_cd <> '' ";
 					}
 					constrainSql = "  obs.valueflag_cd <> '"

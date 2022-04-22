@@ -8,8 +8,8 @@
  ******************************************************************************/
 /*
 
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Rajesh Kuttan
  */
 package edu.harvard.i2b2.crc.dao.pdo.filter;
@@ -25,7 +25,7 @@ import edu.harvard.i2b2.crc.util.SqlClauseUtil;
 /**
  * Class builds "from" and "where" clause of pdo query based on given provider
  * filter $Id: DimensionFilter.java,v 1.3 2009/01/08 19:38:57 rk903 Exp $
- * 
+ *
  * @author rkuttan
  */
 public class DimensionFilter {
@@ -35,21 +35,21 @@ public class DimensionFilter {
 	private String schemaName = null;
 	private DataSourceLookup dataSourceLookup = null;
 	private boolean derivedFactTable = QueryProcessorUtil.getInstance().getDerivedFactTable();
-	
+
 	/**
 	 * Parameter constructor
-	 * 
+	 *
 	 * @param filterListType
 	 */
 	public DimensionFilter(ItemType item, String schemaName, DataSourceLookup dataSourceLookup) {
 		this.item = item;
 		this.schemaName = schemaName;
-		this.dataSourceLookup = dataSourceLookup; 
+		this.dataSourceLookup = dataSourceLookup;
 	}
 
 	/**
 	 * Function generates "from" clause of PDO query, by iterating filter list
-	 * 
+	 *
 	 * @return sql string
 	 */
 	public String getFromSqlString() throws I2B2Exception {
@@ -66,11 +66,11 @@ public class DimensionFilter {
 			String dimCode = item.getDimDimcode();
 			String dimColumnDataType = item.getDimColumndatatype();
 			String dimOperator = item.getDimOperator();
-			
+
 			if (dimOperator.equalsIgnoreCase("LIKE")
 					&& dimCode.trim().length() > 0) {
-				if (!SqlClauseUtil.isEnclosedinSingleQuote(dimCode)) { 
-					
+				if (!SqlClauseUtil.isEnclosedinSingleQuote(dimCode)) {
+
 					// check if the dim code ends with "\" other wise add it,
 					// so that it matches concept_dimension's concept_path or
 					// provider_dimension's provider_path
@@ -79,12 +79,13 @@ public class DimensionFilter {
 					} else {
 						dimCode = dimCode + "\\%";
 					}
-					if (dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL))
+					if (dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) ||
+							dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE))
 						dimCode = dimCode.replaceAll("\\\\", "\\\\\\\\");
 
 				}
 			}
-			
+
 			if (dimOperator.equalsIgnoreCase("IN")) {
 				if (dimColumnDataType.equalsIgnoreCase("T")) {
 					dimCode = SqlClauseUtil.buildINClause(dimCode, true);

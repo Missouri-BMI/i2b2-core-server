@@ -8,8 +8,8 @@
  ******************************************************************************/
 /*
 
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Rajesh Kuttan
  */
 package edu.harvard.i2b2.crc.dao.pdo;
@@ -48,7 +48,7 @@ import edu.harvard.i2b2.crc.datavo.pdo.query.PatientListType;
 /**
  * Class to support visit/event section of plain pdo query $Id:
  * PdoQueryVisitDao.java,v 1.12 2008/04/08 19:41:30 rk903 Exp $
- * 
+ *
  * @author rkuttan
  */
 public class PdoQueryVisitDao extends CRCDAO implements IPdoQueryVisitDao {
@@ -57,20 +57,20 @@ public class PdoQueryVisitDao extends CRCDAO implements IPdoQueryVisitDao {
 	private List<ParamType> metaDataParamList = null;
 
 	public PdoQueryVisitDao(DataSourceLookup dataSourceLookup,
-			DataSource dataSource) {
+							DataSource dataSource) {
 		setDbSchemaName(dataSourceLookup.getFullSchema());
 		setDataSource(dataSource);
 		this.dataSourceLookup = dataSourceLookup;
 	}
-	
+
 	@Override
-	public void setMetaDataParamList(List<ParamType> metaDataParamList) { 
-		this.metaDataParamList = metaDataParamList; 
+	public void setMetaDataParamList(List<ParamType> metaDataParamList) {
+		this.metaDataParamList = metaDataParamList;
 	}
 
 	/**
 	 * Function to return list of eventset for given encounter number list
-	 * 
+	 *
 	 * @param detailFlag
 	 * @param blobFlag
 	 * @param statusFlag
@@ -78,7 +78,7 @@ public class PdoQueryVisitDao extends CRCDAO implements IPdoQueryVisitDao {
 	 */
 	@Override
 	public EventSet getVisitsByEncounterNum(List<String> encounterNumList,
-			boolean detailFlag, boolean blobFlag, boolean statusFlag)
+											boolean detailFlag, boolean blobFlag, boolean statusFlag)
 			throws I2B2DAOException {
 		EventSet visitDimensionSet = new EventSet();
 		log.debug("visit list size " + encounterNumList.size());
@@ -94,7 +94,7 @@ public class PdoQueryVisitDao extends CRCDAO implements IPdoQueryVisitDao {
 			String serverType = dataSourceLookup.getServerType();
 			if (serverType.equalsIgnoreCase(DAOFactoryHelper.ORACLE)) {
 				oracle.jdbc.driver.OracleConnection conn1 = null;//(oracle.jdbc.driver.OracleConnection) ((WrappedConnection) conn)
-					//	.getUnderlyingConnection();
+				//	.getUnderlyingConnection();
 				String finalSql = "SELECT "
 						+ selectClause
 						+ " FROM "
@@ -109,9 +109,9 @@ public class PdoQueryVisitDao extends CRCDAO implements IPdoQueryVisitDao {
 						encounterNumList.toArray(new String[] {}));
 				query.setArray(1, paramArray);
 			} else if (serverType.equalsIgnoreCase(DAOFactoryHelper.SQLSERVER) ||
-					serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL)) {
+					serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) || serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) {
 				log.debug("creating temp table");
-				if (serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL))
+				if (serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) || serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE))
 					tempTableName = SQLServerFactRelatedQueryHandler.TEMP_PDO_INPUTLIST_TABLE.substring(1);
 				else
 					tempTableName = SQLServerFactRelatedQueryHandler.TEMP_PDO_INPUTLIST_TABLE;
@@ -123,7 +123,8 @@ public class PdoQueryVisitDao extends CRCDAO implements IPdoQueryVisitDao {
 					;
 				}
 
-				uploadTempTable(tempStmt, tempTableName, encounterNumList, dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL));
+				uploadTempTable(tempStmt, tempTableName, encounterNumList, dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) ||
+						dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE));
 				String finalSql = "SELECT "
 						+ selectClause
 						+ " FROM "
@@ -153,7 +154,7 @@ public class PdoQueryVisitDao extends CRCDAO implements IPdoQueryVisitDao {
 		} finally {
 			if (dataSourceLookup.getServerType().equalsIgnoreCase(
 					DAOFactoryHelper.SQLSERVER)) {
-				PdoTempTableUtil tempUtil = new PdoTempTableUtil(); 
+				PdoTempTableUtil tempUtil = new PdoTempTableUtil();
 				tempUtil.deleteTempTableSqlServer(conn, tempTableName);
 			}
 			try {
@@ -168,7 +169,7 @@ public class PdoQueryVisitDao extends CRCDAO implements IPdoQueryVisitDao {
 	/**
 	 * Get visit dimension data base on visit list
 	 * (InputOptionList.getVisitListType())
-	 * 
+	 *
 	 * @param detailFlag
 	 * @param blobFlag
 	 * @param statusFlag
@@ -254,7 +255,7 @@ public class PdoQueryVisitDao extends CRCDAO implements IPdoQueryVisitDao {
 
 	/**
 	 * Get visit dimension from patientlist (InputOptionList.getPatientList())
-	 * 
+	 *
 	 * @param patientListType
 	 * @param detailFlag
 	 * @param blobFlag
@@ -338,10 +339,10 @@ public class PdoQueryVisitDao extends CRCDAO implements IPdoQueryVisitDao {
 	}
 
 	private void uploadTempTable(Statement tempStmt, String tempTableName,
-			List<String> patientNumList,  boolean isPostgresql)  throws SQLException {
+								 List<String> patientNumList,  boolean isPostgresql)  throws SQLException {
 		String createTempInputListTable =  "create "
-				 + (isPostgresql ? " temp ": "" ) 
-				 + " table " + tempTableName
+				+ (isPostgresql ? " temp ": "" )
+				+ " table " + tempTableName
 				+ " ( char_param1 varchar(100) )";
 		tempStmt.executeUpdate(createTempInputListTable);
 		log.debug("created temp table" + tempTableName);
@@ -365,13 +366,13 @@ public class PdoQueryVisitDao extends CRCDAO implements IPdoQueryVisitDao {
 		tempStmt.executeBatch();
 	}
 
-	
+
 
 	@Override
 	public EventSet getVisitByFact(List<String> panelSqlList,
-			List<Integer> sqlParamCountList,
-			IInputOptionListHandler inputOptionListHandler, boolean detailFlag,
-			boolean blobFlag, boolean statusFlag) throws I2B2DAOException {
+								   List<Integer> sqlParamCountList,
+								   IInputOptionListHandler inputOptionListHandler, boolean detailFlag,
+								   boolean blobFlag, boolean statusFlag) throws I2B2DAOException {
 
 		EventSet eventSet = new EventSet();
 		I2B2PdoFactory.EventBuilder eventBuilder = new I2B2PdoFactory().new EventBuilder(
@@ -379,7 +380,7 @@ public class PdoQueryVisitDao extends CRCDAO implements IPdoQueryVisitDao {
 		VisitFactRelated eventFactRelated = new VisitFactRelated(
 				buildOutputOptionType(detailFlag, blobFlag, statusFlag));
 		eventFactRelated.setMetaDataParamList(this.metaDataParamList);
-		
+
 		String selectClause = eventFactRelated.getSelectClause();
 		String serverType = dataSourceLookup.getServerType();
 		String factTempTable = "";
@@ -391,10 +392,11 @@ public class PdoQueryVisitDao extends CRCDAO implements IPdoQueryVisitDao {
 				factTempTable = getDbSchemaName()
 						+ FactRelatedQueryHandler.TEMP_FACT_PARAM_TABLE;
 			} else if (serverType.equalsIgnoreCase(DAOFactoryHelper.SQLSERVER) ||
-					serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL)) {
+					serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) ||
+					serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) {
 				log.debug("creating temp table");
 				java.sql.Statement tempStmt = conn.createStatement();
-				if (serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL))
+				if (serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) || serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE))
 					factTempTable = SQLServerFactRelatedQueryHandler.TEMP_FACT_PARAM_TABLE.substring(1);
 				else
 					factTempTable = SQLServerFactRelatedQueryHandler.TEMP_FACT_PARAM_TABLE;
@@ -457,9 +459,9 @@ public class PdoQueryVisitDao extends CRCDAO implements IPdoQueryVisitDao {
 			log.error("", ioEx);
 			throw new I2B2DAOException("IO exception", ioEx);
 		} finally {
-				PdoTempTableUtil tempUtil = new PdoTempTableUtil();
-				tempUtil.clearTempTable(dataSourceLookup.getServerType(), conn, factTempTable);
-			
+			PdoTempTableUtil tempUtil = new PdoTempTableUtil();
+			tempUtil.clearTempTable(dataSourceLookup.getServerType(), conn, factTempTable);
+
 			if (inputOptionListHandler != null
 					&& inputOptionListHandler.isEnumerationSet()) {
 				try {
@@ -481,7 +483,7 @@ public class PdoQueryVisitDao extends CRCDAO implements IPdoQueryVisitDao {
 	}
 
 	private void executeUpdateSql(String totalSql, Connection conn,
-			int sqlParamCount, IInputOptionListHandler inputOptionListHandler)
+								  int sqlParamCount, IInputOptionListHandler inputOptionListHandler)
 			throws SQLException {
 
 		PreparedStatement stmt = conn.prepareStatement(totalSql);

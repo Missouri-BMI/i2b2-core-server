@@ -7,7 +7,7 @@
  * the terms of the Healthcare Disclaimer.
  ******************************************************************************/
 package edu.harvard.i2b2.crc.delegate.ontology;
- 
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -78,7 +78,7 @@ public class CallOntologyUtil {
 
 
 	public static ConceptType callOntology(String itemKey, SecurityType securityType,  String projectId, String ontologyUrl ) throws XMLStreamException,
-	JAXBUtilException, AxisFault, I2B2Exception {
+			JAXBUtilException, AxisFault, I2B2Exception {
 		RequestMessageType requestMessageType = getI2B2RequestMessage(itemKey, securityType, projectId.replaceAll("/", ""));
 		OMElement requestElement = buildOMElement(requestMessageType);
 		log.debug("CRC Ontology call's request xml from callOntology:  " + requestElement);
@@ -94,10 +94,10 @@ public class CallOntologyUtil {
 		return conceptType;
 	}
 
-	
+
 	public static MetadataLoadType callLoadData(String tablename,  List<OntologyDataType> c, SecurityType securityType,  String projectId, String ontologyUrl ) throws XMLStreamException,
-	JAXBUtilException, AxisFault, I2B2Exception {
-		
+			JAXBUtilException, AxisFault, I2B2Exception {
+
 		RequestMessageType requestMessageType = getLoadDataI2B2RequestLoadDataMessage(tablename,c, securityType, projectId.replaceAll("/", ""));
 		OMElement requestElement = buildOMElement(requestMessageType);
 		log.debug("CRC Ontology call's request xml from callLoadData:  " + requestElement);
@@ -111,13 +111,13 @@ public class CallOntologyUtil {
 
 		}
 		return metadataLoadType;
-		
-		
+
+
 	}
 
 	public static DeleteChildType callDeleteChild( DeleteChildType c, SecurityType securityType,  String projectId, String ontologyUrl ) throws XMLStreamException,
-	JAXBUtilException, AxisFault, I2B2Exception {
-		
+			JAXBUtilException, AxisFault, I2B2Exception {
+
 		RequestMessageType requestMessageType = getI2B2RequestDeleteChildMessage(c, securityType, projectId.replaceAll("/", ""));
 		OMElement requestElement = buildOMElement(requestMessageType);
 		log.debug("CRC Ontology call's request xml from callLoadData:  " + requestElement);
@@ -131,8 +131,8 @@ public class CallOntologyUtil {
 
 		}
 		return metadataLoadType;
-		
-		
+
+
 	}
 
 
@@ -142,7 +142,7 @@ public class CallOntologyUtil {
 
 	public static DerivedFactColumnsType callGetFactColumns(String itemKey, SecurityType securityType,  String projectId, String ontologyUrl )
 			throws XMLStreamException, JAXBUtilException, AxisFault,I2B2Exception  {
-			
+
 		RequestMessageType requestMessageType = getDerivedFactColumnsI2B2RequestMessage(itemKey, securityType, projectId.replaceAll("/", ""));
 		OMElement requestElement = buildOMElement(requestMessageType);
 		DerivedFactColumnsType factColumns = null;
@@ -155,8 +155,8 @@ public class CallOntologyUtil {
 		}
 		return factColumns;
 	}
-	
-	
+
+
 	public static DerivedFactColumnsType callGetFactColumnsByConceptCd(String conceptCd, SecurityType securityType,  String projectId, String ontologyUrl )
 			throws XMLStreamException, JAXBUtilException, AxisFault,I2B2Exception  {
 		RequestMessageType requestMessageType = getConceptsByCodeI2B2RequestMessage(conceptCd, securityType, projectId.replaceAll("/", ""));
@@ -173,8 +173,8 @@ public class CallOntologyUtil {
 			log.info("factColumns is null");
 		return factColumns;
 	}
-	
-	
+
+
 	public static ConceptsType callGetChildren(String itemKey, SecurityType securityType,  String projectId, String ontologyUrl )
 			throws XMLStreamException, JAXBUtilException, AxisFault,I2B2Exception  {
 		RequestMessageType requestMessageType = getChildrenI2B2RequestMessage(itemKey, securityType, projectId.replaceAll("/", ""));
@@ -239,11 +239,11 @@ public class CallOntologyUtil {
 
 	private static ModifierType getModifierFromResponse(String responseXml)
 			throws JAXBUtilException, I2B2DAOException {
-		JAXBElement responseJaxb =   
+		JAXBElement responseJaxb =
 				jaxbUtil.unMashallFromString(responseXml); //CRCJAXBUtil.getJAXBUtil()
 		ResponseMessageType r = (ResponseMessageType) responseJaxb.getValue();
 		logesapi.debug(null,"CRC's ontology call response xml from ModiferType: " + responseXml);
-		if (r.getResponseHeader() != null && r.getResponseHeader().getResultStatus() !=null) { 
+		if (r.getResponseHeader() != null && r.getResponseHeader().getResultStatus() !=null) {
 			if (r.getResponseHeader().getResultStatus().getStatus().getType().equalsIgnoreCase("ERROR")) {
 				throw new I2B2DAOException("Error when getting modifier from ontology [" + r.getResponseHeader().getResultStatus().getStatus().getValue() +"]");
 			}
@@ -263,12 +263,12 @@ public class CallOntologyUtil {
 
 	private static ConceptsType getChildrenFromResponse(String responseXml)
 			throws JAXBUtilException, I2B2DAOException {
-		JAXBElement responseJaxb = 
+		JAXBElement responseJaxb =
 				jaxbUtil.unMashallFromString(responseXml); //CRCJAXBUtil.getJAXBUtil()
 		ResponseMessageType r = (ResponseMessageType) responseJaxb.getValue();
 		logesapi.debug(null,"CRC's ontology call response xml from getChildrenFromResponse: " + responseXml);
 
-		if (r.getResponseHeader() != null && r.getResponseHeader().getResultStatus() !=null) { 
+		if (r.getResponseHeader() != null && r.getResponseHeader().getResultStatus() !=null) {
 			if (r.getResponseHeader().getResultStatus().getStatus().getType().equalsIgnoreCase("ERROR")) {
 				throw new I2B2DAOException("Error when getting children from ontology [" + r.getResponseHeader().getResultStatus().getStatus().getValue() +"]");
 			}
@@ -278,17 +278,17 @@ public class CallOntologyUtil {
 				.getMessageBody().getAny(), ConceptsType.class);
 		return conceptsType;
 	}
-	
-	
+
+
 
 	private static MetadataLoadType getLoadDataFromResponse(String responseXml)
 			throws JAXBUtilException, I2B2DAOException {
-		JAXBElement responseJaxb = 
+		JAXBElement responseJaxb =
 				jaxbUtil.unMashallFromString(responseXml); //CRCJAXBUtil.getJAXBUtil()
 		ResponseMessageType r = (ResponseMessageType) responseJaxb.getValue();
 		logesapi.debug(null,"CRC's ontology call response xml from getLoadDataFromResponse: " + responseXml);
 
-		if (r.getResponseHeader() != null && r.getResponseHeader().getResultStatus() !=null) { 
+		if (r.getResponseHeader() != null && r.getResponseHeader().getResultStatus() !=null) {
 			if (r.getResponseHeader().getResultStatus().getStatus().getType().equalsIgnoreCase("ERROR")) {
 				throw new I2B2DAOException("Error when getting Metadata Load from ontology [" + r.getResponseHeader().getResultStatus().getStatus().getValue() +"]");
 			}
@@ -302,12 +302,12 @@ public class CallOntologyUtil {
 
 	private static DeleteChildType getDeleteChildFromResponse(String responseXml)
 			throws JAXBUtilException, I2B2DAOException {
-		JAXBElement responseJaxb = 
+		JAXBElement responseJaxb =
 				jaxbUtil.unMashallFromString(responseXml); //CRCJAXBUtil.getJAXBUtil()
 		ResponseMessageType r = (ResponseMessageType) responseJaxb.getValue();
 		logesapi.debug(null,"CRC's ontology call response xml from getDeleteChildFromResponse: " + responseXml);
 
-		if (r.getResponseHeader() != null && r.getResponseHeader().getResultStatus() !=null) { 
+		if (r.getResponseHeader() != null && r.getResponseHeader().getResultStatus() !=null) {
 			if (r.getResponseHeader().getResultStatus().getStatus().getType().equalsIgnoreCase("ERROR")) {
 				throw new I2B2DAOException("Error when getting Metadata Load from ontology [" + r.getResponseHeader().getResultStatus().getStatus().getValue() +"]");
 			}
@@ -317,8 +317,8 @@ public class CallOntologyUtil {
 				.getMessageBody().getAny(), DeleteChildType.class);
 		return metadataLoadType;
 	}
-	
-	
+
+
 
 	private static DerivedFactColumnsType getFactColumnsFromResponse(String response)
 			throws JAXBUtilException, I2B2DAOException {
@@ -326,7 +326,7 @@ public class CallOntologyUtil {
 				jaxbUtil.unMashallFromString(response);
 		ResponseMessageType r = (ResponseMessageType) responseJaxb.getValue();
 		logesapi.debug(null,"CRC's ontology call response xml from getFactColumnsFromResponse: " + response);
-		if (r.getResponseHeader() != null && r.getResponseHeader().getResultStatus() !=null) { 
+		if (r.getResponseHeader() != null && r.getResponseHeader().getResultStatus() !=null) {
 			if (r.getResponseHeader().getResultStatus().getStatus().getType().equalsIgnoreCase("ERROR")) {
 				throw new I2B2DAOException("Error when getting factColumns/concepts by code from ontology [" + r.getResponseHeader().getResultStatus().getStatus().getValue() +"]");
 			}
@@ -336,9 +336,9 @@ public class CallOntologyUtil {
 		DerivedFactColumnsType factColumns = (DerivedFactColumnsType) helper.getObjectByClass(r
 				.getMessageBody().getAny(), DerivedFactColumnsType.class);
 		if (factColumns != null) {
-				return factColumns;
+			return factColumns;
 		} else {
-			return null; 
+			return null;
 		}
 
 
@@ -346,13 +346,13 @@ public class CallOntologyUtil {
 
 	private static DerivedFactColumnsType getFactColumnsFromResponse2(String response)
 			throws JAXBUtilException, I2B2DAOException {
-		
+
 		log.info("IN getFactColumnsFromResponse2");
 		JAXBElement responseJaxb =// CRCJAXBUtil.getJAXBUtil()
 				jaxbUtil.unMashallFromString(response);
 		ResponseMessageType r = (ResponseMessageType) responseJaxb.getValue();
-		logesapi.info(null,"CRC's ontology call response xml from getFactColumnsFromResponse2: " + response);
-		if (r.getResponseHeader() != null && r.getResponseHeader().getResultStatus() !=null) { 
+		logesapi.debug(null,"CRC's ontology call response xml from getFactColumnsFromResponse2: " + response);
+		if (r.getResponseHeader() != null && r.getResponseHeader().getResultStatus() !=null) {
 			if (r.getResponseHeader().getResultStatus().getStatus().getType().equalsIgnoreCase("ERROR")) {
 				throw new I2B2DAOException("Error when getting factColumns/concepts by code from ontology [" + r.getResponseHeader().getResultStatus().getStatus().getValue() +"]");
 			}
@@ -360,45 +360,45 @@ public class CallOntologyUtil {
 		JAXBUnWrapHelper helper = new JAXBUnWrapHelper();
 		ConceptsType concepts = (ConceptsType) helper.getObjectByClass(r
 				.getMessageBody().getAny(), ConceptsType.class);
-		
+
 		Map<String, ConceptType> factColumnMap = new HashMap<String, ConceptType>();
-		
+
 		if(concepts == null){
 			log.error("concepts is null");
 			return null;
 		}
-		
-			
+
+
 		else if(concepts.getConcept().size() == 0){
 			log.error("no concepts found for concept code");
 			return null;
 		}
-		
+
 		else{
 			// go thru the list of concepts and get unique factTableColumns
 			Iterator i = concepts.getConcept().iterator();
 			ConceptType concept = (ConceptType)i.next();
 			factColumnMap.put(concept.getFacttablecolumn(), concept);
-		
+
 			while(i.hasNext()){
 				concept = (ConceptType)i.next();
 				if(!(factColumnMap.containsKey(concept.getFacttablecolumn())))
 					factColumnMap.put(concept.getFacttablecolumn(), concept);
 			}
-				
+
 		}
 		//Grab all the unique fact columns and put them in a list to return.
 		DerivedFactColumnsType factColumns = new DerivedFactColumnsType();
-		
+
 		Iterator it = factColumnMap.keySet().iterator();
 		while(it.hasNext()){
 			String column = (String)it.next();
 			factColumns.getDerivedFactTableColumn().add(column);
 		}
-		
+
 //		log.info("Key set size: " + factColumnMap.keySet().size());
 //		log.info("fact columns size: " + factColumns.getDerivedFactTableColumn().size());
-		
+
 		if (factColumns.getDerivedFactTableColumn().isEmpty()) {
 			return null;
 		} else {
@@ -406,14 +406,14 @@ public class CallOntologyUtil {
 		}
 
 	}
-	
+
 	private static ConceptType getConceptFromResponse(String response)
 			throws JAXBUtilException, I2B2DAOException {
 		JAXBElement responseJaxb =// CRCJAXBUtil.getJAXBUtil()
 				jaxbUtil.unMashallFromString(response);
 		ResponseMessageType r = (ResponseMessageType) responseJaxb.getValue();
 		logesapi.debug(null,"CRC's ontology call response xml from getConceptFromResponse: " + response);
-		if (r.getResponseHeader() != null && r.getResponseHeader().getResultStatus() !=null) { 
+		if (r.getResponseHeader() != null && r.getResponseHeader().getResultStatus() !=null) {
 			if (r.getResponseHeader().getResultStatus().getStatus().getType().equalsIgnoreCase("ERROR")) {
 				throw new I2B2DAOException("Error when getting metadata from ontology [" + r.getResponseHeader().getResultStatus().getStatus().getValue() +"]");
 			}
@@ -554,7 +554,7 @@ public class CallOntologyUtil {
 		getCodeInfo.setSynonyms(false);
 		getCodeInfo.setType("core");
 		getCodeInfo.setBlob(false);
-		
+
 		MatchStrType match = new MatchStrType();
 		match.setStrategy("exact");
 		match.setValue(conceptCd);
@@ -638,7 +638,7 @@ public class CallOntologyUtil {
 
 		return requestMessageType;
 	}
-	
+
 	private static RequestMessageType getDerivedFactColumnsI2B2RequestMessage(String conceptPath, SecurityType securityType,  String projectId ) {
 		QueryProcessorUtil queryUtil = QueryProcessorUtil.getInstance();
 		MessageHeaderType messageHeaderType =  queryUtil.getMessageHeader();
@@ -689,7 +689,7 @@ public class CallOntologyUtil {
 		messageHeaderType.setReceivingFacility(facilityType);
 		// build message body
 
-		GetModifierInfoType modifierInfoType = new GetModifierInfoType(); 
+		GetModifierInfoType modifierInfoType = new GetModifierInfoType();
 		modifierInfoType.setSelf(modifierPath);
 		modifierInfoType.setAppliedPath(appliedPath);
 

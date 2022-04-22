@@ -29,8 +29,9 @@ public class DataSourceLookupDAOFactory {
 	public static final String ORACLE = "ORACLE";
 	public static final String SQLSERVER = "MICROSOFT SQL SERVER";
 	public static final String POSTGRESQL = "POSTGRESQL";
+	public static final String SNOWFLAKE = "SNOWFLAKE";
 
-//	private static String dataSourceName = null;
+	//	private static String dataSourceName = null;
 	private static String serverType = null;
 	private static String schemaName = null;
 	private static DataSource lookupDataSource = null;
@@ -51,6 +52,8 @@ public class DataSourceLookupDAOFactory {
 			return new OracleDataSourceLookupDAO(lookupDataSource, schemaName);
 		} else if (serverType.equalsIgnoreCase(POSTGRESQL)) {
 			return new OracleDataSourceLookupDAO(lookupDataSource, schemaName);
+		} else if (serverType.equalsIgnoreCase(SNOWFLAKE)) {
+			return new OracleDataSourceLookupDAO(lookupDataSource, schemaName);
 		} else {
 			throw new I2B2DAOException(
 					"DataSourceLookupDAOFactory.getDataSourceLookupDAO: serverType="
@@ -70,14 +73,14 @@ public class DataSourceLookupDAOFactory {
 			throws I2B2DAOException {
 		QueryProcessorUtil crcUtil = QueryProcessorUtil.getInstance();
 		try {
-		//	dataSourceName = crcUtil.getCRCDBLookupDataSource();
-		//	serverType = crcUtil.getCRCDBLookupServerType();
-		//	schemaName = crcUtil.getCRCDBLookupSchemaName();
+			//	dataSourceName = crcUtil.getCRCDBLookupDataSource();
+			//	serverType = crcUtil.getCRCDBLookupServerType();
+			//	schemaName = crcUtil.getCRCDBLookupSchemaName();
 			lookupDataSource = crcUtil
 					.getDataSource("java:/CRCBootStrapDS");
-			
+
 			Connection conn = lookupDataSource.getConnection();
-			
+
 			serverType = conn.getMetaData().getDatabaseProductName().toUpperCase();
 			schemaName = conn.getSchema();
 			conn.close();

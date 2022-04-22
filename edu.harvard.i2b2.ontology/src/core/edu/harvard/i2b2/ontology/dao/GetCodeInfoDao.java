@@ -296,7 +296,7 @@ class GetExpandedConcept implements RowMapper<ExpandedConceptType> {
 		entry.setName(rs.getString("c_name"));
 		entry.setTableCd(rs.getString("tablecd"));
 		if(vocabType.getType().equals("core")) {
-			entry.setKey(rs.getString("c_fullname")); 
+			entry.setKey(rs.getString("c_fullname"));
 			entry.setBasecode(rs.getString("c_basecode"));
 			entry.setLevel(rs.getInt("c_hlevel"));
 			entry.setSynonymCd(rs.getString("c_synonym_cd"));
@@ -305,11 +305,11 @@ class GetExpandedConcept implements RowMapper<ExpandedConceptType> {
 			if (obfuscatedUserFlag == false) { 
 				entry.setTotalnum(totalNum);
 			}
-			entry.setFacttablecolumn(rs.getString("c_facttablecolumn" ));
-			entry.setTablename(rs.getString("c_tablename")); 
-			entry.setColumnname(rs.getString("c_columnname")); 
-			entry.setColumndatatype(rs.getString("c_columndatatype")); 
-			entry.setOperator(rs.getString("c_operator")); 
+			entry.setFacttablecolumn(rs.getString("c_facttablecolumn"));
+			entry.setTablename(rs.getString("c_tablename"));
+			entry.setColumnname(rs.getString("c_columnname"));
+			entry.setColumndatatype(rs.getString("c_columndatatype"));
+			entry.setOperator(rs.getString("c_operator"));
 			entry.setDimcode(rs.getString("c_dimcode"));
 			entry.setTooltip(rs.getString("c_tooltip"));
 

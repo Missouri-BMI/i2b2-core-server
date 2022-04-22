@@ -8,12 +8,12 @@
  ******************************************************************************/
 /*
 
- * 
+ *
  * Contributors:
  * 		Christopher Herrick
  */
 package edu.harvard.i2b2.crc.dao.setfinder.querybuilder.temporal;
- 
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -58,7 +58,7 @@ import edu.harvard.i2b2.crc.util.StringUtil;
 /**
  **
  * Temporal Panel Item
- * 
+ *
  * <P>
  * Panel Item query object that wraps the item tag found in the query definition
  * xml for panel items. It roughly corresponds to an item dropped into a panel in the query UI. PanelItem is responsible
@@ -66,9 +66,9 @@ import edu.harvard.i2b2.crc.util.StringUtil;
  * and takes into account item value constraints, modifier constraints, item and panel based date constraints, 
  * and panel occurrences. This class is an abstract class and must be implemented by class dedicated to 
  * specific panel item types.
- * 
+ *
  * @author Christopher Herrick
- *  
+ *
  */
 public abstract class TemporalPanelItem {
 
@@ -93,10 +93,10 @@ public abstract class TemporalPanelItem {
 	protected String factTable = "observation_fact";
 	protected boolean isProtected = false;
 	protected String ontologyProtection = null;
-	
+
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param parent - TemporalPanel object to which this panle item belongs
 	 * @param item - object representation of the xml from panel item contained in query definition xml 
 	 * @throws I2B2Exception - thrown when an i2b2 specific error is found
@@ -110,7 +110,7 @@ public abstract class TemporalPanelItem {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param parent - TemporalPanel object to which this panle item belongs
 	 * @param item - object representation of the xml from panel item contained in query definition xml 
 	 * @param conceptType - object representation of the item obtained from the Ontology cell
@@ -126,11 +126,11 @@ public abstract class TemporalPanelItem {
 
 	/**
 	 * Parse Item
-	 * 
+	 *
 	 * Parses through the item and/or concept type object and assigns key fields
 	 * to the corresponding properties of the class. ParseItem is called from the constructor
 	 * and must be executed before trying to build sql on the item.
-	 * 
+	 *
 	 * @throws I2B2Exception - thrown when an i2b2 specific error is found
 	 */
 	protected void parseItem() throws I2B2Exception {
@@ -150,7 +150,7 @@ public abstract class TemporalPanelItem {
 			ontologyProtection = conceptType.getOntologyProtection();
 			if (conceptType.getProtectedAccess() != null)
 				isProtected = (conceptType.getProtectedAccess().equalsIgnoreCase("Y")?true:false);
-			
+
 			// If protected check roles
 			if (isProtected)
 			{
@@ -160,11 +160,11 @@ public abstract class TemporalPanelItem {
 				for (String s: parent.getUserRoles()) {
 					if (ontologyProtection.contains(s))
 						protectedAccess = true;
-					
+
 				}
-				
+
 				if (protectedAccess == false)
-				 throw new I2B2DAOException("This query contains protected.");
+					throw new I2B2DAOException("This query contains protected.");
 			}
 			//OMOP addition
 			parseFactColumn(factTableColumn);
@@ -173,11 +173,11 @@ public abstract class TemporalPanelItem {
 
 	/**
 	 * Build Sql 
-	 * 
+	 *
 	 * Main method for generating the sql string that will be run on the
 	 * database for this item. Constructs sql based on logic for main item, value constraints,
 	 * modifier constraints, date constraints, and occurrence constraints
-	 * 
+	 *
 	 * @return String - sql logic for querying based on the constraints represented in this item
 	 * @throws I2B2DAOException - thrown when an i2b2 specific data or database error occurs
 	 */
@@ -187,7 +187,7 @@ public abstract class TemporalPanelItem {
 
 		String sqlHintClause = buildSqlHintClause();
 		String selectSql = buildSelectSql();
-		String fromSql = buildFromSql();			
+		String fromSql = buildFromSql();
 		String dimensionJoinSql = buildDimensionJoinSql();
 		String modifierConstraintSql = buildModifierConstraintSql();
 		String[] modifierValueConstrainSql = buildModifierValueConstraintSql();
@@ -199,25 +199,25 @@ public abstract class TemporalPanelItem {
 
 		if (parent.getAccuracyScale()>0&&
 				valueConstraintSql[1]!=null&&
-				valueConstraintSql[1].trim().length()>0) { 
+				valueConstraintSql[1].trim().length()>0) {
 			fromSql += valueConstraintSql[1];
 		}
 
 		if (parent.getAccuracyScale() >0&
 				modifierValueConstrainSql[1]!=null&&
-				modifierValueConstrainSql[1].trim().length()>0) { 
+				modifierValueConstrainSql[1].trim().length()>0) {
 			fromSql += modifierValueConstrainSql[1];
 		}
 
-		String derivedTableSql = " select " + sqlHintClause 
+		String derivedTableSql = " select " + sqlHintClause
 				+ selectSql
-				+ " \nfrom " + fromSql 
-				+ " \nwhere  " 
+				+ " \nfrom " + fromSql
+				+ " \nwhere  "
 				+ formatSql(dimensionJoinSql) + "  "
-				+ formatSql(modifierConstraintSql) 
+				+ formatSql(modifierConstraintSql)
 				+ formatSql(modifierValueConstrainSql[0])
 				+ formatSql(valueConstraintSql[0])
-				+ formatSql(dateConstraintSql) 
+				+ formatSql(dateConstraintSql)
 				+ formatSql(panelDateConstraintSql)
 				+ " \ngroup by " + groupbyClause
 				+ formatSql(havingClause);
@@ -228,10 +228,10 @@ public abstract class TemporalPanelItem {
 
 	/**
 	 * Format Sql
-	 * 
+	 *
 	 * Method for adding carriage returns into sql so statements are more
 	 * readable when output to error and logs
-	 * 
+	 *
 	 * @param sql String to be formatted
 	 * @return String formatted sql string
 	 */
@@ -245,10 +245,10 @@ public abstract class TemporalPanelItem {
 
 	/**
 	 * Build Select Sql
-	 * 
+	 *
 	 * Construct the sql SELECT clause for this item. Determines which columns should be
 	 * returned by the query
-	 * 
+	 *
 	 * @return String sql SELECT clause for use in larger statement
 	 */
 	protected String buildSelectSql(){
@@ -257,10 +257,10 @@ public abstract class TemporalPanelItem {
 
 	/**
 	 * Build Select Sql
-	 * 
+	 *
 	 * Construct the sql SELECT clause for this item. Determines which columns should be
 	 * returned by the query
-	 * 
+	 *
 	 * @param tableAlias String used to alias all columns contained in the select statement
 	 * @return String sql SELECT clause for use in larger statement
 	 */
@@ -272,14 +272,14 @@ public abstract class TemporalPanelItem {
 		String selectClause = tableAlias + "patient_num ";
 
 		if (this.returnInstanceNum()) {
-			selectClause = " " + tableAlias + "provider_id, " 
-					+ tableAlias + "start_date, " 
-					+ tableAlias + "concept_cd, " 
-					+ tableAlias + "instance_num, " 
+			selectClause = " " + tableAlias + "provider_id, "
+					+ tableAlias + "start_date, "
+					+ tableAlias + "concept_cd, "
+					+ tableAlias + "instance_num, "
 					+ tableAlias + "encounter_num, "
 					+ selectClause;
 		} else if (this.returnEncounterNum()) {
-			selectClause = " " + tableAlias + "encounter_num, " 
+			selectClause = " " + tableAlias + "encounter_num, "
 					+ selectClause;
 		}
 
@@ -295,10 +295,10 @@ public abstract class TemporalPanelItem {
 
 	/**
 	 * Build Sql Hint Clause
-	 * 
+	 *
 	 * Returns any database specific sql syntax used to guid the database optimizer in 
 	 * choosing an execution plan or index to use
-	 * 
+	 *
 	 * @return String sql clause that contains database specific parameters for passing sql hints to optimizer
 	 */
 	protected String buildSqlHintClause(){
@@ -307,10 +307,10 @@ public abstract class TemporalPanelItem {
 
 	/**
 	 * Build From Sql
-	 * 
+	 *
 	 * Construct the sql FROM clause for this item. Determines which tables should be
 	 * referenced and joined to in the item query
-	 *   
+	 *
 	 * @return String sql FROM clause that contains tables used in this item query 
 	 */
 	protected String buildFromSql(){
@@ -319,10 +319,10 @@ public abstract class TemporalPanelItem {
 
 	/**
 	 * Build From Sql
-	 * 
+	 *
 	 * Construct the sql FROM clause for this item. Determines which tables should be
 	 * referenced and joined to in the item query
-	 *   
+	 *
 	 * @param tableAlias String used to alias the table in the from clause
 	 * @return String sql FROM clause that contains tables used in this item query 
 	 */
@@ -338,10 +338,10 @@ public abstract class TemporalPanelItem {
 
 	/**
 	 * Build Dimension Join Sql
-	 * 
+	 *
 	 * Construct the sql FROM clause for this item. Determines which tables should be
 	 * referenced and joined to in the item query.  Use the default table alias.
-	 *   
+	 *
 	 * @return String sql FROM clause that contains tables used in this item query 
 	 */
 	protected String buildDimensionJoinSql(){
@@ -350,10 +350,10 @@ public abstract class TemporalPanelItem {
 
 	/**
 	 * Build Dimension Join Sql
-	 * 
+	 *
 	 * Construct the sql FROM clause for this item. Determines which tables should be
 	 * referenced and joined to in the item query
-	 *   
+	 *
 	 * @param tableAlias String used to alias the table in the from clause
 	 * @return String sql FROM clause that contains tables used in this item query 
 	 */
@@ -363,9 +363,9 @@ public abstract class TemporalPanelItem {
 		if (tableAlias!=null&&tableAlias.trim().length()>0)
 			tableAlias += ".";
 
-		if ((this.operator!=null)&& 
+		if ((this.operator!=null)&&
 				(this.operator.toUpperCase().equals("LIKE"))&&
-				(this.dimCode!=null)  && (parent.getServerType().equalsIgnoreCase("POSTGRESQL")))
+				(this.dimCode!=null)  && (parent.getServerType().equalsIgnoreCase("POSTGRESQL") || parent.getServerType().equalsIgnoreCase("SNOWFLAKE")))
 		{
 			this.dimCode = this.dimCode.replaceAll("\\\\", "\\\\\\\\");
 
@@ -376,12 +376,13 @@ public abstract class TemporalPanelItem {
 				+ "  " + " where " + this.columnName + " "
 				+ this.operator + " " + this.dimCode;
 
-		if ((this.operator!=null)&& 
+		if ((this.operator!=null)&&
 				(this.operator.toUpperCase().equals("LIKE"))&&
 				(this.dimCode!=null)&&
 				(this.dimCode.contains("?")))
-		{			
-			dimensionSql +=  (!parent.getDataSourceLookup().getServerType().toUpperCase().equals("POSTGRESQL") ? " {ESCAPE '?'} " : "" ) ;
+		{
+			dimensionSql +=  (!(parent.getDataSourceLookup().getServerType().toUpperCase().equals("POSTGRESQL")
+					|| parent.getDataSourceLookup().getServerType().toUpperCase().equals("SNOWFLAKE")) ? " {ESCAPE '?'} " : "" ) ;
 		}
 		dimensionSql += ")";
 		return dimensionSql;
@@ -389,10 +390,10 @@ public abstract class TemporalPanelItem {
 
 	/**
 	 * Build Item Date Constraint Sql
-	 * 
+	 *
 	 * Construct sql WHERE constraint statements that constrain this item by date. These date constraints orignate
 	 * at the item level and not at the panel level.
-	 * 
+	 *
 	 * @return String sql constraint clause to be appended to the WHERE clause generated by this item
 	 */
 	protected String buildItemDateConstraintSql() {
@@ -402,10 +403,10 @@ public abstract class TemporalPanelItem {
 
 	/**
 	 * Build Item Date Constraint Sql
-	 * 
+	 *
 	 * Construct sql WHERE constraint statements that constrain this item by date. These date constraints orignate
 	 * at the item level and not at the panel level.
-	 * 
+	 *
 	 * @param tableAlias String used to alias the table that is being constrained
 	 * @return String sql constraint clause to be appended to the WHERE clause generated by this item
 	 */
@@ -489,7 +490,7 @@ public abstract class TemporalPanelItem {
 
 		if (parent.getProjectParameterMap() != null
 				&& parent.getProjectParameterMap().get(
-						ParamUtil.CRC_ENABLE_UNITCD_CONVERSION) != null) {
+				ParamUtil.CRC_ENABLE_UNITCD_CONVERSION) != null) {
 			String unitCdConversionFlag = (String) parent
 					.getProjectParameterMap().get(
 							ParamUtil.CRC_ENABLE_UNITCD_CONVERSION);
@@ -556,7 +557,7 @@ public abstract class TemporalPanelItem {
 			modifierType = getModifierMetadataFromOntology();
 
 		if (modifierType==null)
-			return "";			
+			return "";
 
 		if (tableAlias!=null&&tableAlias.trim().length()>0)
 			tableAlias += ".";
@@ -588,20 +589,22 @@ public abstract class TemporalPanelItem {
 
 		dimPath.replaceAll("'", "''");
 
-		if ((dimOperator != null) && (dimOperator.toUpperCase().equals("LIKE") 
-				&& (parent.getDataSourceLookup().getServerType().toUpperCase().equals("POSTGRESQL"))))
+		if ((dimOperator != null) && (dimOperator.toUpperCase().equals("LIKE")
+				&& (parent.getDataSourceLookup().getServerType().toUpperCase().equals("POSTGRESQL") ||
+				parent.getDataSourceLookup().getServerType().toUpperCase().equals("SNOWFLAKE"))))
 			dimCode = dimCode.replaceAll("\\\\", "\\\\\\\\");
 
-				
+
 
 		itemModifierConstrainSql = " (" + tableAlias + factTableColumn + " IN  "
-				+ "(select " + factTableColumn 
-				+ " from " + parent.getDatabaseSchema() + dimTableName 
+				+ "(select " + factTableColumn
+				+ " from " + parent.getDatabaseSchema() + dimTableName
 				+ " where " + dimColumnName + " " + dimOperator + " " + dimCode;
 
 		if ((dimOperator != null) && (dimOperator.toUpperCase().equals("LIKE"))
 				&& (dimCode != null) && (dimCode.contains("?"))) {
-			itemModifierConstrainSql +=  (!parent.getDataSourceLookup().getServerType().toUpperCase().equals("POSTGRESQL") ? " {ESCAPE '?'} " : "" ) ;
+			itemModifierConstrainSql +=  (!(parent.getDataSourceLookup().getServerType().toUpperCase().equals("POSTGRESQL") ||
+					parent.getDataSourceLookup().getServerType().toUpperCase().equals("SNOWFLAKE")) ? " {ESCAPE '?'} " : "" ) ;
 		}
 		itemModifierConstrainSql += ")) ";
 
@@ -663,7 +666,7 @@ public abstract class TemporalPanelItem {
 
 		if (totalOccur != null) {
 			if ((totalOccur.getOperator() != null
-					&& totalOccur.getOperator().value() != null 
+					&& totalOccur.getOperator().value() != null
 					&& totalOccur.getOperator().value().equalsIgnoreCase(TotOccuranceOperatorType.GE.value()))
 					&& totalOccur.getValue() == 1) {
 			} else {
@@ -674,8 +677,9 @@ public abstract class TemporalPanelItem {
 							+ " " + tableAlias + "provider_id + '|' + cast(" + tableAlias + "start_date as varchar) + '|' + cast(" + tableAlias + "instance_num as varchar) + '|' + " + tableAlias + "concept_cd";
 				} else if (parent.getServerType().equalsIgnoreCase(
 						DAOFactoryHelper.ORACLE) || parent.getServerType().equalsIgnoreCase(
-								DAOFactoryHelper.POSTGRESQL)) {
-					countDistinct = " distinct " + tableAlias + "patient_num || '|' || " + tableAlias + "encounter_num || '|' || " 
+						DAOFactoryHelper.POSTGRESQL) || parent.getServerType().equalsIgnoreCase(
+						DAOFactoryHelper.SNOWFLAKE)) {
+					countDistinct = " distinct " + tableAlias + "patient_num || '|' || " + tableAlias + "encounter_num || '|' || "
 							+ tableAlias + "provider_id || '|' || " + tableAlias + "instance_num || '|' ||" + tableAlias + "concept_cd || '|' ||cast(" + tableAlias + "start_date as varchar(50))";
 				}
 
@@ -703,7 +707,7 @@ public abstract class TemporalPanelItem {
 
 		if ((!parent.applyOccurrenceToPanelLevel()||parent.getItemList().size()==1) && totalOccur != null) {
 			if ((totalOccur.getOperator() != null
-					&& totalOccur.getOperator().value() != null 
+					&& totalOccur.getOperator().value() != null
 					&& totalOccur.getOperator().value().equalsIgnoreCase(TotOccuranceOperatorType.GE.value()))
 					&& totalOccur.getValue() == 1) {
 			} else {
@@ -716,10 +720,11 @@ public abstract class TemporalPanelItem {
 							+ " " + tableAlias + "provider_id + '|' + cast(" + tableAlias + "start_date as varchar) + '|' + cast(" + tableAlias + "instance_num as varchar) + '|' + " + tableAlias + "concept_cd";
 				} else if (parent.getServerType().equalsIgnoreCase(
 						DAOFactoryHelper.ORACLE) || parent.getServerType().equalsIgnoreCase(
-								DAOFactoryHelper.POSTGRESQL)) {
-					countDistinct = " distinct " + tableAlias + "patient_num || '|' || " + tableAlias + "encounter_num || '|' || " 
+						DAOFactoryHelper.POSTGRESQL) || parent.getServerType().equalsIgnoreCase(
+						DAOFactoryHelper.SNOWFLAKE)) {
+					countDistinct = " distinct " + tableAlias + "patient_num || '|' || " + tableAlias + "encounter_num || '|' || "
 							+ tableAlias + "provider_id || '|' || " + tableAlias + "instance_num || '|' ||" + tableAlias + "concept_cd || '|' ||cast(" + tableAlias + "start_date as varchar(50))";
-				} 
+				}
 				havingSql = " having count(" + countDistinct + ") "
 						+ totalItemOccurrenceClause;
 			}
@@ -727,7 +732,7 @@ public abstract class TemporalPanelItem {
 
 		return havingSql;
 	}
-	
+
 	public void parseFactColumn(String factColumnName){
 		this.factTable= "observation_fact";
 		this.factTableColumn = factColumnName;
@@ -740,7 +745,7 @@ public abstract class TemporalPanelItem {
 					this.factTableColumn = factColumnName.substring(lastIndex+1);
 				}
 			}
-	//		log.info("using derived fact table: " + factTable);
+			//		log.info("using derived fact table: " + factTable);
 		}
 	}
 
@@ -784,7 +789,7 @@ public abstract class TemporalPanelItem {
 			constrainByValue.setValueOperator(modifierValueConstrain
 					.getValueOperator());
 			constrainByValue
-			.setValueType(modifierValueConstrain.getValueType());
+					.setValueType(modifierValueConstrain.getValueType());
 			constrainByValue.setValueUnitOfMeasure(modifierValueConstrain
 					.getValueUnitOfMeasure());
 			itemValueConstrainList.add(constrainByValue);
@@ -793,7 +798,7 @@ public abstract class TemporalPanelItem {
 	}
 
 	protected ConceptType getConceptType() throws ConceptNotFoundException,
-	OntologyException {
+			OntologyException {
 		if (conceptType==null){
 			conceptType = getMetaDataFromOntologyCell(baseItem.getItemKey());
 		}
@@ -866,7 +871,7 @@ public abstract class TemporalPanelItem {
 
 
 	protected ModifierType getModifierMetadataFromOntology(String modifierKey,
-			String appliedPath) throws ConceptNotFoundException,
+														   String appliedPath) throws ConceptNotFoundException,
 			OntologyException {
 		ModifierType modifierType = null;
 		try {
@@ -1013,7 +1018,7 @@ public abstract class TemporalPanelItem {
 		if (parent.getPanelTiming().equalsIgnoreCase(QueryTimingHandler.SAMEINSTANCENUM))
 			return true;
 		else
-			return false;		
+			return false;
 	}
 
 	public void addIgnoredMessage(String errorMessage) {

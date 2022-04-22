@@ -8,8 +8,8 @@
  ******************************************************************************/
 /*
 
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Rajesh Kuttan
  */
 package edu.harvard.i2b2.crc.dao.pdo;
@@ -48,7 +48,7 @@ import edu.harvard.i2b2.crc.datavo.pdo.query.PatientListType;
 /**
  * Class to build patient section of plain pdo $Id: PdoQueryPatientDao.java,v
  * 1.11 2008/03/19 22:42:08 rk903 Exp $
- * 
+ *
  * @author rkuttan
  */
 public class PdoQueryPatientDao extends CRCDAO implements IPdoQueryPatientDao {
@@ -57,20 +57,20 @@ public class PdoQueryPatientDao extends CRCDAO implements IPdoQueryPatientDao {
 	private List<ParamType> metaDataParamList = null;
 
 	public PdoQueryPatientDao(DataSourceLookup dataSourceLookup,
-			DataSource dataSource) {
+							  DataSource dataSource) {
 		setDataSource(dataSource);
 		setDbSchemaName(dataSourceLookup.getFullSchema());
 		this.dataSourceLookup = dataSourceLookup;
 	}
 
 	@Override
-	public void setMetaDataParamList(List<ParamType> metaDataParamList) { 
-		this.metaDataParamList = metaDataParamList; 
+	public void setMetaDataParamList(List<ParamType> metaDataParamList) {
+		this.metaDataParamList = metaDataParamList;
 	}
 
 	/**
 	 * Function to return patient dimension data for given list of patient num
-	 * 
+	 *
 	 * @param patientNumList
 	 * @param detailFlag
 	 * @param blobFlag
@@ -80,8 +80,8 @@ public class PdoQueryPatientDao extends CRCDAO implements IPdoQueryPatientDao {
 	 */
 	@Override
 	public PatientSet getPatientByPatientNum(List<String> patientNumList,
-			boolean detailFlag, boolean blobFlag, boolean statusFlag)
-					throws I2B2DAOException {
+											 boolean detailFlag, boolean blobFlag, boolean statusFlag)
+			throws I2B2DAOException {
 
 		Connection conn = null;
 		PreparedStatement query = null;
@@ -129,20 +129,22 @@ public class PdoQueryPatientDao extends CRCDAO implements IPdoQueryPatientDao {
 			java.sql.Statement tempStmt = conn.createStatement();
 
 			if (dataSourceLookup.getServerType().equalsIgnoreCase(
-					DAOFactoryHelper.POSTGRESQL))
+					DAOFactoryHelper.POSTGRESQL) ||
+					dataSourceLookup.getServerType().equalsIgnoreCase(
+							DAOFactoryHelper.SNOWFLAKE))
 				tempTableName = SQLServerFactRelatedQueryHandler.TEMP_PDO_INPUTLIST_TABLE.substring(1);
 			else if (dataSourceLookup.getServerType().equalsIgnoreCase(
 					DAOFactoryHelper.SQLSERVER))
 				tempTableName =  this.getDbSchemaName() + SQLServerFactRelatedQueryHandler.TEMP_PDO_INPUTLIST_TABLE;
 			else
 				tempTableName = this.getDbSchemaName()
-				+ FactRelatedQueryHandler.TEMP_PDO_INPUTLIST_TABLE;
-			
-			
+						+ FactRelatedQueryHandler.TEMP_PDO_INPUTLIST_TABLE;
+
+
 			try {
 				if (!dataSourceLookup.getServerType().equalsIgnoreCase(
 						DAOFactoryHelper.ORACLE))
-				tempStmt.executeUpdate("drop table " + tempTableName);
+					tempStmt.executeUpdate("drop table " + tempTableName);
 			} catch (SQLException sqlex) {
 				;
 			}
@@ -179,7 +181,7 @@ public class PdoQueryPatientDao extends CRCDAO implements IPdoQueryPatientDao {
 		} finally {
 			if (dataSourceLookup.getServerType().equalsIgnoreCase(
 					DAOFactoryHelper.SQLSERVER)) {
-				PdoTempTableUtil tempUtil = new PdoTempTableUtil(); 
+				PdoTempTableUtil tempUtil = new PdoTempTableUtil();
 				tempUtil.deleteTempTableSqlServer(conn, tempTableName);
 			}
 			try {
@@ -196,7 +198,7 @@ public class PdoQueryPatientDao extends CRCDAO implements IPdoQueryPatientDao {
 	/**
 	 * Get Patient dimension data based on patientlist present in input option
 	 * list
-	 * 
+	 *
 	 * @param patientListType
 	 *            {@link PatientListType}
 	 * @param detailFlag
@@ -207,8 +209,8 @@ public class PdoQueryPatientDao extends CRCDAO implements IPdoQueryPatientDao {
 	 */
 	@Override
 	public PatientSet getPatientFromPatientSet(PatientListType patientListType,
-			boolean detailFlag, boolean blobFlag, boolean statusFlag)
-					throws I2B2DAOException {
+											   boolean detailFlag, boolean blobFlag, boolean statusFlag)
+			throws I2B2DAOException {
 
 		PatientListTypeHandler patientListTypeHandler = new PatientListTypeHandler(
 				dataSourceLookup, patientListType);
@@ -284,7 +286,7 @@ public class PdoQueryPatientDao extends CRCDAO implements IPdoQueryPatientDao {
 	/**
 	 * Get Patient dimension data based on visitlist present in input option
 	 * list
-	 * 
+	 *
 	 * @param eventListType
 	 *            {@link EventListType}
 	 * @param detailFlag
@@ -295,8 +297,8 @@ public class PdoQueryPatientDao extends CRCDAO implements IPdoQueryPatientDao {
 	 */
 	@Override
 	public PatientSet getPatientFromVisitSet(EventListType visitListType,
-			boolean detailFlag, boolean blobFlag, boolean statusFlag)
-					throws I2B2DAOException {
+											 boolean detailFlag, boolean blobFlag, boolean statusFlag)
+			throws I2B2DAOException {
 
 		VisitListTypeHandler visitListTypeHandler = new VisitListTypeHandler(
 				dataSourceLookup, visitListType);
@@ -387,11 +389,11 @@ public class PdoQueryPatientDao extends CRCDAO implements IPdoQueryPatientDao {
 	}
 
 	private void uploadTempTable(Statement tempStmt, String tempTableName,
-			List<String> patientNumList, String dbServer) throws SQLException {
+								 List<String> patientNumList, String dbServer) throws SQLException {
 		if ( !dbServer.equalsIgnoreCase(
 				DAOFactoryHelper.ORACLE)) {
-			String createTempInputListTable = "create " 
-					 + (dbServer.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) ? " temp ": "" )
+			String createTempInputListTable = "create "
+					+ ((dbServer.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) || dbServer.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) ? " temp ": "" )
 					+ " table "
 					+ tempTableName
 					+ " ( char_param1 varchar(100) )";
@@ -422,16 +424,16 @@ public class PdoQueryPatientDao extends CRCDAO implements IPdoQueryPatientDao {
 
 	@Override
 	public PatientSet getPatientByFact(List<String> panelSqlList,
-			List<Integer> sqlParamCountList,
-			IInputOptionListHandler inputOptionListHandler, boolean detailFlag,
-			boolean blobFlag, boolean statusFlag) throws I2B2DAOException {
+									   List<Integer> sqlParamCountList,
+									   IInputOptionListHandler inputOptionListHandler, boolean detailFlag,
+									   boolean blobFlag, boolean statusFlag) throws I2B2DAOException {
 
 		PatientSet patientSet = new PatientSet();
 		I2B2PdoFactory.PatientBuilder patientBuilder = new I2B2PdoFactory().new PatientBuilder(
 				detailFlag, blobFlag, statusFlag, dataSourceLookup.getServerType());
 		PatientFactRelated patientFactRelated = new PatientFactRelated(
 				buildOutputOptionType(detailFlag, blobFlag, statusFlag));
-		patientFactRelated.setMetaDataParamList(metaDataParamList); 
+		patientFactRelated.setMetaDataParamList(metaDataParamList);
 
 		String selectClause = patientFactRelated.getSelectClause();
 		String serverType = dataSourceLookup.getServerType();
@@ -444,11 +446,13 @@ public class PdoQueryPatientDao extends CRCDAO implements IPdoQueryPatientDao {
 				factTempTable = this.getDbSchemaName()
 						+ FactRelatedQueryHandler.TEMP_FACT_PARAM_TABLE;
 			} else if (serverType.equalsIgnoreCase(DAOFactoryHelper.SQLSERVER) ||
-					serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL)) {
+					serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) ||
+					serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) {
 				log.debug("creating temp table");
 				java.sql.Statement tempStmt = conn.createStatement();
 				if (dataSourceLookup.getServerType().equalsIgnoreCase(
-						DAOFactoryHelper.POSTGRESQL))
+						DAOFactoryHelper.POSTGRESQL) || dataSourceLookup.getServerType().equalsIgnoreCase(
+						DAOFactoryHelper.SNOWFLAKE))
 					factTempTable =  SQLServerFactRelatedQueryHandler.TEMP_FACT_PARAM_TABLE.substring(1);
 				else
 					factTempTable =  SQLServerFactRelatedQueryHandler.TEMP_FACT_PARAM_TABLE;
@@ -457,8 +461,8 @@ public class PdoQueryPatientDao extends CRCDAO implements IPdoQueryPatientDao {
 				} catch (SQLException sqlex) {
 					;
 				}
-				String createTempInputListTable = "create " 
-						 + (serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) ? " temp ": "" )
+				String createTempInputListTable = "create "
+						+ ((serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) || serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) ? " temp ": "" )
 						+ " table "
 						+ factTempTable
 						+ " ( set_index int, char_param1 varchar(500) )";
@@ -514,7 +518,7 @@ public class PdoQueryPatientDao extends CRCDAO implements IPdoQueryPatientDao {
 			throw new I2B2DAOException("IO exception", ioEx);
 		} finally {
 
-			PdoTempTableUtil tempUtil = new PdoTempTableUtil(); 
+			PdoTempTableUtil tempUtil = new PdoTempTableUtil();
 			tempUtil.clearTempTable(dataSourceLookup.getServerType(), conn, factTempTable);
 
 			if (inputOptionListHandler != null
@@ -538,8 +542,8 @@ public class PdoQueryPatientDao extends CRCDAO implements IPdoQueryPatientDao {
 	}
 
 	private void executeUpdateSql(String totalSql, Connection conn,
-			int sqlParamCount, IInputOptionListHandler inputOptionListHandler)
-					throws SQLException {
+								  int sqlParamCount, IInputOptionListHandler inputOptionListHandler)
+			throws SQLException {
 
 		PreparedStatement stmt = conn.prepareStatement(totalSql);
 

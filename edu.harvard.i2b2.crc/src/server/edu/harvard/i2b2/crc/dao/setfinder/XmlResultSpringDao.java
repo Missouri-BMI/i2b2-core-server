@@ -8,8 +8,8 @@
  ******************************************************************************/
 /*
 
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Rajesh Kuttan
  */
 package edu.harvard.i2b2.crc.dao.setfinder;
@@ -20,6 +20,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import javax.sql.DataSource;
+import java.sql.Types;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -43,7 +44,7 @@ import edu.harvard.i2b2.crc.datavo.i2b2result.ResultType;
  * Class to handle persistance operation of Query instance i.e. each run of
  * query is called query instance $Id: QueryInstanceSpringDao.java,v 1.4
  * 2008/04/08 19:38:24 rk903 Exp $
- * 
+ *
  * @author rkuttan
  * @see QtQueryInstance
  */
@@ -55,7 +56,7 @@ public class XmlResultSpringDao extends CRCDAO implements IXmlResultDao  {
 	private DataSourceLookup dataSourceLookup = null;
 
 	public XmlResultSpringDao(DataSource dataSource,
-			DataSourceLookup dataSourceLookup) {
+							  DataSourceLookup dataSourceLookup) {
 		setDataSource(dataSource);
 		setDbSchemaName(dataSourceLookup.getFullSchema());
 		jdbcTemplate = new JdbcTemplate(dataSource);
@@ -65,7 +66,7 @@ public class XmlResultSpringDao extends CRCDAO implements IXmlResultDao  {
 
 	/**
 	 * Function to create query instance
-	 * 
+	 *
 	 * @param queryMasterId
 	 * @param userId
 	 * @param groupId
@@ -75,21 +76,27 @@ public class XmlResultSpringDao extends CRCDAO implements IXmlResultDao  {
 	 */
 	@Override
 	public String createQueryXmlResult(String resultInstanceId, String xmlValue) {
-		String ORACLE_SQL = "INSERT INTO " + getDbSchemaName() + "QT_XML_RESULT(xml_result_id,result_instance_id,xml_value) VALUES(?,?,?)"; 
-		String POSTGRESQL_SQL = "INSERT INTO " + getDbSchemaName() + "QT_XML_RESULT(xml_result_id,result_instance_id,xml_value) VALUES(?,?,?)"; 
+		String ORACLE_SQL = "INSERT INTO " + getDbSchemaName() + "QT_XML_RESULT(xml_result_id,result_instance_id,xml_value) VALUES(?,?,?)";
+		String POSTGRESQL_SQL = "INSERT INTO " + getDbSchemaName() + "QT_XML_RESULT(xml_result_id,result_instance_id,xml_value) VALUES(?,?,?)";
 		String SQLSERVER_SQL = "INSERT INTO " + getDbSchemaName() + "QT_XML_RESULT(result_instance_id,xml_value) VALUES(?,?)";
 		String SEQUENCE_ORACLE = "SELECT "+ dbSchemaName +"QT_SQ_QXR_XRID.nextval from dual";
 		String SEQUENCE_POSTGRESQL = "SELECT nextval('qt_xml_result_xml_result_id_seq') ";
+		String SNOWFLAKE_SQL = "INSERT INTO " + getDbSchemaName() + "QT_XML_RESULT(xml_result_id,result_instance_id,xml_value) VALUES(?,?,?)";
+		String SEQUENCE_SNOWFLAKE = "SELECT " + getDbSchemaName() + "SEQ_QT_XML_RESULT.nextval";
 		int xmlResultId = 0;
 		if (dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.ORACLE)) {
 			xmlResultId = jdbcTemplate.queryForObject(SEQUENCE_ORACLE, Integer.class);
 			jdbcTemplate.update(ORACLE_SQL, new Object[]{xmlResultId,resultInstanceId,xmlValue});
-		} else if (dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.SQLSERVER)) { 
+		} else if (dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.SQLSERVER)) {
 			jdbcTemplate.update(SQLSERVER_SQL, new Object[]{resultInstanceId,xmlValue});
 			xmlResultId = jdbcTemplate.queryForObject("SELECT @@IDENTITY", Integer.class);
 		} else 		if (dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL)) {
 			xmlResultId = jdbcTemplate.queryForObject(SEQUENCE_POSTGRESQL, Integer.class);
 			jdbcTemplate.update(POSTGRESQL_SQL, new Object[]{xmlResultId,Integer.parseInt(resultInstanceId),xmlValue});
+
+		}	else if (dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) {
+			xmlResultId = jdbcTemplate.queryForObject(SEQUENCE_SNOWFLAKE, Integer.class);
+			jdbcTemplate.update(SNOWFLAKE_SQL, new Object[]{xmlResultId,Integer.parseInt(resultInstanceId),xmlValue});
 
 		}
 		return String.valueOf(xmlResultId);
@@ -97,7 +104,7 @@ public class XmlResultSpringDao extends CRCDAO implements IXmlResultDao  {
 
 	/**
 	 * Returns list of query instance for the given master id
-	 * 
+	 *
 	 * @param queryMasterId
 	 * @return List<QtQueryInstance>
 	 */
@@ -105,26 +112,29 @@ public class XmlResultSpringDao extends CRCDAO implements IXmlResultDao  {
 	@SuppressWarnings("unchecked")
 	public QtXmlResult getXmlResultByResultInstanceId(String resultInstanceId) throws I2B2DAOException {
 		String sql = "select *  from " + getDbSchemaName()
-		+ "qt_xml_result where result_instance_id = ?";
-		List<QtXmlResult> queryXmlResult = jdbcTemplate.query(sql,
-				new Object[] { Integer.parseInt(resultInstanceId) }, xmlResultMapper);
-		if (queryXmlResult != null && queryXmlResult.size()>0) { 
+				+ "qt_xml_result where result_instance_id = ?";
+		List<QtXmlResult> queryXmlResult = jdbcTemplate.query(
+				sql,
+				new Object[] { Integer.parseInt(resultInstanceId) },
+				new int[] { Types.INTEGER },
+				xmlResultMapper);
+		if (queryXmlResult != null && queryXmlResult.size()>0) {
 			return queryXmlResult.get(0);
-		} else { 
+		} else {
 			//Check to see if it is being worked on
 			sql = "select b.name from " + getDbSchemaName()
-			+ "qt_query_result_instance a, " + getDbSchemaName()
-			+ "qt_query_result_type b where a.result_instance_id = ? and a.result_type_id = b.result_type_id";
+					+ "qt_query_result_instance a, " + getDbSchemaName()
+					+ "qt_query_result_type b where a.result_instance_id = ? and a.result_type_id = b.result_type_id";
 
 			String resultName = null;
-			
+
 			try {
-				
+
 				resultName = (String) jdbcTemplate.queryForObject(
-					sql, new Object[] { Integer.parseInt(resultInstanceId) }, String.class);
+						sql, new Object[] { Integer.parseInt(resultInstanceId) }, String.class);
 			} catch (Exception e)
 			{
-				
+
 			}
 
 			if (resultName != null)

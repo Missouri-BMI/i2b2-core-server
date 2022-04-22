@@ -172,7 +172,7 @@ class GetCategoriesConcept implements RowMapper<ConceptType> {
 		ConceptType child = new ConceptType();
 		//TODO fix this for all/+blob
 
-		child.setKey("\\\\" + rs.getString("c_table_cd")+ rs.getString("c_fullname")); 
+		child.setKey("\\\\" + rs.getString("c_table_cd")+ rs.getString("c_fullname"));
 		child.setName(rs.getString("c_name"));
 		if(returnType.getType().equals("core")) {
 			child.setBasecode(rs.getString("c_basecode"));
@@ -184,12 +184,12 @@ class GetCategoriesConcept implements RowMapper<ConceptType> {
 			if (obfuscatedUserFlag == false) { 
 				child.setTotalnum(totalNum);
 			}
-			child.setFacttablecolumn(rs.getString("c_facttablecolumn" ));
-			child.setTablename(rs.getString("c_tablename")); 
-			child.setColumnname(rs.getString("c_columnname")); 
-			child.setColumndatatype(rs.getString("c_columndatatype")); 
-			child.setOperator(rs.getString("c_operator")); 
-			child.setDimcode(rs.getString("c_dimcode")); 
+			child.setFacttablecolumn(rs.getString("c_facttablecolumn"));
+			child.setTablename(rs.getString("c_tablename"));
+			child.setColumnname(rs.getString("c_columnname"));
+			child.setColumndatatype(rs.getString("c_columndatatype"));
+			child.setOperator(rs.getString("c_operator"));
+			child.setDimcode(rs.getString("c_dimcode"));
 			child.setTooltip(rs.getString("c_tooltip"));
 		}
 		return child;

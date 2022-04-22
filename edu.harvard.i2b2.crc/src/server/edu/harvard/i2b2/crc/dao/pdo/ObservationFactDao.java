@@ -8,8 +8,8 @@
  ******************************************************************************/
 /*
 
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Rajesh Kuttan
  */
 package edu.harvard.i2b2.crc.dao.pdo;
@@ -53,7 +53,7 @@ import edu.harvard.i2b2.crc.util.QueryProcessorUtil;
 /**
  * DAO class for observation fact $Id: ObservationFactDao.java,v 1.13 2008/07/21
  * 19:53:40 rk903 Exp $
- * 
+ *
  * @author rkuttan
  * @see FactPrimaryKeyType
  * @see OutputOptionType
@@ -63,7 +63,7 @@ public class ObservationFactDao extends CRCDAO implements IObservationFactDao {
 	private DataSourceLookup dataSourceLookup = null;
 
 	public ObservationFactDao(DataSourceLookup dataSourceLookup,
-			DataSource dataSource) {
+							  DataSource dataSource) {
 		setDataSource(dataSource);
 		setDbSchemaName(dataSourceLookup.getFullSchema());
 		this.dataSourceLookup = dataSourceLookup;
@@ -75,7 +75,7 @@ public class ObservationFactDao extends CRCDAO implements IObservationFactDao {
 	 * Required fields : <b>patient_num, concept_cd, encounter_num</b>
 	 * <p>
 	 * Optional field : <b>provider_id,start_date</b>
-	 * 
+	 *
 	 * @param factPrimaryKey
 	 * @param factOutputOption
 	 * @return PatientDataType
@@ -91,7 +91,7 @@ public class ObservationFactDao extends CRCDAO implements IObservationFactDao {
 				factOutputOption);
 
 		String defaultTableName =  getDbSchemaName() + "observation_fact";
-		
+
 		String sql = " SELECT " + factRelated.getSelectClause() + " \n "
 				+ " FROM " + defaultTableName + " obs \n"
 				+ " WHERE obs.encounter_num = ? AND \n "
@@ -115,7 +115,13 @@ public class ObservationFactDao extends CRCDAO implements IObservationFactDao {
 						+ sqlFormatedStartDate + " ', 'DD-MON-YYYY HH24:MI:SS') ");
 			} else if (dataSourceLookup.getServerType().equalsIgnoreCase(
 					DAOFactoryHelper.SQLSERVER) || dataSourceLookup.getServerType().equalsIgnoreCase(
-							DAOFactoryHelper.POSTGRESQL)) {
+					DAOFactoryHelper.POSTGRESQL)) {
+				SimpleDateFormat dateFormat = new SimpleDateFormat(
+						"yyyy-MM-dd'T'HH:mm:ss");
+				sqlFormatedStartDate = dateFormat.format(gc.getTime());
+				sql += (" AND obs.start_date = '" + sqlFormatedStartDate + "'");
+			} else if (dataSourceLookup.getServerType().equalsIgnoreCase(
+					DAOFactoryHelper.SNOWFLAKE)) {
 				SimpleDateFormat dateFormat = new SimpleDateFormat(
 						"yyyy-MM-dd'T'HH:mm:ss");
 				sqlFormatedStartDate = dateFormat.format(gc.getTime());
@@ -131,15 +137,15 @@ public class ObservationFactDao extends CRCDAO implements IObservationFactDao {
 		}
 
 //		log.info("Pre Sql from ObservationFactDAO[" + sql + "]");
-		
-		
+
+
 		int numDerivedTables = 1;
 		boolean derivedFactTable = QueryProcessorUtil.getInstance().getDerivedFactTable();
 		String finalSql = sql;
 		if(derivedFactTable == true){
 			// call ONT to get concept info 
 			DerivedFactColumnsType columns = getFactColumnsFromOntologyCellByCode(factPrimaryKey.getConceptCd());
-			
+
 			if(columns != null){
 				numDerivedTables = columns.getDerivedFactTableColumn().size();
 //				log.info("found " +numDerivedTables + " derived tables");
@@ -161,13 +167,13 @@ public class ObservationFactDao extends CRCDAO implements IObservationFactDao {
 						String table = this.getDbSchemaName() + (column.substring(0, lastIndex));
 						if(table != null)
 							finalSql += "\n union all \n";
-							finalSql  += sql.replace(defaultTableName, table);
+						finalSql  += sql.replace(defaultTableName, table);
 					}
-				
+
 				}
 			}
 		}
-			
+
 //		log.info("Generated Sql from ObservationFactDAO[" + finalSql + "]");
 
 		Connection conn = null;
@@ -183,35 +189,35 @@ public class ObservationFactDao extends CRCDAO implements IObservationFactDao {
 			int index = 1;
 			for (int i=0; i<= numDerivedTables -1; i++){
 				stmt.setInt(i+index, Integer.parseInt(factPrimaryKey.getEventId()));
-			//	log.info(i+index + " " + factPrimaryKey.getEventId());
+				//	log.info(i+index + " " + factPrimaryKey.getEventId());
 				index++;
 				stmt.setInt(i+index , Integer.parseInt(factPrimaryKey.getPatientId()));
-			//	log.info(i+index +" " + factPrimaryKey.getPatientId());
+				//	log.info(i+index +" " + factPrimaryKey.getPatientId());
 				index++;
 				stmt.setString(i+index, factPrimaryKey.getConceptCd());
-		//		log.info(i+index + " "  + factPrimaryKey.getConceptCd());
+				//		log.info(i+index + " "  + factPrimaryKey.getConceptCd());
 				index++;
 				// if provider id is not null add it to sql parameter
 				if (factPrimaryKey.getObserverId() != null) {
 					stmt.setString(i+index, factPrimaryKey.getObserverId());
-				//	log.info(i+index + " " + factPrimaryKey.getObserverId());
+					//	log.info(i+index + " " + factPrimaryKey.getObserverId());
 					index++;
 				}
 				// if modifier cd is not null add it to sql parameter
 				if (factPrimaryKey.getModifierCd() != null) {
 					stmt.setString(i+index, factPrimaryKey.getModifierCd());
-		//			log.info(i + index +" " + factPrimaryKey.getModifierCd());
+					//			log.info(i + index +" " + factPrimaryKey.getModifierCd());
 					index++;
 				}
 				if (factPrimaryKey.getInstanceNum() != null) {
 					int instanceNum = Integer.parseInt(factPrimaryKey
 							.getInstanceNum());
 					stmt.setInt(i+index, instanceNum);
-		//			log.info(i + index + " " + factPrimaryKey.getInstanceNum());
+					//			log.info(i + index + " " + factPrimaryKey.getInstanceNum());
 					index++;
 				}
 
-			} 
+			}
 
 			// original (pre-OMOP) code
 			/*			stmt.setInt(1, Integer.parseInt(factPrimaryKey.getEventId())); 
@@ -270,21 +276,21 @@ public class ObservationFactDao extends CRCDAO implements IObservationFactDao {
 
 		return patientDataType;
 	}
-	
 
-	
+
+
 	protected DerivedFactColumnsType getFactColumnsFromOntologyCellByCode(String conceptCd)
 			throws ConceptNotFoundException, OntologyException {
 		DerivedFactColumnsType factColumns = new DerivedFactColumnsType();
 		try {
-			
+
 			QueryProcessorUtil qpUtil = QueryProcessorUtil.getInstance();
 			String ontologyUrl = qpUtil
 					.getCRCPropertyValue(QueryProcessorUtil.ONTOLOGYCELL_ROOT_WS_URL_PROPERTIES);
 
 			SecurityType securityType = PMServiceAccountUtil
 					.getServiceSecurityType(dataSourceLookup.getDomainId());
-			
+
 			factColumns = CallOntologyUtil.callGetFactColumnsByConceptCd(conceptCd,
 					securityType, dataSourceLookup.getProjectPath(),
 					ontologyUrl +"/getCodeInfo");
@@ -314,6 +320,6 @@ public class ObservationFactDao extends CRCDAO implements IObservationFactDao {
 
 		return factColumns;
 	}
-	
+
 
 }

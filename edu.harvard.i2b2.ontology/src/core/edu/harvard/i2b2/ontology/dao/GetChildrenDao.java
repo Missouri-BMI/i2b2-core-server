@@ -188,7 +188,7 @@ class GetChildrenConcept implements RowMapper<ConceptType> {
 		child.setName(rs.getString("c_name"));
 		child.setBasecode(rs.getString("c_basecode"));
 		child.setLevel(rs.getInt("c_hlevel"));
-		child.setKey(rs.getString("c_fullname")); 
+		child.setKey(rs.getString("c_fullname"));
 		child.setSynonymCd(rs.getString("c_synonym_cd"));
 		child.setVisualattributes(rs.getString("c_visualattributes"));
 		Integer totalNum = rs.getInt("c_totalnum");
@@ -196,12 +196,12 @@ class GetChildrenConcept implements RowMapper<ConceptType> {
 		if (obfuscatedUserFlag == false ) { 
 			child.setTotalnum(totalNum);
 		}
-		child.setFacttablecolumn(rs.getString("c_facttablecolumn" ));
-		child.setTablename(rs.getString("c_tablename")); 
-		child.setColumnname(rs.getString("c_columnname")); 
-		child.setColumndatatype(rs.getString("c_columndatatype")); 
-		child.setOperator(rs.getString("c_operator")); 
-		child.setDimcode(rs.getString("c_dimcode")); 
+		child.setFacttablecolumn(rs.getString("c_facttablecolumn"));
+		child.setTablename(rs.getString("c_tablename"));
+		child.setColumnname(rs.getString("c_columnname"));
+		child.setColumndatatype(rs.getString("c_columndatatype"));
+		child.setOperator(rs.getString("c_operator"));
+		child.setDimcode(rs.getString("c_dimcode"));
 		child.setTooltip(rs.getString("c_tooltip"));
 		if(childrenType.isBlob() == true){
 			try {

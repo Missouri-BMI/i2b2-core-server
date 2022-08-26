@@ -98,8 +98,8 @@ class getSchemesMapper implements RowMapper<ConceptType> {
 		ConceptType scheme = new ConceptType();
 		//TODO fix this for all/+blob
 
-		scheme.setKey(rs.getString("key")); 
-		scheme.setName(rs.getString("name"));
+		scheme.setKey(rs.getString("key".toUpperCase()));
+		scheme.setName(rs.getString("name".toUpperCase()));
 		return scheme;
 	}
 }

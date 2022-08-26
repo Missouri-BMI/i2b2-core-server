@@ -166,44 +166,48 @@ class GetTermInfoConcept implements RowMapper<ConceptType> {
 	@Override
 	public ConceptType mapRow(ResultSet rs, int rowNum) throws SQLException {
 		ConceptType self = new ConceptType();	            
-		self.setName(rs.getString("c_name"));
-		self.setBasecode(rs.getString("c_basecode"));
-		self.setLevel(rs.getInt("c_hlevel"));
-		self.setKey(rs.getString("c_fullname")); 
-		self.setSynonymCd(rs.getString("c_synonym_cd"));
-		self.setVisualattributes(rs.getString("c_visualattributes"));
+		self.setName(rs.getString("c_name".toUpperCase()));
+		self.setBasecode(rs.getString("c_basecode".toUpperCase()));
+		self.setLevel(rs.getInt("c_hlevel".toUpperCase()));
+		self.setKey(rs.getString("c_fullname".toUpperCase()));
+		self.setSynonymCd(rs.getString("c_synonym_cd".toUpperCase()));
+		self.setVisualattributes(rs.getString("c_visualattributes".toUpperCase()));
 
-		Integer totalNum = rs.getInt("c_totalnum");
+		Integer totalNum = rs.getInt("c_totalnum".toUpperCase());
 		if ( obfuscatedUserFlag == false) { 
 			self.setTotalnum(totalNum);
 		}
-		self.setFacttablecolumn(rs.getString("c_facttablecolumn" ));
-		self.setTablename(rs.getString("c_tablename")); 
-		self.setColumnname(rs.getString("c_columnname")); 
-		self.setColumndatatype(rs.getString("c_columndatatype")); 
-		self.setOperator(rs.getString("c_operator")); 
-		self.setDimcode(rs.getString("c_dimcode")); 
-		self.setTooltip(rs.getString("c_tooltip"));
+		self.setFacttablecolumn(rs.getString("c_facttablecolumn".toUpperCase() ));
+		self.setTablename(rs.getString("c_tablename".toUpperCase()));
+		self.setColumnname(rs.getString("c_columnname".toUpperCase()));
+		self.setColumndatatype(rs.getString("c_columndatatype".toUpperCase()));
+		self.setOperator(rs.getString("c_operator".toUpperCase()));
+		self.setDimcode(rs.getString("c_dimcode".toUpperCase()));
+		self.setTooltip(rs.getString("c_tooltip".toUpperCase()));
 		if(termInfoType.isBlob() == true) {
-			if(rs.getClob("c_comment") == null)
+			if(rs.getClob("c_comment".toUpperCase()) == null)
 				self.setComment(null);
 			else {
 				try {
 					if (dbType.equals("POSTGRESQL"))
 						self.setComment(rs.getString("c_comment"));
+					else if (dbType.equals("SNOWFLAKE"))
+						self.setComment(rs.getString("c_comment".toUpperCase()));
 					else
 						self.setComment(JDBCUtil.getClobString(rs.getClob("c_comment")));
 				} catch (IOException e1) {
 					self.setComment(null);
 				}
 			}
-			if(rs.getClob("c_metadataxml") == null){
+			if(rs.getClob("c_metadataxml".toUpperCase()) == null){
 				self.setMetadataxml(null);
 			}else {
 				String c_xml = null;
 				try {
 					if (dbType.equals("POSTGRESQL"))
 						c_xml = rs.getString("c_metadataxml");
+					else if (dbType.equals("SNOWFLAKE"))
+						c_xml = rs.getString("c_metadataxml".toUpperCase());
 					else
 						c_xml = JDBCUtil.getClobString(rs.getClob("c_metadataxml"));
 				} catch (IOException e1) {
@@ -234,26 +238,26 @@ class GetTermInfoConcept implements RowMapper<ConceptType> {
 		if((termInfoType.getType().equals("all"))){
 			DTOFactory factory = new DTOFactory();
 			// make sure date isnt null before converting to XMLGregorianCalendar
-			Date date = rs.getDate("update_date");
+			Date date = rs.getDate("update_date".toUpperCase());
 			if (date == null)
 				self.setUpdateDate(null);
 			else 
 				self.setUpdateDate(factory.getXMLGregorianCalendar(date.getTime())); 
 
-			date = rs.getDate("download_date");
+			date = rs.getDate("download_date".toUpperCase());
 			if (date == null)
 				self.setDownloadDate(null);
 			else 
 				self.setDownloadDate(factory.getXMLGregorianCalendar(date.getTime())); 
 
-			date = rs.getDate("import_date");
+			date = rs.getDate("import_date".toUpperCase());
 			if (date == null)
 				self.setImportDate(null);
 			else 
 				self.setImportDate(factory.getXMLGregorianCalendar(date.getTime())); 
 
-			self.setSourcesystemCd(rs.getString("sourcesystem_cd"));
-			self.setValuetypeCd(rs.getString("valuetype_cd"));
+			self.setSourcesystemCd(rs.getString("sourcesystem_cd".toUpperCase()));
+			self.setValuetypeCd(rs.getString("valuetype_cd".toUpperCase()));
 		}
 		return self;
 	}

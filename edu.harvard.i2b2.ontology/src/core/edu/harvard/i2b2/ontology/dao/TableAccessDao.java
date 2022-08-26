@@ -159,12 +159,12 @@ class geTableAccess implements RowMapper<TableAccessType> {
 	
 	public TableAccessType mapRow(ResultSet rs, int rowNum) throws SQLException {
 		TableAccessType tableAccessType = new TableAccessType();
-		tableAccessType.setTableName(rs.getString("c_table_name"));
-		tableAccessType.setTableCd(rs.getString("c_table_cd"));
-		tableAccessType.setFullName(rs.getString("c_fullname"));
-		tableAccessType.setSynonymCd(rs.getString("c_synonym_cd"));
-		tableAccessType.setVisualAttributes(rs.getString("c_visualattributes"));
-		tableAccessType.setDimCode(rs.getString("c_dimcode"));
+		tableAccessType.setTableName(rs.getString("c_table_name".toUpperCase()));
+		tableAccessType.setTableCd(rs.getString("c_table_cd".toUpperCase()));
+		tableAccessType.setFullName(rs.getString("c_fullname".toUpperCase()));
+		tableAccessType.setSynonymCd(rs.getString("c_synonym_cd".toUpperCase()));
+		tableAccessType.setVisualAttributes(rs.getString("c_visualattributes".toUpperCase()));
+		tableAccessType.setDimCode(rs.getString("c_dimcode".toUpperCase()));
 		return tableAccessType;
 	}
 };

@@ -172,25 +172,25 @@ class GetCategoriesConcept implements RowMapper<ConceptType> {
 		ConceptType child = new ConceptType();
 		//TODO fix this for all/+blob
 
-		child.setKey("\\\\" + rs.getString("c_table_cd")+ rs.getString("c_fullname")); 
-		child.setName(rs.getString("c_name"));
+		child.setKey("\\\\" + rs.getString("c_table_cd".toUpperCase())+ rs.getString("c_fullname".toUpperCase()));
+		child.setName(rs.getString("c_name".toUpperCase()));
 		if(returnType.getType().equals("core")) {
-			child.setBasecode(rs.getString("c_basecode"));
-			child.setLevel(rs.getInt("c_hlevel"));
-			child.setSynonymCd(rs.getString("c_synonym_cd"));
-			child.setVisualattributes(rs.getString("c_visualattributes"));
-			Integer totalNum = rs.getInt("c_totalnum");
+			child.setBasecode(rs.getString("c_basecode".toUpperCase()));
+			child.setLevel(rs.getInt("c_hlevel".toUpperCase()));
+			child.setSynonymCd(rs.getString("c_synonym_cd".toUpperCase()));
+			child.setVisualattributes(rs.getString("c_visualattributes".toUpperCase()));
+			Integer totalNum = rs.getInt("c_totalnum".toUpperCase());
 
 			if (obfuscatedUserFlag == false) { 
 				child.setTotalnum(totalNum);
 			}
-			child.setFacttablecolumn(rs.getString("c_facttablecolumn" ));
-			child.setTablename(rs.getString("c_tablename")); 
-			child.setColumnname(rs.getString("c_columnname")); 
-			child.setColumndatatype(rs.getString("c_columndatatype")); 
-			child.setOperator(rs.getString("c_operator")); 
-			child.setDimcode(rs.getString("c_dimcode")); 
-			child.setTooltip(rs.getString("c_tooltip"));
+			child.setFacttablecolumn(rs.getString("c_facttablecolumn".toUpperCase() ));
+			child.setTablename(rs.getString("c_tablename".toUpperCase()));
+			child.setColumnname(rs.getString("c_columnname".toUpperCase()));
+			child.setColumndatatype(rs.getString("c_columndatatype".toUpperCase()));
+			child.setOperator(rs.getString("c_operator".toUpperCase()));
+			child.setDimcode(rs.getString("c_dimcode".toUpperCase()));
+			child.setTooltip(rs.getString("c_tooltip".toUpperCase()));
 		}
 		return child;
 	}
@@ -202,12 +202,12 @@ class GetCategoriesConceptXML implements RowMapper<ConceptType> {
 		ConceptType concept = new ConceptType();
 		//			        	ResultSetMetaData rsmd = rs.getMetaData();
 		//			        	rsmd.get
-		if(rs.getClob("c_metadataxml") == null){
+		if(rs.getClob("c_metadataxml".toUpperCase()) == null){
 			concept.setMetadataxml(null);
 		}else {
 			String c_xml = null;
 			try {
-				c_xml = JDBCUtil.getClobString(rs.getClob("c_metadataxml"));
+				c_xml = JDBCUtil.getClobString(rs.getClob("c_metadataxml".toUpperCase()));
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 			}
@@ -232,11 +232,11 @@ class GetCategoriesConceptXML implements RowMapper<ConceptType> {
 			}
 		}	
 
-		if(rs.getClob("c_comment") == null){
+		if(rs.getClob("c_comment".toUpperCase()) == null){
 			concept.setComment(null);
 		}else {
 			try {
-				concept.setComment(JDBCUtil.getClobString(rs.getClob("c_comment")));
+				concept.setComment(JDBCUtil.getClobString(rs.getClob("c_comment".toUpperCase())));
 			} catch (IOException e) {
 				concept.setComment(null);
 			}

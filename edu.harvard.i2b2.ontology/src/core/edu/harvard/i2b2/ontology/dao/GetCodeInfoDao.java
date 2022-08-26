@@ -293,51 +293,51 @@ class GetExpandedConcept implements RowMapper<ExpandedConceptType> {
 		ExpandedConceptType entry = new ExpandedConceptType();
 		//TODO fix this for all/+blob
 
-		entry.setName(rs.getString("c_name"));
-		entry.setTableCd(rs.getString("tablecd"));
+		entry.setName(rs.getString("c_name".toUpperCase()));
+		entry.setTableCd(rs.getString("tablecd".toUpperCase()));
 		if(vocabType.getType().equals("core")) {
-			entry.setKey(rs.getString("c_fullname")); 
-			entry.setBasecode(rs.getString("c_basecode"));
-			entry.setLevel(rs.getInt("c_hlevel"));
-			entry.setSynonymCd(rs.getString("c_synonym_cd"));
-			entry.setVisualattributes(rs.getString("c_visualattributes"));
-			Integer totalNum = rs.getInt("c_totalnum");
+			entry.setKey(rs.getString("c_fullname".toUpperCase()));
+			entry.setBasecode(rs.getString("c_basecode".toUpperCase()));
+			entry.setLevel(rs.getInt("c_hlevel".toUpperCase()));
+			entry.setSynonymCd(rs.getString("c_synonym_cd".toUpperCase()));
+			entry.setVisualattributes(rs.getString("c_visualattributes".toUpperCase()));
+			Integer totalNum = rs.getInt("c_totalnum".toUpperCase());
 			if (obfuscatedUserFlag == false) { 
 				entry.setTotalnum(totalNum);
 			}
-			entry.setFacttablecolumn(rs.getString("c_facttablecolumn" ));
-			entry.setTablename(rs.getString("c_tablename")); 
-			entry.setColumnname(rs.getString("c_columnname")); 
-			entry.setColumndatatype(rs.getString("c_columndatatype")); 
-			entry.setOperator(rs.getString("c_operator")); 
-			entry.setDimcode(rs.getString("c_dimcode"));
-			entry.setTooltip(rs.getString("c_tooltip"));
+			entry.setFacttablecolumn(rs.getString("c_facttablecolumn".toUpperCase() ));
+			entry.setTablename(rs.getString("c_tablename".toUpperCase()));
+			entry.setColumnname(rs.getString("c_columnname".toUpperCase()));
+			entry.setColumndatatype(rs.getString("c_columndatatype".toUpperCase()));
+			entry.setOperator(rs.getString("c_operator".toUpperCase()));
+			entry.setDimcode(rs.getString("c_dimcode".toUpperCase()));
+			entry.setTooltip(rs.getString("c_tooltip".toUpperCase()));
 
 		}
 
 		if((vocabType.getType().equals("all"))){
 			DTOFactory factory = new DTOFactory();
 			// make sure date isnt null before converting to XMLGregorianCalendar
-			Date date = rs.getDate("update_date");
+			Date date = rs.getDate("update_date".toUpperCase());
 			if (date == null)
 				entry.setUpdateDate(null);
 			else 
 				entry.setUpdateDate(factory.getXMLGregorianCalendar(date.getTime())); 
 
-			date = rs.getDate("download_date");
+			date = rs.getDate("download_date".toUpperCase());
 			if (date == null)
 				entry.setDownloadDate(null);
 			else 
 				entry.setDownloadDate(factory.getXMLGregorianCalendar(date.getTime())); 
 
-			date = rs.getDate("import_date");
+			date = rs.getDate("import_date".toUpperCase());
 			if (date == null)
 				entry.setImportDate(null);
 			else 
 				entry.setImportDate(factory.getXMLGregorianCalendar(date.getTime())); 
 
-			entry.setSourcesystemCd(rs.getString("sourcesystem_cd"));
-			entry.setValuetypeCd(rs.getString("valuetype_cd"));
+			entry.setSourcesystemCd(rs.getString("sourcesystem_cd".toUpperCase()));
+			entry.setValuetypeCd(rs.getString("valuetype_cd".toUpperCase()));
 		}
 
 		return entry;

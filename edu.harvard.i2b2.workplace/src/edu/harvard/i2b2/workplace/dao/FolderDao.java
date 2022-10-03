@@ -1708,7 +1708,7 @@ class mapToShareAccess implements RowMapper<String> {
 	@Override
 	public String mapRow(ResultSet rs, int rowNum) throws SQLException {
 
-		String resultRow = "\\tablename=" +  rs.getString("c_table_name") + "\\share_id=" + rs.getString("c_share_id") + "\\user_id=" + rs.getString("c_user_id") ;
+		String resultRow = "\\tablename=" +  rs.getString("c_table_name".toUpperCase()) + "\\share_id=" + rs.getString("c_share_id".toUpperCase()) + "\\user_id=" + rs.getString("c_user_id".toUpperCase()) ;
 
 		return resultRow;
 	}
@@ -1720,7 +1720,7 @@ class mapTocheckAccess implements RowMapper<String> {
 	//	@Override
 	public String mapRow(ResultSet rs, int rowNum) throws SQLException {
 
-		String resultRow = "\\share_id=" + rs.getString("c_share_id") + "\\user_id=" + rs.getString("c_user_id") + "\\type=" + rs.getString("c_work_xml_i2b2_type") ;
+		String resultRow = "\\share_id=" + rs.getString("c_share_id".toUpperCase()) + "\\user_id=" + rs.getString("c_user_id".toUpperCase()) + "\\type=" + rs.getString("c_work_xml_i2b2_type".toUpperCase()) ;
 
 		return resultRow;
 	}
@@ -1731,9 +1731,9 @@ class mapToFolderXML implements RowMapper<FolderType> {
 	@Override
 	public FolderType mapRow(ResultSet rs, int rowNum) throws SQLException {
 		FolderType child = new FolderType();
-		child.setName(rs.getString("c_name"));
+		child.setName(rs.getString("c_name".toUpperCase()));
 		//	            child.setTooltip(rs.getString("c_tooltip"));
-		child.setWorkXmlI2B2Type(rs.getString("c_work_xml_i2b2_type"));
+		child.setWorkXmlI2B2Type(rs.getString("c_work_xml_i2b2_type".toUpperCase()));
 
 		return child;
 	}
@@ -1743,7 +1743,7 @@ class mapToFolderXML implements RowMapper<FolderType> {
 class getFolderTableMapper implements RowMapper<String> {
 	@Override
 	public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-		String str =  "\\\\" + rs.getString("c_table_cd") + "\\" + rs.getString("c_table_name");
+		String str =  "\\\\" + rs.getString("c_table_cd".toUpperCase()) + "\\" + rs.getString("c_table_name".toUpperCase());
 		return str;
 	}
 
@@ -1753,18 +1753,18 @@ class getTableMapper implements RowMapper<DblookupType> {
 	@Override
 	public DblookupType mapRow(ResultSet rs, int rowNum) throws SQLException {
 		DblookupType dblu = new DblookupType();
-		dblu.setDomainId(rs.getString("c_domain_id"));
-		dblu.setProjectPath(rs.getString("c_project_path"));
-		dblu.setOwnerId(rs.getString("c_owner_id"));
-		dblu.setDbFullschema(rs.getString("c_db_fullschema"));
-		dblu.setDbDatasource(rs.getString("c_db_datasource"));
-		dblu.setDbServertype(rs.getString("c_db_servertype"));
-		dblu.setDbNicename(rs.getString("c_db_nicename"));
-		dblu.setDbTooltip(rs.getString("c_db_tooltip"));
-		dblu.setComment(rs.getString("c_comment"));
-		dblu.setEntryDate(rs.getString("c_entry_date"));
-		dblu.setChangeDate(rs.getString("c_change_date"));
-		dblu.setStatusCd(rs.getString("c_status_cd"));
+		dblu.setDomainId(rs.getString("c_domain_id".toUpperCase()));
+		dblu.setProjectPath(rs.getString("c_project_path".toUpperCase()));
+		dblu.setOwnerId(rs.getString("c_owner_id".toUpperCase()));
+		dblu.setDbFullschema(rs.getString("c_db_fullschema".toUpperCase()));
+		dblu.setDbDatasource(rs.getString("c_db_datasource".toUpperCase()));
+		dblu.setDbServertype(rs.getString("c_db_servertype".toUpperCase()));
+		dblu.setDbNicename(rs.getString("c_db_nicename".toUpperCase()));
+		dblu.setDbTooltip(rs.getString("c_db_tooltip".toUpperCase()));
+		dblu.setComment(rs.getString("c_comment".toUpperCase()));
+		dblu.setEntryDate(rs.getString("c_entry_date".toUpperCase()));
+		dblu.setChangeDate(rs.getString("c_change_date".toUpperCase()));
+		dblu.setStatusCd(rs.getString("c_status_cd".toUpperCase()));
 		return dblu;
 	}
 }
@@ -1799,44 +1799,47 @@ class GetFolderMapper implements RowMapper<FolderType> {
 		//TODO fix this for all/+blob
 		if (tableCd == null){
 			//	            	child.setHierarchy("\\\\" + rs.getString("c_table_cd")+ rs.getString("c_hierarchy")); 
-			child.setIndex("\\\\" + rs.getString("c_table_cd")+ "\\" + rs.getString("c_index")); 
+			child.setIndex("\\\\" + rs.getString("c_table_cd".toUpperCase())+ "\\" + rs.getString("c_index".toUpperCase()));
 		}
 		else{
 			//	            	child.setHierarchy("\\\\" + tableCd + rs.getString("c_hierarchy")); 
-			child.setIndex("\\\\" + tableCd + "\\" + rs.getString("c_index")); 
+			child.setIndex("\\\\" + tableCd + "\\" + rs.getString("c_index".toUpperCase()));
 		}
 		//      log.debug("getMapper: " + child.getIndex());
-		child.setName(rs.getString("c_name"));
+		child.setName(rs.getString("c_name".toUpperCase()));
 
-		child.setProtectedAccess(rs.getString("c_protected_access"));
+		child.setProtectedAccess(rs.getString("c_protected_access".toUpperCase()));
 
 		if(!(type.equals("default"))) {
-			child.setUserId(rs.getString("c_user_id"));
+			child.setUserId(rs.getString("c_user_id".toUpperCase()));
 			//         	child.setHlevel(rs.getInt("c_hlevel"));
-			child.setGroupId(rs.getString("c_group_id"));
-			child.setVisualAttributes(rs.getString("c_visualattributes"));
+			child.setGroupId(rs.getString("c_group_id".toUpperCase()));
+			child.setVisualAttributes(rs.getString("c_visualattributes".toUpperCase()));
 			//         	child.setIndex(rs.getString("c_index"));
-			child.setParentIndex(rs.getString("c_parent_index"));
-			child.setShareId(rs.getString("c_share_id" ));
+			child.setParentIndex(rs.getString("c_parent_index".toUpperCase()));
+			child.setShareId(rs.getString("c_share_id".toUpperCase() ));
 
 			// Building tooltip for the response 
 			// eg. project name - cname \n tooltip from db
-			String toolTip = rs.getString("c_group_id") + " - " + rs.getString("c_name") ;
-			if(rs.getString("c_tooltip")!=null && !rs.getString("c_tooltip").isEmpty()){
-				toolTip = toolTip + "\n" + rs.getString("c_tooltip"); 
+			String toolTip = rs.getString("c_group_id".toUpperCase()) + " - " + rs.getString("c_name".toUpperCase()) ;
+			if(rs.getString("c_tooltip".toUpperCase())!=null && !rs.getString("c_tooltip".toUpperCase()).isEmpty()){
+				toolTip = toolTip + "\n" + rs.getString("c_tooltip".toUpperCase());
 			}
 
 			//child.setTooltip(rs.getString("c_tooltip"));
 			child.setTooltip(toolTip);
 
 		}if(isBlob == true){
-			child.setWorkXmlI2B2Type(rs.getString("c_work_xml_i2b2_type"));
+			child.setWorkXmlI2B2Type(rs.getString("c_work_xml_i2b2_type".toUpperCase()));
 
 			String c_xml = null;
 			try {
 				if (dbType.equals("POSTGRESQL"))
 				{
 					c_xml = rs.getString("c_work_xml");
+				} else if (dbType.equals("SNOWFLAKE"))
+				{
+					c_xml = rs.getString("c_work_xml".toUpperCase());
 				} else
 				{
 					c_xml = rs.getString("c_work_xml");  //JDBCUtil.getClobString(rs.getClob("c_work_xml"));
@@ -1880,7 +1883,7 @@ class GetFolderMapper implements RowMapper<FolderType> {
 			} 
 
 			try {
-				Clob xml_schema_clob = rs.getClob("c_work_xml_schema");
+				Clob xml_schema_clob = rs.getClob("c_work_xml_schema".toUpperCase());
 				if (xml_schema_clob != null){
 					c_xml = JDBCUtil.getClobString(xml_schema_clob);
 					if ((c_xml!=null)&&(c_xml.trim().length()>0)&&(!c_xml.equals("(null)")))
@@ -1921,19 +1924,19 @@ class GetFolderMapper implements RowMapper<FolderType> {
 		if((type.equals("all"))){
 			DTOFactory factory = new DTOFactory();
 			// make sure date isnt null before converting to XMLGregorianCalendar
-			Date date = rs.getDate("c_entry_date");
+			Date date = rs.getDate("c_entry_date".toUpperCase());
 			if (date == null)
 				child.setEntryDate(null);
 			else 
 				child.setEntryDate(factory.getXMLGregorianCalendar(date.getTime())); 
 
-			date = rs.getDate("c_change_date");
+			date = rs.getDate("c_change_date".toUpperCase());
 			if (date == null)
 				child.setChangeDate(null);
 			else 
 				child.setChangeDate(factory.getXMLGregorianCalendar(date.getTime())); 
 
-			child.setStatusCd(rs.getString("c_status_cd"));
+			child.setStatusCd(rs.getString("c_status_cd".toUpperCase()));
 
 		}
 		return child;

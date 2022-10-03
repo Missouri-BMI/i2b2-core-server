@@ -1109,6 +1109,10 @@ public class PMDbDao extends JdbcDaoSupport {
 			sql =  "select count(*) as badlogin from pm_user_login where user_id = ? and " +
 					" attempt_cd = 'BADPASSWORD' and " +
 					"(entry_date + cast('" + waittime + " minutes' as interval))  >= now() ";
+		else if (database.equalsIgnoreCase("Snowflake"))
+			sql =  "select count(*) as badlogin from pm_user_login where user_id = ? and " +
+					" attempt_cd = 'BADPASSWORD' and " +
+					"dateadd(minute, " + waittime + ", entry_date)  >= CURRENT_TIMESTAMP ";
 
 		int results = jt.queryForObject(sql, Integer.class, userId);
 
@@ -1133,6 +1137,9 @@ public class PMDbDao extends JdbcDaoSupport {
 		else if (database.equalsIgnoreCase("postgresql"))
 			addSql = "insert into pm_user_login " + 
 					"(user_id, attempt_cd, changeby_char, entry_date, status_cd) values (?,?,?,now(),'A')";
+		else if (database.equalsIgnoreCase("Snowflake"))
+			addSql = "insert into pm_user_login " +
+					"(user_id, attempt_cd, changeby_char, entry_date, status_cd) values (?,?,?,current_timestamp,'A')";
 
 		int numRowsAdded =
 				jt.update(addSql, 
@@ -1157,6 +1164,9 @@ public class PMDbDao extends JdbcDaoSupport {
 		else if (database.equalsIgnoreCase("postgresql"))
 			addSql = "insert into pm_user_session " + 
 					"(user_id, session_id, changeby_char, entry_date, expired_date) values (?,?,?,now(),  now() + interval '" + timeout + " millisecond')";
+		else if (database.equalsIgnoreCase("Snowflake"))
+			addSql = "insert into pm_user_session " +
+					"(user_id, session_id, changeby_char, entry_date, expired_date) values (?,?,?, current_timestamp, DATEADD(ms," + timeout + ",current_timestamp))";
 
 		Calendar now = Calendar.getInstance();
 		now.add(Calendar.MILLISECOND, timeout);
@@ -2529,9 +2539,9 @@ class getEnvironmentParams implements RowMapper<HiveParamData> {
 		HiveParamData eData = new HiveParamData();
 
 
-		eData.setDomain(rs.getString("domain_id"));
-		eData.setName(rs.getString("param_name_cd"));
-		eData.setValue(rs.getString("value"));
+		eData.setDomain(rs.getString("domain_id".toUpperCase()));
+		eData.setName(rs.getString("param_name_cd".toUpperCase()));
+		eData.setValue(rs.getString("value".toUpperCase()));
 
 		return eData;
 	}
@@ -2557,12 +2567,12 @@ class getProject implements RowMapper<ProjectType> {
 
 		ProjectType rData = new ProjectType();
 		DTOFactory factory = new DTOFactory();
-		rData.setKey(rs.getString("project_key"));
-		rData.setName(rs.getString("project_name"));
-		rData.setPath(rs.getString("project_path"));
-		rData.setDescription(rs.getString("project_description"));
-		rData.setId(rs.getString("project_id"));
-		rData.setWiki(rs.getString("project_wiki"));
+		rData.setKey(rs.getString("project_key".toUpperCase()));
+		rData.setName(rs.getString("project_name".toUpperCase()));
+		rData.setPath(rs.getString("project_path".toUpperCase()));
+		rData.setDescription(rs.getString("project_description".toUpperCase()));
+		rData.setId(rs.getString("project_id".toUpperCase()));
+		rData.setWiki(rs.getString("project_wiki".toUpperCase()));
 		return rData;
 	} 
 }
@@ -2572,12 +2582,12 @@ class getCell implements RowMapper<CellDataType> {
 	public CellDataType mapRow(ResultSet rs, int rowNum) throws SQLException {
 		CellDataType rData = new CellDataType();
 		DTOFactory factory = new DTOFactory();
-		rData.setId(rs.getString("cell_id"));
-		rData.setName(rs.getString("name"));
-		rData.setProjectPath(rs.getString("project_path"));
-		rData.setCanOverride(rs.getBoolean("can_override"));
-		rData.setMethod(rs.getString("method_cd"));
-		rData.setUrl(rs.getString("url"));
+		rData.setId(rs.getString("cell_id".toUpperCase()));
+		rData.setName(rs.getString("name".toUpperCase()));
+		rData.setProjectPath(rs.getString("project_path".toUpperCase()));
+		rData.setCanOverride(rs.getBoolean("can_override".toUpperCase()));
+		rData.setMethod(rs.getString("method_cd".toUpperCase()));
+		rData.setUrl(rs.getString("url".toUpperCase()));
 		return rData;
 	} 
 }
@@ -2587,18 +2597,18 @@ class getProjectRequest implements RowMapper<ProjectRequestType> {
 	public ProjectRequestType mapRow(ResultSet rs, int rowNum) throws SQLException {
 		ProjectRequestType rData = new ProjectRequestType();
 		DTOFactory factory = new DTOFactory();
-		rData.setId(Integer.toString(rs.getInt("id")));
-		rData.setProjectId(rs.getString("project_id"));
-		rData.setTitle(rs.getString("title"));
-		rData.setSubmitChar(rs.getString("submit_char"));
-		Date date = rs.getDate("entry_date");
+		rData.setId(Integer.toString(rs.getInt("id".toUpperCase())));
+		rData.setProjectId(rs.getString("project_id".toUpperCase()));
+		rData.setTitle(rs.getString("title".toUpperCase()));
+		rData.setSubmitChar(rs.getString("submit_char".toUpperCase()));
+		Date date = rs.getDate("entry_date".toUpperCase());
 
 		if (date == null)
 			rData.setEntryDate(null);
 		else 
 			rData.setEntryDate(long2Gregorian(date.getTime())); 
 
-		rData.setRequestXml(rs.getString("request_xml"));
+		rData.setRequestXml(rs.getString("request_xml".toUpperCase()));
 
 		//rData.setRequestXml(rs.getClob("request_xml"));
 		return rData;
@@ -2622,18 +2632,18 @@ class getApproval implements RowMapper<ApprovalType> {
 	public ApprovalType mapRow(ResultSet rs, int rowNum) throws SQLException {
 		ApprovalType rData = new ApprovalType();
 		DTOFactory factory = new DTOFactory();
-		rData.setId(rs.getString("approval_id"));
-		rData.setName(rs.getString("approval_name"));
-		rData.setDescription(rs.getString("approval_description"));
-		rData.setObjectCd(rs.getString("object_cd"));
-		Date date = rs.getDate("approval_activation_date");
+		rData.setId(rs.getString("approval_id".toUpperCase()));
+		rData.setName(rs.getString("approval_name".toUpperCase()));
+		rData.setDescription(rs.getString("approval_description".toUpperCase()));
+		rData.setObjectCd(rs.getString("object_cd".toUpperCase()));
+		Date date = rs.getDate("approval_activation_date".toUpperCase());
 
 		if (date == null)
 			rData.setActivationDate(null);
 		else 
 			rData.setActivationDate(long2Gregorian(date.getTime())); 
 
-		date = rs.getDate("approval_expiration_date");
+		date = rs.getDate("approval_expiration_date".toUpperCase());
 		if (date == null)
 			rData.setExpirationDate(null);
 		else 
@@ -2659,10 +2669,10 @@ class getParam implements RowMapper<ParamType> {
 	@Override
 	public ParamType mapRow(ResultSet rs, int rowNum) throws SQLException {	
 		ParamType eData = new ParamType();
-		eData.setName(rs.getString("param_name_cd"));
-		eData.setValue(rs.getString("value"));
-		eData.setId(rs.getInt("id"));
-		eData.setDatatype(rs.getString("datatype_cd"));
+		eData.setName(rs.getString("param_name_cd".toUpperCase()));
+		eData.setValue(rs.getString("value".toUpperCase()));
+		eData.setId(rs.getInt("id".toUpperCase()));
+		eData.setDatatype(rs.getString("datatype_cd".toUpperCase()));
 		return eData;
 	} 
 }
@@ -2691,13 +2701,13 @@ class getGlobal implements RowMapper<GlobalDataType> {
 		GlobalDataType eData = new GlobalDataType();
 
 		ParamType param = new ParamType();
-		param.setId(rs.getInt("id"));
-		param.setName(rs.getString("param_name_cd"));
-		param.setValue(rs.getString("value"));
-		param.setDatatype(rs.getString("datatype_cd"));
+		param.setId(rs.getInt("id".toUpperCase()));
+		param.setName(rs.getString("param_name_cd".toUpperCase()));
+		param.setValue(rs.getString("value".toUpperCase()));
+		param.setDatatype(rs.getString("datatype_cd".toUpperCase()));
 		eData.getParam().add(param);
-		eData.setProjectPath(rs.getString("project_path"));
-		eData.setCanOverride(rs.getBoolean("can_override"));
+		eData.setProjectPath(rs.getString("project_path".toUpperCase()));
+		eData.setCanOverride(rs.getBoolean("can_override".toUpperCase()));
 		return eData;
 	} 
 }
@@ -2706,11 +2716,11 @@ class getUserParams implements RowMapper<UserParamData> {
 	@Override
 	public UserParamData mapRow(ResultSet rs, int rowNum) throws SQLException {
 		UserParamData eData = new UserParamData();
-		eData.setId(rs.getInt("id"));
-		eData.setDatatype(rs.getString("datatype_cd"));
-		eData.setUser(rs.getString("user_id"));
-		eData.setName(rs.getString("param_name_cd"));
-		eData.setValue(rs.getString("value"));
+		eData.setId(rs.getInt("id".toUpperCase()));
+		eData.setDatatype(rs.getString("datatype_cd".toUpperCase()));
+		eData.setUser(rs.getString("user_id".toUpperCase()));
+		eData.setName(rs.getString("param_name_cd".toUpperCase()));
+		eData.setValue(rs.getString("value".toUpperCase()));
 		return eData;
 	} 
 }
@@ -2719,10 +2729,10 @@ class getProjectUserParams implements RowMapper<ProjectUserParamData> {
 	@Override
 	public ProjectUserParamData mapRow(ResultSet rs, int rowNum) throws SQLException {
 		ProjectUserParamData eData = new ProjectUserParamData();
-		eData.setProject(rs.getString("project_path"));
-		eData.setUser(rs.getString("user_id"));
-		eData.setName(rs.getString("param_name"));
-		eData.setValue(rs.getString("value"));
+		eData.setProject(rs.getString("project_path".toUpperCase()));
+		eData.setUser(rs.getString("user_id".toUpperCase()));
+		eData.setName(rs.getString("param_name".toUpperCase()));
+		eData.setValue(rs.getString("value".toUpperCase()));
 
 		return eData;
 	} 
@@ -2733,8 +2743,8 @@ class getProjectParams implements RowMapper<ParamType> {
 	public ParamType mapRow(ResultSet rs, int rowNum) throws SQLException {
 		ParamType eData = new ParamType();
 		//eData.setProject(rs.getString("project_path"));
-		eData.setName(rs.getString("param_name_cd"));
-		eData.setValue(rs.getString("value"));
+		eData.setName(rs.getString("param_name_cd".toUpperCase()));
+		eData.setValue(rs.getString("value".toUpperCase()));
 
 		return eData;
 	} 
@@ -2746,15 +2756,15 @@ class getSession implements RowMapper<SessionData> {
 		SessionData rData = new SessionData();
 		//				DTOFactory factory = new DTOFactory();
 
-		rData.setSessionID(rs.getString("session_id"));
+		rData.setSessionID(rs.getString("session_id".toUpperCase()));
 
-		Date date = rs.getTimestamp("expired_date");
+		Date date = rs.getTimestamp("expired_date".toUpperCase());
 		if (date == null)
 			rData.setExpiredDate(null);
 		else 
 			rData.setExpiredDate(date); 
 
-		date = rs.getTimestamp("entry_date");
+		date = rs.getTimestamp("entry_date".toUpperCase());
 		if (date == null)
 			rData.setIssuedDate(null);
 		else 
@@ -2771,15 +2781,15 @@ class getUserLogin implements RowMapper<SessionData> {
 		SessionData rData = new SessionData();
 		//				DTOFactory factory = new DTOFactory();
 
-		rData.setSessionID(rs.getString("session_id"));
+		rData.setSessionID(rs.getString("session_id".toUpperCase()));
 
-		Date date = rs.getTimestamp("expired_date");
+		Date date = rs.getTimestamp("expired_date".toUpperCase());
 		if (date == null)
 			rData.setExpiredDate(null);
 		else 
 			rData.setExpiredDate(date); 
 
-		date = rs.getTimestamp("entry_date");
+		date = rs.getTimestamp("entry_date".toUpperCase());
 		if (date == null)
 			rData.setIssuedDate(null);
 		else 
@@ -2794,9 +2804,9 @@ class getRole implements RowMapper<RoleType> {
 	@Override
 	public RoleType mapRow(ResultSet rs, int rowNum) throws SQLException {
 		RoleType rData = new RoleType();
-		rData.setProjectId(rs.getString("project_id"));
-		rData.setUserName(rs.getString("user_id"));
-		rData.setRole(rs.getString("user_role_cd"));
+		rData.setProjectId(rs.getString("project_id".toUpperCase()));
+		rData.setUserName(rs.getString("user_id".toUpperCase()));
+		rData.setRole(rs.getString("user_role_cd".toUpperCase()));
 
 		return rData;
 	} 
@@ -2807,11 +2817,11 @@ class getEnvironment implements RowMapper<ConfigureType> {
 	public ConfigureType mapRow(ResultSet rs, int rowNum) throws SQLException {
 		DTOFactory factory = new DTOFactory();
 		ConfigureType eData = new ConfigureType();
-		eData.setActive(rs.getBoolean("active"));
-		eData.setDomainId(rs.getString("domain_id"));
-		eData.setDomainName(rs.getString("domain_name"));
-		eData.setHelpURL(rs.getString("helpurl"));
-		eData.setEnvironment(rs.getString("environment_cd"));
+		eData.setActive(rs.getBoolean("active".toUpperCase()));
+		eData.setDomainId(rs.getString("domain_id".toUpperCase()));
+		eData.setDomainName(rs.getString("domain_name".toUpperCase()));
+		eData.setHelpURL(rs.getString("helpurl".toUpperCase()));
+		eData.setEnvironment(rs.getString("environment_cd".toUpperCase()));
 
 		return eData;
 	} 
@@ -2827,11 +2837,11 @@ class getUser implements RowMapper<UserType> {
 	@Override
 	public UserType mapRow(ResultSet rs, int rowNum) throws SQLException {
 		UserType userData = new UserType();
-		userData.setFullName(rs.getString("full_name"));
-		userData.setUserName(rs.getString("user_id"));
+		userData.setFullName(rs.getString("full_name".toUpperCase()));
+		userData.setUserName(rs.getString("user_id".toUpperCase()));
 		try {
 			//TODO MM fix admin
-			String isAdmin = rs.getString("user_role_cd");
+			String isAdmin = rs.getString("user_role_cd".toUpperCase());
 			if ((isAdmin != null && isAdmin.equalsIgnoreCase("ADMIN")))
 			userData.setIsAdmin(true);
 			else
@@ -2843,10 +2853,10 @@ class getUser implements RowMapper<UserType> {
 		}
 		if (includePassword) {
 			PasswordType pass = new PasswordType();
-			pass.setValue(rs.getString("password"));
+			pass.setValue(rs.getString("password".toUpperCase()));
 			userData.setPassword(pass);
 		}
-		userData.setEmail(rs.getString("email"));
+		userData.setEmail(rs.getString("email".toUpperCase()));
 
 		return userData;
 	} 
@@ -2857,8 +2867,8 @@ class getUserLoginAttempt implements RowMapper<UserLoginType> {
 	public UserLoginType mapRow(ResultSet rs, int rowNum) throws SQLException {
 		DTOFactory factory = new DTOFactory();
 		UserLoginType userData = new UserLoginType();
-		userData.setAttempt(rs.getString("attenpt_cd"));
-		userData.setUserName(rs.getString("user_id"));
+		userData.setAttempt(rs.getString("attenpt_cd".toUpperCase()));
+		userData.setUserName(rs.getString("user_id".toUpperCase()));
 
 		return userData;
 	} 

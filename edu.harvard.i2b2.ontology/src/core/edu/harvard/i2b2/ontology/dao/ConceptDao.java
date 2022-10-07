@@ -889,9 +889,9 @@ public class ConceptDao extends JdbcDaoSupport {
 									public ConceptType mapRow(ResultSet rs, int rowNum) throws SQLException {
 										ConceptType category = new ConceptType();	 
 
-										category.setKey(rs.getString("c_fullname".toUpperCase()));
-										category.setLevel(rs.getInt("c_hlevel".toUpperCase()));
-										category.setName(rs.getString("c_name".toUpperCase()));
+										category.setKey(rs.getString("c_fullname"));
+										category.setLevel(rs.getInt("c_hlevel"));
+										category.setName(rs.getString("c_name"));
 										return category;
 									}
 								}/*new GetConceptParentMapper()*/);
@@ -2124,22 +2124,22 @@ class GetConceptNodeMapper implements RowMapper<ConceptType> {
 	@Override
 	public ConceptType mapRow(ResultSet rs, int rowNum) throws SQLException {
 		ConceptType child = new ConceptType();	          
-		child.setName(rs.getString("c_name".toUpperCase()));
+		child.setName(rs.getString("c_name"));
 		if(!(node.getType().equals("default"))){
-			child.setBasecode(rs.getString("c_basecode".toUpperCase()));
-			child.setLevel(rs.getInt("c_hlevel".toUpperCase()));
+			child.setBasecode(rs.getString("c_basecode"));
+			child.setLevel(rs.getInt("c_hlevel"));
 			if (node.getParent().equals("terminfo")) {
-				child.setProtectedAccess(rs.getString("c_protected_access".toUpperCase()));
-				child.setOntologyProtection(rs.getString("c_ontology_protection".toUpperCase()));
+				child.setProtectedAccess(rs.getString("c_protected_access"));
+				child.setOntologyProtection(rs.getString("c_ontology_protection"));
 			}
 			// cover get Code Info case where we dont know the vocabType.category apriori
 			if ((node.getNode() != null) && !node.getNode().equals("@"))
-				child.setKey("\\\\" + node.getNode() + rs.getString("c_fullname".toUpperCase()));
+				child.setKey("\\\\" + node.getNode() + rs.getString("c_fullname"));
 			else
-				child.setKey("\\\\" + rs.getString("tableCd".toUpperCase()) + rs.getString("c_fullname".toUpperCase()));
-			child.setSynonymCd(rs.getString("c_synonym_cd".toUpperCase()));
-			child.setVisualattributes(rs.getString("c_visualattributes".toUpperCase()));
-			Integer totalNumValue = rs.getInt("c_totalnum".toUpperCase());
+				child.setKey("\\\\" + rs.getString("tableCd") + rs.getString("c_fullname"));
+			child.setSynonymCd(rs.getString("c_synonym_cd"));
+			child.setVisualattributes(rs.getString("c_visualattributes"));
+			Integer totalNumValue = rs.getInt("c_totalnum");
 			boolean nullFlag = rs.wasNull();
 
 			/*
@@ -2158,15 +2158,15 @@ class GetConceptNodeMapper implements RowMapper<ConceptType> {
 			if ( ofuscatedUserFlag == false && nullFlag == false) { 
 				child.setTotalnum(totalNumValue);
 			}
-			child.setTooltip(rs.getString("c_tooltip".toUpperCase()));
-			child.setValuetypeCd(rs.getString("valuetype_cd".toUpperCase()));
+			child.setTooltip(rs.getString("c_tooltip"));
+			child.setValuetypeCd(rs.getString("valuetype_cd"));
 			if(!(node.getType().equals("limited"))) {
-				child.setFacttablecolumn(rs.getString("c_facttablecolumn".toUpperCase() ));
-				child.setTablename(rs.getString("c_tablename".toUpperCase()));
-				child.setColumnname(rs.getString("c_columnname".toUpperCase()));
-				child.setColumndatatype(rs.getString("c_columndatatype".toUpperCase()));
-				child.setOperator(rs.getString("c_operator".toUpperCase()));
-				child.setDimcode(rs.getString("c_dimcode".toUpperCase()));
+				child.setFacttablecolumn(rs.getString("c_facttablecolumn"));
+				child.setTablename(rs.getString("c_tablename"));
+				child.setColumnname(rs.getString("c_columnname"));
+				child.setColumndatatype(rs.getString("c_columndatatype"));
+				child.setOperator(rs.getString("c_operator"));
+				child.setDimcode(rs.getString("c_dimcode"));
 			}
 		}
 		if(node.isBlob() == true){
@@ -2180,10 +2180,10 @@ class GetConceptNodeMapper implements RowMapper<ConceptType> {
 				}
 				else if (dbType.equals("SNOWFLAKE"))
 				{
-					if(rs.getString("c_comment".toUpperCase()) == null)
+					if(rs.getString("c_comment") == null)
 						child.setComment(null);
 					else
-						child.setComment(rs.getString("c_comment".toUpperCase()));
+						child.setComment(rs.getString("c_comment"));
 				}
 				else {
 
@@ -2202,7 +2202,7 @@ class GetConceptNodeMapper implements RowMapper<ConceptType> {
 				if (dbType.equals("POSTGRESQL"))
 					c_xml = rs.getString("c_metadataxml");
 				else if (dbType.equals("SNOWFLAKE"))
-					c_xml = rs.getString("c_metadataxml".toUpperCase());
+					c_xml = rs.getString("c_metadataxml");
 				else if (rs.getClob("c_metadataxml") != null)
 					c_xml = JDBCUtil.getClobString(rs.getClob("c_metadataxml"));
 			} catch (IOException e) {
@@ -2237,25 +2237,25 @@ class GetConceptNodeMapper implements RowMapper<ConceptType> {
 		if((node.getType().equals("all"))){
 			DTOFactory factory = new DTOFactory();
 			// make sure date isnt null before converting to XMLGregorianCalendar
-			Date date = rs.getDate("update_date".toUpperCase());
+			Date date = rs.getDate("update_date");
 			if (date == null)
 				child.setUpdateDate(null);
 			else 
 				child.setUpdateDate(factory.getXMLGregorianCalendar(date.getTime())); 
 
-			date = rs.getDate("download_date".toUpperCase());
+			date = rs.getDate("download_date");
 			if (date == null)
 				child.setDownloadDate(null);
 			else 
 				child.setDownloadDate(factory.getXMLGregorianCalendar(date.getTime())); 
 
-			date = rs.getDate("import_date".toUpperCase());
+			date = rs.getDate("import_date");
 			if (date == null)
 				child.setImportDate(null);
 			else 
 				child.setImportDate(factory.getXMLGregorianCalendar(date.getTime())); 
 
-			child.setSourcesystemCd(rs.getString("sourcesystem_cd".toUpperCase()));
+			child.setSourcesystemCd(rs.getString("sourcesystem_cd"));
 
 		}
 		return child;
@@ -2270,9 +2270,9 @@ class GetConceptNameMapper implements RowMapper<ConceptType> {
 	public ConceptType mapRow(ResultSet rs, int rowNum) throws SQLException {
 		ConceptType category = new ConceptType();	 
 
-		category.setTablename(rs.getString("c_table_name".toUpperCase()));
-		category.setKey(rs.getString("c_fullname".toUpperCase()));
-		category.setName(rs.getString("c_name".toUpperCase()));
+		category.setTablename(rs.getString("c_table_name"));
+		category.setKey(rs.getString("c_fullname"));
+		category.setName(rs.getString("c_name"));
 		return category;
 	}
 }
@@ -2283,7 +2283,7 @@ class GetConceptParentMapper implements RowMapper<ConceptType> {
 		ConceptType category = new ConceptType();	 
 
 		//category.setLevel(rs.getInt("c_hevel"));
-		category.setName(rs.getString("c_name".toUpperCase()));
+		category.setName(rs.getString("c_name"));
 		return category;
 	}
 }
@@ -2313,29 +2313,29 @@ class GetConceptFullNameMapper implements RowMapper<ConceptType> {
 	public ConceptType mapRow(ResultSet rs, int rowNum) throws SQLException {
 		ConceptType child = new ConceptType();
 		//TODO fix this for all
-		child.setKey("\\\\" + rs.getString("c_table_cd".toUpperCase())+ rs.getString("c_fullname".toUpperCase()));
-		child.setName(rs.getString("c_name".toUpperCase()));
+		child.setKey("\\\\" + rs.getString("c_table_cd")+ rs.getString("c_fullname"));
+		child.setName(rs.getString("c_name"));
 		if(returnType.getType().equals("limited")) {
-			child.setBasecode(rs.getString("c_basecode".toUpperCase()));
-			child.setLevel(rs.getInt("c_hlevel".toUpperCase()));
-			child.setSynonymCd(rs.getString("c_synonym_cd".toUpperCase()));
-			child.setVisualattributes(rs.getString("c_visualattributes".toUpperCase()));
+			child.setBasecode(rs.getString("c_basecode"));
+			child.setLevel(rs.getInt("c_hlevel"));
+			child.setSynonymCd(rs.getString("c_synonym_cd"));
+			child.setVisualattributes(rs.getString("c_visualattributes"));
 
-			child.setTooltip(rs.getString("c_tooltip".toUpperCase()));
-			child.setValuetypeCd(rs.getString("valuetype_cd".toUpperCase()));
-			child.setProtectedAccess(rs.getString("c_protected_access".toUpperCase()));
-			child.setOntologyProtection(rs.getString("c_ontology_protection".toUpperCase()));
+			child.setTooltip(rs.getString("c_tooltip"));
+			child.setValuetypeCd(rs.getString("valuetype_cd"));
+			child.setProtectedAccess(rs.getString("c_protected_access"));
+			child.setOntologyProtection(rs.getString("c_ontology_protection"));
 
 		}
 		else if(returnType.getType().equals("core")) {
-			child.setBasecode(rs.getString("c_basecode".toUpperCase()));
-			child.setLevel(rs.getInt("c_hlevel".toUpperCase()));
-			child.setSynonymCd(rs.getString("c_synonym_cd".toUpperCase()));
-			child.setVisualattributes(rs.getString("c_visualattributes".toUpperCase()));
-			child.setProtectedAccess(rs.getString("c_protected_access".toUpperCase()));
-			child.setOntologyProtection(rs.getString("c_ontology_protection".toUpperCase()));
+			child.setBasecode(rs.getString("c_basecode"));
+			child.setLevel(rs.getInt("c_hlevel"));
+			child.setSynonymCd(rs.getString("c_synonym_cd"));
+			child.setVisualattributes(rs.getString("c_visualattributes"));
+			child.setProtectedAccess(rs.getString("c_protected_access"));
+			child.setOntologyProtection(rs.getString("c_ontology_protection"));
 
-			Integer totalNum = rs.getInt("c_totalnum".toUpperCase());
+			Integer totalNum = rs.getInt("c_totalnum");
 			boolean nullFlag = rs.wasNull();
 
 
@@ -2343,7 +2343,7 @@ class GetConceptFullNameMapper implements RowMapper<ConceptType> {
 			} else { 
 			}
 
-			if (rs.getString("c_totalnum".toUpperCase()) == null) {
+			if (rs.getString("c_totalnum") == null) {
 			} else { 
 			}
 
@@ -2352,14 +2352,14 @@ class GetConceptFullNameMapper implements RowMapper<ConceptType> {
 			} 
 
 
-			child.setFacttablecolumn(rs.getString("c_facttablecolumn".toUpperCase() ));
-			child.setTablename(rs.getString("c_dimtablename".toUpperCase()));
-			child.setColumnname(rs.getString("c_columnname".toUpperCase()));
-			child.setColumndatatype(rs.getString("c_columndatatype".toUpperCase()));
-			child.setOperator(rs.getString("c_operator".toUpperCase()));
-			child.setDimcode(rs.getString("c_dimcode".toUpperCase()));
-			child.setTooltip(rs.getString("c_tooltip".toUpperCase()));
-			child.setValuetypeCd(rs.getString("valuetype_cd".toUpperCase()));
+			child.setFacttablecolumn(rs.getString("c_facttablecolumn"));
+			child.setTablename(rs.getString("c_dimtablename"));
+			child.setColumnname(rs.getString("c_columnname"));
+			child.setColumndatatype(rs.getString("c_columndatatype"));
+			child.setOperator(rs.getString("c_operator"));
+			child.setDimcode(rs.getString("c_dimcode"));
+			child.setTooltip(rs.getString("c_tooltip"));
+			child.setValuetypeCd(rs.getString("valuetype_cd"));
 		}
 		if (child.getProtectedAccess().equalsIgnoreCase("Y"))
 		{
@@ -2408,31 +2408,31 @@ class GetModNodeMapper implements RowMapper<ModifierType> {
 	public ModifierType mapRow(ResultSet rs, int rowNum) throws SQLException {
 		ModifierType child = new ModifierType();	          
 		if(node.getType().equals("limited")){
-			child.setName(rs.getString("c_name".toUpperCase()));
-			child.setAppliedPath(rs.getString("m_applied_path".toUpperCase()));
-			child.setBasecode(rs.getString("c_basecode".toUpperCase()));
-			child.setKey("\\\\" + node.getNode() + rs.getString("c_fullname".toUpperCase()));
-			child.setLevel(rs.getInt("c_hlevel".toUpperCase()));
-			child.setFullname(rs.getString("c_fullname".toUpperCase()));
-			child.setVisualattributes(rs.getString("c_visualattributes".toUpperCase()));
-			child.setSynonymCd(rs.getString("c_synonym_cd".toUpperCase()));
-			child.setTooltip(rs.getString("c_tooltip".toUpperCase()));
+			child.setName(rs.getString("c_name"));
+			child.setAppliedPath(rs.getString("m_applied_path"));
+			child.setBasecode(rs.getString("c_basecode"));
+			child.setKey("\\\\" + node.getNode() + rs.getString("c_fullname"));
+			child.setLevel(rs.getInt("c_hlevel"));
+			child.setFullname(rs.getString("c_fullname"));
+			child.setVisualattributes(rs.getString("c_visualattributes"));
+			child.setSynonymCd(rs.getString("c_synonym_cd"));
+			child.setTooltip(rs.getString("c_tooltip"));
 		}else{
-			child.setName(rs.getString("c_name".toUpperCase()));
-			child.setAppliedPath(rs.getString("m_applied_path".toUpperCase()));
-			child.setBasecode(rs.getString("c_basecode".toUpperCase()));
-			child.setKey("\\\\" + node.getNode() + rs.getString("c_fullname".toUpperCase()));
-			child.setLevel(rs.getInt("c_hlevel".toUpperCase()));
-			child.setFullname(rs.getString("c_fullname".toUpperCase()));
-			child.setVisualattributes(rs.getString("c_visualattributes".toUpperCase()));
-			child.setSynonymCd(rs.getString("c_synonym_cd".toUpperCase()));
-			child.setFacttablecolumn(rs.getString("c_facttablecolumn".toUpperCase() ));
-			child.setTooltip(rs.getString("c_tooltip".toUpperCase()));
-			child.setTablename(rs.getString("c_tablename".toUpperCase()));
-			child.setColumnname(rs.getString("c_columnname".toUpperCase()));
-			child.setColumndatatype(rs.getString("c_columndatatype".toUpperCase()));
-			child.setOperator(rs.getString("c_operator".toUpperCase()));
-			child.setDimcode(rs.getString("c_dimcode".toUpperCase()));
+			child.setName(rs.getString("c_name"));
+			child.setAppliedPath(rs.getString("m_applied_path"));
+			child.setBasecode(rs.getString("c_basecode"));
+			child.setKey("\\\\" + node.getNode() + rs.getString("c_fullname"));
+			child.setLevel(rs.getInt("c_hlevel"));
+			child.setFullname(rs.getString("c_fullname"));
+			child.setVisualattributes(rs.getString("c_visualattributes"));
+			child.setSynonymCd(rs.getString("c_synonym_cd"));
+			child.setFacttablecolumn(rs.getString("c_facttablecolumn"));
+			child.setTooltip(rs.getString("c_tooltip"));
+			child.setTablename(rs.getString("c_tablename"));
+			child.setColumnname(rs.getString("c_columnname"));
+			child.setColumndatatype(rs.getString("c_columndatatype"));
+			child.setOperator(rs.getString("c_operator"));
+			child.setDimcode(rs.getString("c_dimcode"));
 		}
 
 		if(node.isBlob() == true){
@@ -2447,10 +2447,10 @@ class GetModNodeMapper implements RowMapper<ModifierType> {
 				}
 				else if (dbType.equals("SNOWFLAKE"))
 				{
-					if(rs.getString("c_comment".toUpperCase()) == null)
+					if(rs.getString("c_comment") == null)
 						child.setComment(null);
 					else
-						child.setComment(rs.getString("c_comment".toUpperCase()));
+						child.setComment(rs.getString("c_comment"));
 
 				}
 				else {
@@ -2470,7 +2470,7 @@ class GetModNodeMapper implements RowMapper<ModifierType> {
 				if (dbType.equals("POSTGRESQL"))
 					c_xml = rs.getString("c_metadataxml");
 				else if (dbType.equals("SNOWFLAKE"))
-					c_xml = rs.getString("c_metadataxml".toUpperCase());
+					c_xml = rs.getString("c_metadataxml");
 				else  if (rs.getClob("c_metadataxml") != null)
 					c_xml = JDBCUtil.getClobString(rs.getClob("c_metadataxml"));
 			} catch (IOException e) {
@@ -2506,25 +2506,25 @@ class GetModNodeMapper implements RowMapper<ModifierType> {
 		if((node.getType().equals("all"))){
 			DTOFactory factory = new DTOFactory();
 			// make sure date isnt null before converting to XMLGregorianCalendar
-			Date date = rs.getDate("update_date".toUpperCase());
+			Date date = rs.getDate("update_date");
 			if (date == null)
 				child.setUpdateDate(null);
 			else 
 				child.setUpdateDate(factory.getXMLGregorianCalendar(date.getTime())); 
 
-			date = rs.getDate("download_date".toUpperCase());
+			date = rs.getDate("download_date");
 			if (date == null)
 				child.setDownloadDate(null);
 			else 
 				child.setDownloadDate(factory.getXMLGregorianCalendar(date.getTime())); 
 
-			date = rs.getDate("import_date".toUpperCase());
+			date = rs.getDate("import_date");
 			if (date == null)
 				child.setImportDate(null);
 			else 
 				child.setImportDate(factory.getXMLGregorianCalendar(date.getTime())); 
 
-			child.setSourcesystemCd(rs.getString("sourcesystem_cd".toUpperCase()));
+			child.setSourcesystemCd(rs.getString("sourcesystem_cd"));
 
 		}
 		return child;
@@ -2558,7 +2558,7 @@ class GetConceptXMLMapper implements RowMapper<ConceptType> {
 			if (dbInfo.getDb_serverType().equals("POSTGRESQL"))
 				c_xml = rs.getString("c_metadataxml");
 			else if (dbInfo.getDb_serverType().equals("SNOWFLAKE"))
-				c_xml = rs.getString("c_metadataxml".toUpperCase());
+				c_xml = rs.getString("c_metadataxml");
 			else  if (rs.getClob("c_metadataxml") != null)
 				c_xml = JDBCUtil.getClobString(rs.getClob("c_metadataxml"));
 		} catch (IOException e) {
@@ -2599,7 +2599,7 @@ class GetConceptXMLMapper implements RowMapper<ConceptType> {
 			}
 			else if (dbInfo.getDb_serverType().equals("SNOWFLAKE"))
 			{
-				concept.setComment(rs.getString("c_comment".toUpperCase()));
+				concept.setComment(rs.getString("c_comment"));
 			}
 			else  if (rs.getClob("c_comment") != null)
 			{

@@ -98,10 +98,10 @@ class geConcept implements RowMapper<ConceptType> {
 		//assume key is "" unless we explicitly determine otherwise
 		// "" is valid
 		scheme.setKey("");	            
-		String c_key = rs.getString("c_key".toUpperCase());
+		String c_key = rs.getString("c_key");
 		if((c_key!=null)&&(c_key.trim().length()>0)&&(!c_key.equals("(null)")))
 			scheme.setKey(c_key);
-		scheme.setName(rs.getString("c_name".toUpperCase()));
+		scheme.setName(rs.getString("c_name"));
 		return scheme;
 	}
 }

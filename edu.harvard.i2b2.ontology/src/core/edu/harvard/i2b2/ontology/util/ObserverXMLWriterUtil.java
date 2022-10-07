@@ -68,21 +68,21 @@ public class ObserverXMLWriterUtil extends PatientDataXMLWriterUtil {
 				"", "observer");
 
 		eventWriter.add(configStartElement);
-		updateDate = conceptResultSet.getDate("update_date".toUpperCase());
+		updateDate = conceptResultSet.getDate("update_date");
 		if (updateDate != null) {
 			eventWriter.add(eventFactory.createAttribute("update_date",
 					dtoFactory.getXMLGregorianCalendar(updateDate.getTime())
 							.toString()));
 
 		}
-		downloadDate = conceptResultSet.getDate("download_date".toUpperCase());
+		downloadDate = conceptResultSet.getDate("download_date");
 		if (downloadDate != null) {
 			eventWriter.add(eventFactory.createAttribute("download_date",
 					dtoFactory.getXMLGregorianCalendar(downloadDate.getTime())
 							.toString()));
 
 		}
-		sourceSystemCd = conceptResultSet.getString("sourcesystem_cd".toUpperCase());
+		sourceSystemCd = conceptResultSet.getString("sourcesystem_cd");
 		if (sourceSystemCd != null) {
 			eventWriter.add(eventFactory.createAttribute("sourcesystem_cd",
 					sourceSystemCd));
@@ -92,11 +92,11 @@ public class ObserverXMLWriterUtil extends PatientDataXMLWriterUtil {
 
 		// Write the different nodes
 		createNode(eventWriter, "observer_path", conceptResultSet
-				.getString("c_dimcode".toUpperCase()));
+				.getString("c_dimcode"));
 		createNode(eventWriter, "observer_cd", conceptResultSet
-				.getString("c_basecode".toUpperCase()));
+				.getString("c_basecode"));
 		createNode(eventWriter, "name_char", conceptResultSet
-				.getString("c_name".toUpperCase()));
+				.getString("c_name"));
 
 		eventWriter.add(eventFactory.createEndElement("", "", "observer"));
 		eventWriter.add(end);

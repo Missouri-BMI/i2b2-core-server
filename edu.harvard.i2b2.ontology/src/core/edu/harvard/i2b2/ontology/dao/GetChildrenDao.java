@@ -185,40 +185,40 @@ class GetChildrenConcept implements RowMapper<ConceptType> {
 	@Override
 	public ConceptType mapRow(ResultSet rs, int rowNum) throws SQLException {
 		ConceptType child = new ConceptType();	          
-		child.setName(rs.getString("c_name".toUpperCase()));
-		child.setBasecode(rs.getString("c_basecode".toUpperCase()));
-		child.setLevel(rs.getInt("c_hlevel".toUpperCase()));
-		child.setKey(rs.getString("c_fullname".toUpperCase()));
-		child.setSynonymCd(rs.getString("c_synonym_cd".toUpperCase()));
-		child.setVisualattributes(rs.getString("c_visualattributes".toUpperCase()));
-		Integer totalNum = rs.getInt("c_totalnum".toUpperCase());
+		child.setName(rs.getString("c_name"));
+		child.setBasecode(rs.getString("c_basecode"));
+		child.setLevel(rs.getInt("c_hlevel"));
+		child.setKey(rs.getString("c_fullname"));
+		child.setSynonymCd(rs.getString("c_synonym_cd"));
+		child.setVisualattributes(rs.getString("c_visualattributes"));
+		Integer totalNum = rs.getInt("c_totalnum");
 
 		if (obfuscatedUserFlag == false ) { 
 			child.setTotalnum(totalNum);
 		}
-		child.setFacttablecolumn(rs.getString("c_facttablecolumn".toUpperCase() ));
-		child.setTablename(rs.getString("c_tablename".toUpperCase()));
-		child.setColumnname(rs.getString("c_columnname".toUpperCase()));
-		child.setColumndatatype(rs.getString("c_columndatatype".toUpperCase()));
-		child.setOperator(rs.getString("c_operator".toUpperCase()));
-		child.setDimcode(rs.getString("c_dimcode".toUpperCase()));
-		child.setTooltip(rs.getString("c_tooltip".toUpperCase()));
+		child.setFacttablecolumn(rs.getString("c_facttablecolumn"));
+		child.setTablename(rs.getString("c_tablename"));
+		child.setColumnname(rs.getString("c_columnname"));
+		child.setColumndatatype(rs.getString("c_columndatatype"));
+		child.setOperator(rs.getString("c_operator"));
+		child.setDimcode(rs.getString("c_dimcode"));
+		child.setTooltip(rs.getString("c_tooltip"));
 		if(childrenType.isBlob() == true){
 			try {
-				if(rs.getClob("c_comment".toUpperCase()) == null)
+				if(rs.getClob("c_comment") == null)
 					child.setComment(null);
 				else
-					child.setComment(JDBCUtil.getClobString(rs.getClob("c_comment".toUpperCase())));
+					child.setComment(JDBCUtil.getClobString(rs.getClob("c_comment")));
 			} catch (IOException e) {
 				child.setComment(null);
 			} 
 
-			if(rs.getClob("c_metadataxml".toUpperCase()) == null){
+			if(rs.getClob("c_metadataxml") == null){
 				child.setMetadataxml(null);
 			}else {
 				String c_xml = null;
 				try {
-					c_xml = JDBCUtil.getClobString(rs.getClob("c_metadataxml".toUpperCase()));
+					c_xml = JDBCUtil.getClobString(rs.getClob("c_metadataxml"));
 				} catch (IOException e) {
 					child.setMetadataxml(null);
 				}
@@ -248,26 +248,26 @@ class GetChildrenConcept implements RowMapper<ConceptType> {
 		if((childrenType.getType().equals("all"))){
 			DTOFactory factory = new DTOFactory();
 			// make sure date isnt null before converting to XMLGregorianCalendar
-			Date date = rs.getDate("update_date".toUpperCase());
+			Date date = rs.getDate("update_date");
 			if (date == null)
 				child.setUpdateDate(null);
 			else 
 				child.setUpdateDate(factory.getXMLGregorianCalendar(date.getTime())); 
 
-			date = rs.getDate("download_date".toUpperCase());
+			date = rs.getDate("download_date");
 			if (date == null)
 				child.setDownloadDate(null);
 			else 
 				child.setDownloadDate(factory.getXMLGregorianCalendar(date.getTime())); 
 
-			date = rs.getDate("import_date".toUpperCase());
+			date = rs.getDate("import_date");
 			if (date == null)
 				child.setImportDate(null);
 			else 
 				child.setImportDate(factory.getXMLGregorianCalendar(date.getTime())); 
 
-			child.setSourcesystemCd(rs.getString("sourcesystem_cd".toUpperCase()));
-			child.setValuetypeCd(rs.getString("valuetype_cd".toUpperCase()));
+			child.setSourcesystemCd(rs.getString("sourcesystem_cd"));
+			child.setValuetypeCd(rs.getString("valuetype_cd"));
 		}
 		return child;
 	}

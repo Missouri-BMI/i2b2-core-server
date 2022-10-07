@@ -163,7 +163,7 @@ public class CRCConceptTotalNumUpdateDao extends JdbcDaoSupport {
 				boolean conceptSkipFlag = false;
 				while (resultSet.next()) {
 					
-					cFullName = resultSet.getString("c_fullname".toUpperCase());
+					cFullName = resultSet.getString("c_fullname");
 					//check for status of ont_process_status giving the process id
 					//if the status is  "aborted", then exit
 					ontProcessStatusType = ontProcessStatusDao.findById(processId);

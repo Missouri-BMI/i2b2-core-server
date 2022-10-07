@@ -212,18 +212,18 @@ class getMapper implements RowMapper<DblookupType> {
         @Override
 		public DblookupType mapRow(ResultSet rs, int rowNum) throws SQLException {
         	DblookupType dblu = new DblookupType();
-        	dblu.setDomainId(rs.getString("c_domain_id".toUpperCase()));
-        	dblu.setProjectPath(rs.getString("c_project_path".toUpperCase()));
-        	dblu.setOwnerId(rs.getString("c_owner_id".toUpperCase()));
-        	dblu.setDbFullschema(rs.getString("c_db_fullschema".toUpperCase()));
-        	dblu.setDbDatasource(rs.getString("c_db_datasource".toUpperCase()));
-        	dblu.setDbServertype(rs.getString("c_db_servertype".toUpperCase()));
-        	dblu.setDbNicename(rs.getString("c_db_nicename".toUpperCase()));
-        	dblu.setDbTooltip(rs.getString("c_db_tooltip".toUpperCase()));
-        	dblu.setComment(rs.getString("c_comment".toUpperCase()));
-        	dblu.setEntryDate(rs.getString("c_entry_date".toUpperCase()));
-        	dblu.setChangeDate(rs.getString("c_change_date".toUpperCase()));
-        	dblu.setStatusCd(rs.getString("c_status_cd".toUpperCase()));
+        	dblu.setDomainId(rs.getString("c_domain_id"));
+        	dblu.setProjectPath(rs.getString("c_project_path"));
+        	dblu.setOwnerId(rs.getString("c_owner_id"));
+        	dblu.setDbFullschema(rs.getString("c_db_fullschema"));
+        	dblu.setDbDatasource(rs.getString("c_db_datasource"));
+        	dblu.setDbServertype(rs.getString("c_db_servertype"));
+        	dblu.setDbNicename(rs.getString("c_db_nicename"));
+        	dblu.setDbTooltip(rs.getString("c_db_tooltip"));
+        	dblu.setComment(rs.getString("c_comment"));
+        	dblu.setEntryDate(rs.getString("c_entry_date"));
+        	dblu.setChangeDate(rs.getString("c_change_date"));
+        	dblu.setStatusCd(rs.getString("c_status_cd"));
             return dblu;
         }
  }

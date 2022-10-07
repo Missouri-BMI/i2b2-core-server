@@ -103,13 +103,13 @@ class getDBInfoMapper implements RowMapper<DBInfoType> {
 	@Override
 		public DBInfoType mapRow(ResultSet rs, int rowNum) throws SQLException {
 			DBInfoType dataSourceLookup = new DBInfoType();
-			dataSourceLookup.setHive(rs.getString("c_domain_id".toUpperCase()));
-			dataSourceLookup.setProjectId(rs.getString("c_project_path".toUpperCase()));
-			dataSourceLookup.setOwnerId(rs.getString("c_owner_id".toUpperCase()));
+			dataSourceLookup.setHive(rs.getString("c_domain_id"));
+			dataSourceLookup.setProjectId(rs.getString("c_project_path"));
+			dataSourceLookup.setOwnerId(rs.getString("c_owner_id"));
 //			dataSourceLookup.setDatabaseName(rs.getString("c_db_datasource"));
-			dataSourceLookup.setDb_fullSchema(rs.getString("c_db_fullschema".toUpperCase()));
-			dataSourceLookup.setDb_dataSource(rs.getString("c_db_datasource".toUpperCase()));
-			dataSourceLookup.setDb_serverType(rs.getString("c_db_servertype".toUpperCase()));
+			dataSourceLookup.setDb_fullSchema(rs.getString("c_db_fullschema"));
+			dataSourceLookup.setDb_dataSource(rs.getString("c_db_datasource"));
+			dataSourceLookup.setDb_serverType(rs.getString("c_db_servertype"));
 
 			return dataSourceLookup;
 		} 

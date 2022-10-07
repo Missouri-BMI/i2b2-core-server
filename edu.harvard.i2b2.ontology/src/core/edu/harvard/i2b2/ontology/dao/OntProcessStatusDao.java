@@ -586,24 +586,24 @@ class geOntologyProcessStatuMapper implements RowMapper<OntologyProcessStatusTyp
 	public OntologyProcessStatusType mapRow(ResultSet rs, int rowNum)
 			throws SQLException {
 		OntologyProcessStatusType processStatusType = new OntologyProcessStatusType();
-		processStatusType.setProcessId(rs.getString("process_id".toUpperCase()));
-		processStatusType.setProcessTypeCd(rs.getString("process_type_cd".toUpperCase()));
-		startDate = rs.getTimestamp("start_date".toUpperCase());
+		processStatusType.setProcessId(rs.getString("process_id"));
+		processStatusType.setProcessTypeCd(rs.getString("process_type_cd"));
+		startDate = rs.getTimestamp("start_date");
 		if (startDate != null) {
 			processStatusType.setStartDate(factory
 					.getXMLGregorianCalendar(startDate.getTime()));
 		}
-		endDate = rs.getTimestamp("end_date".toUpperCase());
+		endDate = rs.getTimestamp("end_date");
 		if (endDate != null) {
 			processStatusType.setEndDate(factory
 					.getXMLGregorianCalendar(endDate.getTime()));
 		}
 		processStatusType.setProcessStepCd(rs
-				.getString("process_step_cd".toUpperCase()));
+				.getString("process_step_cd"));
 		processStatusType.setProcessStatusCd(rs
-				.getString("process_status_cd".toUpperCase()));
-		processStatusType.setCrcUploadId(rs.getString("crc_upload_id".toUpperCase()));
-		processStatusType.setMessage(rs.getString("message".toUpperCase()));
+				.getString("process_status_cd"));
+		processStatusType.setCrcUploadId(rs.getString("crc_upload_id"));
+		processStatusType.setMessage(rs.getString("message"));
 		return processStatusType;
 	}
 

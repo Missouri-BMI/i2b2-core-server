@@ -455,7 +455,7 @@ public class ServicesHandler extends RequestHandler {
 				log.debug("Creating new session key");
 				String encryptedKey = PMUtil.getInstance().generateMessageId();
 				log.debug("Saving new session key: " + encryptedKey);
-				int timeout = 86400000;
+				int timeout = 1800000;
 				if (rmt.getPassword().getTokenMsTimeout() != null)
 					timeout = rmt.getPassword().getTokenMsTimeout();
 				int result = pmDb.setSession(rmt.getUsername(), encryptedKey, timeout);

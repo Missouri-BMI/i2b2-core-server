@@ -63,6 +63,6 @@ public class ProviderFactRelated extends FactRelated {
 
     public String getProviderIdFromResultSet(ResultSet resultSet)
         throws SQLException {
-        return resultSet.getString("obs_provider_id".toUpperCase());
+        return resultSet.getString("obs_provider_id");
     }
 }

@@ -377,7 +377,7 @@ public class QueryExecutorHelperDao extends CRCDAO {
 			double countSigma = GaussianBoxMuller.getCountSigma();
 			double obfuscatedMinimumValue = GaussianBoxMuller.getObfuscatedMinimumVal();
 			while (resultSet.next() && (i++ < 10)) {
-				recordCount = resultSet.getInt("patient_num_count".toUpperCase());
+				recordCount = resultSet.getInt("patient_num_count");
 
 				GaussianBoxMuller gaussianBoxMuller = new GaussianBoxMuller();
 				obfuscatedRecordCount = (int) gaussianBoxMuller

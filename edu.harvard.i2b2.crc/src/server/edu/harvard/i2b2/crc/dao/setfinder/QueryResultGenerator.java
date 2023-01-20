@@ -198,7 +198,7 @@ public class QueryResultGenerator extends CRCDAO implements IResultGenerator {
 					throw new CRCTimeOutException("The query was canceled.");
 				}
 				resultSet.next();
-				int demoCount = resultSet.getInt("item_count".toUpperCase());
+				int demoCount = resultSet.getInt("item_count");
 				subLogTimingUtil.setEndTime();
 				if (processTimingFlag != null) {
 					if (processTimingFlag.trim().equalsIgnoreCase(ProcessTimingReportUtil.DEBUG) ) {

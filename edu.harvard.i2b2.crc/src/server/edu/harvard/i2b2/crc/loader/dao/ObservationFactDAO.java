@@ -266,11 +266,11 @@ public class ObservationFactDAO extends CRCLoaderDAO implements
 			String encounterIde = "", patientIde = "", conceptCd = "", providerId = "";
 			Date startDate = null;
 			while (resultSet.next()) {
-				encounterIde = resultSet.getString("encounter_ide".toUpperCase());
-				patientIde = resultSet.getString("patient_ide".toUpperCase());
-				conceptCd = resultSet.getString("concept_cd".toUpperCase());
-				providerId = resultSet.getString("provider_id".toUpperCase());
-				startDate = resultSet.getDate("start_date".toUpperCase());
+				encounterIde = resultSet.getString("encounter_ide");
+				patientIde = resultSet.getString("patient_ide");
+				conceptCd = resultSet.getString("concept_cd");
+				providerId = resultSet.getString("provider_id");
+				startDate = resultSet.getDate("start_date");
 				// write to logwriter
 				bufWriter.write(encounterIde + "|" + patientIde + "|"
 						+ conceptCd + "|" + providerId + "\n");

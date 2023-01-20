@@ -77,8 +77,8 @@ public class QueryResultPatientVitalCdCountGenerator extends CRCDAO implements
 			resultType.setName(RESULT_NAME);
 			while (resultSet.next()) {
 
-				String demoCount = resultSet.getString("vital_status_count".toUpperCase());
-				String raceCd = resultSet.getString("pd_vital_status_cd".toUpperCase());
+				String demoCount = resultSet.getString("vital_status_count");
+				String raceCd = resultSet.getString("pd_vital_status_cd");
 				DataType mdataType = new DataType();
 				mdataType.setValue(demoCount);
 				mdataType.setColumn(raceCd);

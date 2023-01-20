@@ -388,7 +388,7 @@ IQueryResultInstanceDao {
 
 			ResultSet resultSet = preparedStmt.executeQuery();
 			if (resultSet.next()) {
-				returnSetSize = resultSet.getInt("result_count".toUpperCase());
+				returnSetSize = resultSet.getInt("result_count");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -76,8 +76,8 @@ public class QueryResultPatientGenderCountGenerator extends CRCDAO implements
 			resultType.setName(RESULT_NAME);
 
 			while (resultSet.next()) {
-				String demoCount = resultSet.getString("demo_count".toUpperCase());
-				String raceCd = resultSet.getString("pd_demo_cd".toUpperCase());
+				String demoCount = resultSet.getString("demo_count");
+				String raceCd = resultSet.getString("pd_demo_cd");
 				
 				DataType mdataType = new DataType();
 				mdataType.setValue(demoCount);

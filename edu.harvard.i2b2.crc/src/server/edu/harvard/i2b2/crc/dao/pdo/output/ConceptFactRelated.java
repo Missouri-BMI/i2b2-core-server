@@ -78,6 +78,6 @@ public class ConceptFactRelated extends FactRelated {
 
 	public String getConceptCdFromResultSet(ResultSet resultSet)
 			throws SQLException {
-		return resultSet.getString("obs_concept_cd".toUpperCase());
+		return resultSet.getString("obs_concept_cd");
 	}
 }

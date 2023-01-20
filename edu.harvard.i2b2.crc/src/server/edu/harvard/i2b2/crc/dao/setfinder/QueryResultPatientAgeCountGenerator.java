@@ -109,8 +109,8 @@ public class QueryResultPatientAgeCountGenerator extends CRCDAO implements
 			ResultType resultType = new ResultType();
 			resultType.setName(RESULT_NAME);
 			while (resultSet.next()) {
-				String demoCount = resultSet.getString("patient_count".toUpperCase());
-				String raceCd = resultSet.getString("patient_range".toUpperCase());
+				String demoCount = resultSet.getString("patient_count");
+				String raceCd = resultSet.getString("patient_range");
 
 				DataType mdataType = new DataType();
 				mdataType.setValue(demoCount);

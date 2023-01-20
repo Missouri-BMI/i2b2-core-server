@@ -181,7 +181,7 @@ public class QueryResultPatientSQLCountGenerator extends CRCDAO implements IResu
 				throw new CRCTimeOutException("The query was canceled.");
 			}
 			while (resultSet.next()) {
-				int demoCount = resultSet.getInt("patient_count".toUpperCase());
+				int demoCount = resultSet.getInt("patient_count");
 
 				subLogTimingUtil.setEndTime();
 				if (processTimingFlag != null) {
@@ -201,7 +201,7 @@ public class QueryResultPatientSQLCountGenerator extends CRCDAO implements IResu
 				}
 				DataType mdataType = new DataType();
 
-				String rangeCd = resultSet.getString("patient_range".toUpperCase());
+				String rangeCd = resultSet.getString("patient_range");
 
 				mdataType.setValue(String.valueOf(demoCount));
 				mdataType.setColumn(rangeCd);

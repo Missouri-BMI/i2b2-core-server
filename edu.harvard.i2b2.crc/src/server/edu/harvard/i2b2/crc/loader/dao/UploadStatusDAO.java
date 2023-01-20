@@ -503,20 +503,20 @@ public class UploadStatusDAO extends CRCLoaderDAO implements UploadStatusDAOI {
 		@Override
 		protected Object mapRow(ResultSet rs, int rownum) throws SQLException {
 			UploadStatus uploadStatus = new UploadStatus();
-			uploadStatus.setUploadId(rs.getInt("upload_id".toUpperCase()));
-			uploadStatus.setUploadLabel(rs.getString("upload_label".toUpperCase()));
-			uploadStatus.setUserId(rs.getString("user_id".toUpperCase()));
-			uploadStatus.setSourceCd(rs.getString("source_cd".toUpperCase()));
-			uploadStatus.setNoOfRecord(rs.getInt("no_of_record".toUpperCase()));
-			uploadStatus.setDeletedRecord(rs.getInt("deleted_record".toUpperCase()));
-			uploadStatus.setLoadedRecord(rs.getInt("loaded_record".toUpperCase()));
-			uploadStatus.setLoadDate(rs.getTimestamp("load_date".toUpperCase()));
-			uploadStatus.setEndDate(rs.getTimestamp("end_date".toUpperCase()));
-			uploadStatus.setLoadStatus(rs.getString("load_status".toUpperCase()));
-			uploadStatus.setInputFileName(rs.getString("input_file_name".toUpperCase()));
-			uploadStatus.setLogFileName(rs.getString("log_file_name".toUpperCase()));
-			uploadStatus.setTransformName(rs.getString("transform_name".toUpperCase()));
-			uploadStatus.setMessage(rs.getString("message".toUpperCase()));
+			uploadStatus.setUploadId(rs.getInt("upload_id"));
+			uploadStatus.setUploadLabel(rs.getString("upload_label"));
+			uploadStatus.setUserId(rs.getString("user_id"));
+			uploadStatus.setSourceCd(rs.getString("source_cd"));
+			uploadStatus.setNoOfRecord(rs.getInt("no_of_record"));
+			uploadStatus.setDeletedRecord(rs.getInt("deleted_record"));
+			uploadStatus.setLoadedRecord(rs.getInt("loaded_record"));
+			uploadStatus.setLoadDate(rs.getTimestamp("load_date"));
+			uploadStatus.setEndDate(rs.getTimestamp("end_date"));
+			uploadStatus.setLoadStatus(rs.getString("load_status"));
+			uploadStatus.setInputFileName(rs.getString("input_file_name"));
+			uploadStatus.setLogFileName(rs.getString("log_file_name"));
+			uploadStatus.setTransformName(rs.getString("transform_name"));
+			uploadStatus.setMessage(rs.getString("message"));
 			return uploadStatus;
 		}
 	}

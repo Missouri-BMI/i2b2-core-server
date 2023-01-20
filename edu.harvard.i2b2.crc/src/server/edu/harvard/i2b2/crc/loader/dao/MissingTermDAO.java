@@ -173,8 +173,8 @@ public class MissingTermDAO extends CRCLoaderDAO implements IMissingTermDAO {
 
 			while (resultSet.next()) {
 				concept = new MissingCodesConceptSetType.Concept();
-				concept.setConceptCd(resultSet.getString("concept_cd".toUpperCase()));
-				concept.setMissingTotal(resultSet.getInt("tot".toUpperCase()));
+				concept.setConceptCd(resultSet.getString("concept_cd"));
+				concept.setMissingTotal(resultSet.getInt("tot"));
 				missConceptSetType.getConcept().add(concept);
 			}
 			resultSet.close();
@@ -248,8 +248,8 @@ public class MissingTermDAO extends CRCLoaderDAO implements IMissingTermDAO {
 
 			while (resultSet.next()) {
 				modifier = new MissingCodesModifierSetType.Modifier();
-				modifier.setModifierCd(resultSet.getString("modifier_cd".toUpperCase()));
-				modifier.setMissingTotal(resultSet.getInt("tot".toUpperCase()));
+				modifier.setModifierCd(resultSet.getString("modifier_cd"));
+				modifier.setMissingTotal(resultSet.getInt("tot"));
 				missModifierSetType.getModifier().add(modifier);
 			}
 			resultSet.close();
@@ -323,8 +323,8 @@ public class MissingTermDAO extends CRCLoaderDAO implements IMissingTermDAO {
 
 			while (resultSet.next()) {
 				observer = new MissingCodesObserverSetType.Observer();
-				observer.setObserverCd(resultSet.getString("provider_id".toUpperCase()));
-				observer.setMissingTotal(resultSet.getInt("tot".toUpperCase()));
+				observer.setObserverCd(resultSet.getString("provider_id"));
+				observer.setMissingTotal(resultSet.getInt("tot"));
 				missObserverSetType.getObserver().add(observer);
 			}
 			resultSet.close();

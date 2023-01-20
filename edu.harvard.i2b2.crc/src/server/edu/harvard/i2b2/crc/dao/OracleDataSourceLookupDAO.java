@@ -88,18 +88,18 @@ public class OracleDataSourceLookupDAO extends DataSourceLookupDAO {
 		@Override
 		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
 			DataSourceLookup dataSourceLookup = new DataSourceLookup();
-			dataSourceLookup.setDomainId(rs.getString("c_domain_id".toUpperCase()));
-			dataSourceLookup.setProjectPath(rs.getString("c_project_path".toUpperCase()));
-			dataSourceLookup.setOwnerId(rs.getString("c_owner_id".toUpperCase()));
-			dataSourceLookup.setFullSchema(rs.getString("c_db_fullschema".toUpperCase()));
-			dataSourceLookup.setDataSource(rs.getString("c_db_datasource".toUpperCase()));
-			dataSourceLookup.setServerType(rs.getString("c_db_servertype".toUpperCase()));
-			dataSourceLookup.setNiceName(rs.getString("c_db_nicename".toUpperCase()));
-			dataSourceLookup.setToolTip(rs.getString("c_db_tooltip".toUpperCase()));
-			dataSourceLookup.setComment(rs.getString("c_comment".toUpperCase()));
-			dataSourceLookup.setEntryDate(rs.getDate("c_entry_date".toUpperCase()));
-			dataSourceLookup.setChangeDate(rs.getDate("c_change_date".toUpperCase()));
-			dataSourceLookup.setStatusCd(rs.getString("c_status_cd".toUpperCase()));
+			dataSourceLookup.setDomainId(rs.getString("c_domain_id"));
+			dataSourceLookup.setProjectPath(rs.getString("c_project_path"));
+			dataSourceLookup.setOwnerId(rs.getString("c_owner_id"));
+			dataSourceLookup.setFullSchema(rs.getString("c_db_fullschema"));
+			dataSourceLookup.setDataSource(rs.getString("c_db_datasource"));
+			dataSourceLookup.setServerType(rs.getString("c_db_servertype"));
+			dataSourceLookup.setNiceName(rs.getString("c_db_nicename"));
+			dataSourceLookup.setToolTip(rs.getString("c_db_tooltip"));
+			dataSourceLookup.setComment(rs.getString("c_comment"));
+			dataSourceLookup.setEntryDate(rs.getDate("c_entry_date"));
+			dataSourceLookup.setChangeDate(rs.getDate("c_change_date"));
+			dataSourceLookup.setStatusCd(rs.getString("c_status_cd"));
 			return dataSourceLookup;
 		}
 	}

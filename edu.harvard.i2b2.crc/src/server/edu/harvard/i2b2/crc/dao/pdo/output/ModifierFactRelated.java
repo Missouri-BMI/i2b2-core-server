@@ -78,6 +78,6 @@ public class ModifierFactRelated extends FactRelated {
 
 	public String getModifierCdFromResultSet(ResultSet resultSet)
 			throws SQLException {
-		return resultSet.getString("obs_modifier_cd".toUpperCase());
+		return resultSet.getString("obs_modifier_cd");
 	}
 }

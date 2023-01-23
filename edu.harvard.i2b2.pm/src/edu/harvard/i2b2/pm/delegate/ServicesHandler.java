@@ -259,15 +259,15 @@ public class ServicesHandler extends RequestHandler {
 		log.debug("checking date");
 		log.debug("Now Time: "+ now.toString());
 		log.debug("Current session: "+ session.getExpiredDate().toString());
-		if(now.after(session.getExpiredDate()))
-		{
+		if(now.after(session.getExpiredDate())){
 			log.debug("Session Expired");
-			return false;
+			// reduce update session frequency
+			int sessionUpdated = pmDb.updateSession(userId, sessionId, timeout);
+			return sessionUpdated != -1;
 		}
 		log.debug("date ok");
-
 		// Add new timeout to it
-		pmDb.updateSession(userId, sessionId, timeout);
+		// pmDb.updateSession(userId, sessionId, timeout);
 		return true;
 	}
 

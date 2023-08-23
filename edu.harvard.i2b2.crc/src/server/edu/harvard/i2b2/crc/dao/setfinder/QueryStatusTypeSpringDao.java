@@ -8,8 +8,8 @@
  ******************************************************************************/
 /*
 
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Rajesh Kuttan
  */
 package edu.harvard.i2b2.crc.dao.setfinder;
@@ -24,7 +24,7 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.sql.DataSource;
-
+import java.sql.Types;
 
 /**
  * Class to manager persistance operation of
@@ -34,50 +34,57 @@ import javax.sql.DataSource;
  * @see QtQueryMaster
  */
 public class QueryStatusTypeSpringDao extends CRCDAO implements IQueryStatusTypeDao {
-	
-	JdbcTemplate jdbcTemplate = null;
-	
-	QtStatusTypeRowMapper queryStatusTypeMapper = new QtStatusTypeRowMapper();
-	
 
-	
+	JdbcTemplate jdbcTemplate = null;
+
+	QtStatusTypeRowMapper queryStatusTypeMapper = new QtStatusTypeRowMapper();
+
+
+
 
 	private DataSourceLookup dataSourceLookup = null;
-	
-	
-	public QueryStatusTypeSpringDao(DataSource dataSource,DataSourceLookup dataSourceLookup) { 
+
+
+	public QueryStatusTypeSpringDao(DataSource dataSource,DataSourceLookup dataSourceLookup) {
 		setDataSource(dataSource);
 		setDbSchemaName(dataSourceLookup.getFullSchema());
 		jdbcTemplate = new JdbcTemplate(dataSource);
 		this.dataSourceLookup = dataSourceLookup;
-		
+
 	}
-	
-    /**
-     * Returns list of query master by user id
-     * @param userId
-     * @return List<QtQueryMaster>
-     */
-    @Override
+
+	/**
+	 * Returns list of query master by user id
+	 * @param userId
+	 * @return List<QtQueryMaster>
+	 */
+	@Override
 	@SuppressWarnings("unchecked")
-    public QtQueryStatusType getQueryStatusTypeById(int statusTypeId) {
-    	
-        String sql = "select * from " + getDbSchemaName() + "qt_query_status_type where status_type_id = ?" ;
-        QtQueryStatusType queryStatusType = (QtQueryStatusType)jdbcTemplate.queryForObject(sql,new Object[]{statusTypeId},queryStatusTypeMapper );
-        return queryStatusType;
-    }
-   
-  private static class QtStatusTypeRowMapper implements RowMapper {
-      @Override
-	public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-    	  QtQueryStatusType queryStatusType = new QtQueryStatusType();
-    	  queryStatusType.setStatusTypeId(rs.getInt("STATUS_TYPE_ID"));
-    	  queryStatusType.setName(rs.getString("NAME"));
-    	  queryStatusType.setDescription(rs.getString("DESCRIPTION"));
-          
-          return queryStatusType;
-      }
-  }
-    
-    
+	public QtQueryStatusType getQueryStatusTypeById(int statusTypeId) {
+
+		String sql = "select * from " + getDbSchemaName() + "qt_query_status_type where status_type_id = ?" ;
+		// Deprecated
+		//QtQueryStatusType queryStatusType = (QtQueryStatusType)jdbcTemplate.queryForObject(sql,new Object[]{statusTypeId},queryStatusTypeMapper );
+		QtQueryStatusType queryStatusType = (QtQueryStatusType)jdbcTemplate.queryForObject(
+				sql,
+				new Object[]{statusTypeId},
+				new int[]{ Types.INTEGER },
+				queryStatusTypeMapper
+		);
+		return queryStatusType;
+	}
+
+	private static class QtStatusTypeRowMapper implements RowMapper {
+		@Override
+		public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+			QtQueryStatusType queryStatusType = new QtQueryStatusType();
+			queryStatusType.setStatusTypeId(rs.getInt("STATUS_TYPE_ID"));
+			queryStatusType.setName(rs.getString("NAME"));
+			queryStatusType.setDescription(rs.getString("DESCRIPTION"));
+
+			return queryStatusType;
+		}
+	}
+
+
 }

@@ -8,8 +8,8 @@
  ******************************************************************************/
 /*
 
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Rajesh Kuttan
  */
 package edu.harvard.i2b2.crc.dao.setfinder;
@@ -44,11 +44,11 @@ import edu.harvard.i2b2.crc.datavo.db.StatusEnum;
 /**
  * This is class handles persistance of result instance and its update operation
  * $Id: QueryResultInstanceSpringDao.java,v 1.14 2010/07/22 18:54:51 rk903 Exp $
- * 
+ *
  * @author rkuttan
  */
 public class QueryResultInstanceSpringDao extends CRCDAO implements
-IQueryResultInstanceDao {
+		IQueryResultInstanceDao {
 
 	JdbcTemplate jdbcTemplate = null;
 	SavePatientSetResult savePatientSetResult = null;
@@ -58,7 +58,7 @@ IQueryResultInstanceDao {
 
 
 	public QueryResultInstanceSpringDao(DataSource dataSource,
-			DataSourceLookup dataSourceLookup) {
+										DataSourceLookup dataSourceLookup) {
 		setDataSource(dataSource);
 		setDbSchemaName(dataSourceLookup.getFullSchema());
 		jdbcTemplate = new JdbcTemplate(dataSource);
@@ -66,7 +66,7 @@ IQueryResultInstanceDao {
 
 		patientSetMapper = new PatientSetResultRowMapper();
 	}
-	
+
 
 	public void setRoles(List<String> roles) {
 		this.roles = roles;
@@ -77,7 +77,7 @@ IQueryResultInstanceDao {
 	 * Function to create result instance for given query instance id. The
 	 * result instance status is set to running. Use updatePatientSet function
 	 * to change the status to completed or error
-	 * 
+	 *
 	 * @param queryInstanceId
 	 * @return
 	 */
@@ -116,59 +116,59 @@ IQueryResultInstanceDao {
 
 	/**
 	 * Function used to update result instance Particularly its status and size
-	 * 
+	 *
 	 * @param resultInstanceId
 	 * @param statusTypeId
 	 * @param setSize
 	 */
 	@Override
 	public void updatePatientSet(String resultInstanceId, int statusTypeId,
-			int setSize) {
+								 int setSize) {
 		updatePatientSet(resultInstanceId, statusTypeId, "", setSize, 0, "");
 	}
 
 	/**
 	 * Function used to update result instance Particularly its status and size
-	 * 
+	 *
 	 * @param resultInstanceId
 	 * @param statusTypeId
 	 * @param setSize
 	 */
 	@Override
 	public void updatePatientSet(String resultInstanceId, int statusTypeId,
-			String message, int setSize, int realSetSize, String obsMethod) {
+								 String message, int setSize, int realSetSize, String obsMethod) {
 
 		Date endDate = new Date(System.currentTimeMillis());
 		String sql = "update "
 				+ getDbSchemaName()
 				+ "qt_query_result_instance set set_size = ?, real_set_size = ? , obfusc_method = ?, status_type_id =?, end_date = ?, message = ?  where result_instance_id = ?";
 		jdbcTemplate.update(sql, new Object[] { setSize, realSetSize,
-				obsMethod, statusTypeId, endDate, message, resultInstanceId },
+						obsMethod, statusTypeId, endDate, message, resultInstanceId },
 				new int[] { Types.INTEGER, Types.INTEGER, Types.VARCHAR,
-				Types.INTEGER, Types.TIMESTAMP, Types.VARCHAR,
-				Types.INTEGER });
+						Types.INTEGER, Types.TIMESTAMP, Types.VARCHAR,
+						Types.INTEGER });
 	}
 
 	/**
 	 * Function used to update result instance description
-	 * 
+	 *
 	 * @param resultInstanceId
 	 * @param description
 	 */
 	@Override
 	public void updateResultInstanceDescription(String resultInstanceId,
-			String description) {
+												String description) {
 		String sql = "update "
 				+ getDbSchemaName()
 				+ "qt_query_result_instance set description = ?  where result_instance_id = ?";
 		jdbcTemplate.update(sql,
 				new Object[] { description, Integer.parseInt(resultInstanceId) }, new int[] {
-				Types.VARCHAR, Types.INTEGER });
+						Types.VARCHAR, Types.INTEGER });
 	}
 
 	/**
 	 * Return list of query result instance by query instance id
-	 * 
+	 *
 	 * @param queryInstanceId
 	 * @return List<QtQueryResultInstance>
 	 */
@@ -178,14 +178,18 @@ IQueryResultInstanceDao {
 			String queryInstanceId) {
 		String sql = "select *  from " + getDbSchemaName()
 				+ "qt_query_result_instance where query_instance_id = ? ";
-		List<QtQueryResultInstance> queryResultInstanceList = jdbcTemplate
-				.query(sql, new Object[] { Integer.parseInt(queryInstanceId) }, patientSetMapper);
+		List<QtQueryResultInstance> queryResultInstanceList = jdbcTemplate.query(
+				sql,
+				new Object[] { Integer.parseInt(queryInstanceId) },
+				new int[] { Types.INTEGER},
+				patientSetMapper
+		);
 		return queryResultInstanceList;
 	}
 
 	/**
 	 * Return list of query result instance by query result id
-	 * 
+	 *
 	 * @param queryResultId
 	 * @return QtQueryResultInstance
 	 */
@@ -195,8 +199,12 @@ IQueryResultInstanceDao {
 			throws I2B2DAOException {
 		String sql = "select *  from " + getDbSchemaName()
 				+ "qt_query_result_instance where result_instance_id = ? ";
-		List<QtQueryResultInstance> queryResultInstanceList = jdbcTemplate
-				.query(sql, new Object[] { Integer.parseInt(queryResultId) }, patientSetMapper);
+		List<QtQueryResultInstance> queryResultInstanceList = jdbcTemplate.query(
+				sql,
+				new Object[] { Integer.parseInt(queryResultId) },
+				new int[] { Types.INTEGER },
+				patientSetMapper
+		);
 		if (queryResultInstanceList.size() > 0) {
 			return queryResultInstanceList.get(0);
 		} else {
@@ -208,7 +216,7 @@ IQueryResultInstanceDao {
 
 	/**
 	 * Return list of query result instance by query instance id and result name
-	 * 
+	 *
 	 * @param queryInstanceId
 	 * @param resultName
 	 * @return QtQueryResultInstance
@@ -225,13 +233,14 @@ IQueryResultInstanceDao {
 		QtQueryResultInstance queryResultInstanceList = (QtQueryResultInstance) jdbcTemplate
 				.queryForObject(sql,
 						new Object[] { Integer.parseInt(queryInstanceId), resultName },
+						new int[] { Types.INTEGER, Types.VARCHAR },
 						patientSetMapper);
 		return queryResultInstanceList;
 	}
 
 	/**
 	 * Return a list of query result instance with waiting status
-	 * 
+	 *
 	 * @param queueName
 	 * @param maxListSize
 	 * @return
@@ -246,14 +255,18 @@ IQueryResultInstanceDao {
 				+ "qt_query_result_instance ri, "
 				+ getDbSchemaName()
 				+ "qt_query_result_type rt where status_type_id = ? and queue_name = ? and ri.result_type_id = rt.result_type_id order by start_date";
-		resultInstanceList = jdbcTemplate.query(sql, new Object[] { waitStatus,
-				queueName }, patientSetMapper);
+		resultInstanceList = jdbcTemplate.query(
+				sql,
+				new Object[] { waitStatus, queueName },
+				new int[] { Types.VARCHAR, Types.VARCHAR },
+				patientSetMapper
+		);
 		return resultInstanceList;
 	}
 
 	/**
 	 * Get result instance count by set size
-	 * 
+	 *
 	 * @param userId
 	 * @param compareDays
 	 * @param setSize
@@ -263,8 +276,8 @@ IQueryResultInstanceDao {
 	 */
 	@Override
 	public int getResultInstanceCountBySetSize(String userId, int compareDays,
-			int resultTypeId, int setSize, int totalCount)
-					throws I2B2DAOException {
+											   int resultTypeId, int setSize, int totalCount)
+			throws I2B2DAOException {
 		// int betweenDayValue = compareDays / 2;
 		int startBetweenDayValue = compareDays * -1;
 		int returnSetSize = 0;
@@ -293,6 +306,27 @@ IQueryResultInstanceDao {
 					+ " having count(r1.result_instance_id) > ? ";
 		} else if (dataSourceLookup.getServerType().equalsIgnoreCase(
 				DAOFactoryHelper.POSTGRESQL) ) {
+			queryCountSql = " select count(r1.result_instance_id) result_count,r1.real_set_size "
+					+ " from " + this.getDbSchemaName() + "qt_query_result_instance r1 inner join " + this.getDbSchemaName()+ "qt_query_result_instance r2 on "
+					+ " r1.real_set_size = r2.real_set_size, "
+					+ this.getDbSchemaName() +"qt_query_instance qi "
+					+ " where "
+					+ "  r1.start_date between LOCALTIMESTAMP - INTERVAL '"
+					+ compareDays
+					+ " days' and LOCALTIMESTAMP "
+					+ " and r2.start_date between LOCALTIMESTAMP - INTERVAL '"
+					+ compareDays
+					+ " days' and LOCALTIMESTAMP "
+					+ " and r1.result_type_id = ?"
+					+ " and r2.result_type_id = ? "
+					+ " and  qi.user_id = ? "
+					+ " and qi.query_instance_id = r1.query_instance_id "
+					+ " and qi.query_instance_id = r2.query_instance_id "
+					+ " and r1.real_set_size = ? "
+					+ " group by r1.real_set_size "
+					+ " having count(r1.result_instance_id) > ? ";
+		} else if (dataSourceLookup.getServerType().equalsIgnoreCase(
+				DAOFactoryHelper.SNOWFLAKE) ) {
 			queryCountSql = " select count(r1.result_instance_id) result_count,r1.real_set_size "
 					+ " from " + this.getDbSchemaName() + "qt_query_result_instance r1 inner join " + this.getDbSchemaName()+ "qt_query_result_instance r2 on "
 					+ " r1.real_set_size = r2.real_set_size, "
@@ -382,10 +416,12 @@ IQueryResultInstanceDao {
 		private String SEQUENCE_ORACLE = "";
 		private String SEQUENCE_POSTGRESQL = "";
 		private String INSERT_POSTGRESQL = "";
+		private String SEQUENCE_SNOWFLAKE = "";
+		private String INSERT_SNOWFLAKE = "";
 		DataSourceLookup dataSourceLookup = null;
 
 		public SavePatientSetResult(DataSource dataSource, String dbSchemaName,
-				DataSourceLookup dataSourceLookup) {
+									DataSourceLookup dataSourceLookup) {
 			super();
 			setDataSource(dataSource);
 			if (dataSourceLookup.getServerType().equalsIgnoreCase(
@@ -421,8 +457,22 @@ IQueryResultInstanceDao {
 				declareParameter(new SqlParameter(Types.INTEGER));
 
 
+			} else if (dataSourceLookup.getServerType().equalsIgnoreCase(
+					DAOFactoryHelper.SNOWFLAKE)) {
+				INSERT_SNOWFLAKE = "INSERT INTO "
+						+ dbSchemaName
+						+ "QT_QUERY_RESULT_INSTANCE "
+						+ "(RESULT_INSTANCE_ID, QUERY_INSTANCE_ID, RESULT_TYPE_ID, SET_SIZE,START_DATE,END_DATE,STATUS_TYPE_ID,DELETE_FLAG) "
+						+ "VALUES (?,?,?,?,?,?,?,?)";
+				setSql(INSERT_SNOWFLAKE);
+				SEQUENCE_SNOWFLAKE = "select "
+						+ dbSchemaName
+						+ "SEQ_QT_QUERY_RESULT_INSTANCE.nextval";
+				declareParameter(new SqlParameter(Types.INTEGER));
+
 			}
 
+			this.dataSourceLookup = dataSourceLookup;
 			declareParameter(new SqlParameter(Types.INTEGER));
 			declareParameter(new SqlParameter(Types.INTEGER));
 			declareParameter(new SqlParameter(Types.INTEGER));
@@ -430,8 +480,6 @@ IQueryResultInstanceDao {
 			declareParameter(new SqlParameter(Types.TIMESTAMP));
 			declareParameter(new SqlParameter(Types.INTEGER));
 			declareParameter(new SqlParameter(Types.VARCHAR));
-			this.dataSourceLookup = dataSourceLookup;
-
 			compile();
 		}
 
@@ -444,7 +492,7 @@ IQueryResultInstanceDao {
 
 				object = new Object[] {
 						resultInstance.getQtQueryInstance()
-						.getQueryInstanceId(),
+								.getQueryInstanceId(),
 
 						resultInstance.getQtQueryResultType().getResultTypeId(),
 						resultInstance.getSetSize(),
@@ -462,7 +510,7 @@ IQueryResultInstanceDao {
 				object = new Object[] {
 						resultInstance.getResultInstanceId(),
 						resultInstance.getQtQueryInstance()
-						.getQueryInstanceId(),
+								.getQueryInstanceId(),
 						resultInstance.getQtQueryResultType().getResultTypeId(),
 						resultInstance.getSetSize(),
 						resultInstance.getStartDate(),
@@ -479,7 +527,7 @@ IQueryResultInstanceDao {
 				object = new Object[] {
 						resultInstance.getResultInstanceId(),
 						resultInstance.getQtQueryInstance()
-						.getQueryInstanceId(),
+								.getQueryInstanceId(),
 						resultInstance.getQtQueryResultType().getResultTypeId(),
 						resultInstance.getSetSize(),
 						resultInstance.getStartDate(),
@@ -488,8 +536,25 @@ IQueryResultInstanceDao {
 						resultInstance.getDeleteFlag()
 
 				};
-			}
+			}	else  if (dataSourceLookup.getServerType().equalsIgnoreCase(
+					DAOFactoryHelper.SNOWFLAKE)) {
+				resultInstanceId = jdbc.queryForObject(SEQUENCE_SNOWFLAKE, Integer.class);
+				resultInstance.setResultInstanceId(String
+						.valueOf(resultInstanceId));
+				object = new Object[] {
+						resultInstance.getResultInstanceId(),
+						resultInstance.getQtQueryInstance()
+								.getQueryInstanceId(),
+						resultInstance.getQtQueryResultType().getResultTypeId(),
+						resultInstance.getSetSize(),
+						resultInstance.getStartDate(),
+						resultInstance.getEndDate(),
+						resultInstance.getQtQueryStatusType().getStatusTypeId(),
+						resultInstance.getDeleteFlag()
 
+				};
+
+			}
 			update(object);
 			if (dataSourceLookup.getServerType().equalsIgnoreCase(
 					DAOFactoryHelper.SQLSERVER)) {

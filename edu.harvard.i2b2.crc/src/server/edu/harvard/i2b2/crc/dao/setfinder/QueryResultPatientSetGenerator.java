@@ -39,8 +39,8 @@ public class QueryResultPatientSetGenerator extends CRCDAO implements
 	}
 
 	private String xmlResult = null;
-	
-	
+
+
 	@Override
 	public void generateResult(Map param) throws I2B2DAOException {
 
@@ -58,7 +58,7 @@ public class QueryResultPatientSetGenerator extends CRCDAO implements
 		DataSourceLookup originalDataSource = (DataSourceLookup) param
 				.get("OriginalDataSourceLookup");
 		List<String> roles = (List<String>) param.get("Roles");
-		this.setDbSchemaName(sfDAOFactory.getDataSourceLookup().getFullSchema()); 
+		this.setDbSchemaName(sfDAOFactory.getDataSourceLookup().getFullSchema());
 
 		boolean errorFlag = false;
 		Exception exception = null;
@@ -75,7 +75,7 @@ public class QueryResultPatientSetGenerator extends CRCDAO implements
 
 			String patientIdSql = " select distinct patient_num from " + TEMP_DX_TABLE
 					+ " order by patient_num ";
-			
+
 			////
 			//JNix: refactored to no longer pull down records just to insert back.
 			String sql = null;
@@ -86,7 +86,8 @@ public class QueryResultPatientSetGenerator extends CRCDAO implements
 						+ "SELECT <from>QT_SQ_QPR_PCID.nextval AS patient_set_coll_id, ? AS result_instance_id, rownum AS set_index, t.patient_num "
 						+ "FROM (SELECT DISTINCT patient_num FROM <TEMP_DX_TABLE>) t";
 			} else if (sfDAOFactory.getDataSourceLookup().getServerType().equalsIgnoreCase(DAOFactoryHelper.SQLSERVER) ||
-					sfDAOFactory.getDataSourceLookup().getServerType().equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL)) {
+					sfDAOFactory.getDataSourceLookup().getServerType().equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) ||
+					sfDAOFactory.getDataSourceLookup().getServerType().equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) {
 				sql = "INSERT INTO <from>qt_patient_set_collection"
 						+ " (result_instance_id, set_index, patient_num) "
 						+ "SELECT ? AS result_instance_id, ROW_NUMBER() OVER(ORDER BY patient_num) AS set_index, t.patient_num "
@@ -114,7 +115,7 @@ public class QueryResultPatientSetGenerator extends CRCDAO implements
 				}
 			}
 			realCount = loadCount;
-			
+
 
 			// check for the user role to see if it needs data obfscation
 			DataSourceLookup dataSourceLookup = sfDAOFactory
@@ -158,7 +159,7 @@ public class QueryResultPatientSetGenerator extends CRCDAO implements
 				double obfuscatedMinimumValue = GaussianBoxMuller.getObfuscatedMinimumVal();
 				loadCount = (int) gaussianBoxMuller
 						.getNormalizedValueForCount(loadCount,countSigma,obfuscatedMinimumValue);
-			} else { 
+			} else {
 				obfucatedRecordCount = loadCount;
 			}
 
@@ -176,7 +177,7 @@ public class QueryResultPatientSetGenerator extends CRCDAO implements
 		} finally {
 			IQueryResultInstanceDao resultInstanceDao = sfDAOFactory
 					.getPatientSetResultDAO();
-			
+
 			String queryName = sfDAOFactory.getQueryMasterDAO().getQueryDefinition(
 					sfDAOFactory.getQueryInstanceDAO().getQueryInstanceByInstanceId(queryInstanceId).getQtQueryMaster().getQueryMasterId()).getName();
 
@@ -186,7 +187,7 @@ public class QueryResultPatientSetGenerator extends CRCDAO implements
 			} else {
 				resultInstanceDao.updatePatientSet(resultInstanceId,
 						QueryStatusTypeId.STATUSTYPE_ID_FINISHED, "",
-						obfucatedRecordCount, 
+						obfucatedRecordCount,
 						//loadCount, 
 						realCount, obfusMethod);
 				//String description = "Patient Set - " + obfuscationDescription

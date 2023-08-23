@@ -8,8 +8,8 @@
  ******************************************************************************/
 /*
 
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Rajesh Kuttan
  */
 package edu.harvard.i2b2.crc.dao.pdo;
@@ -51,7 +51,7 @@ import edu.harvard.i2b2.crc.datavo.pdo.query.PidListType.Pid;
 /**
  * Class to build patient section of plain pdo $Id: PdoQueryPatientDao.java,v
  * 1.11 2008/03/19 22:42:08 rk903 Exp $
- * 
+ *
  * @author rkuttan
  */
 public class PdoQueryPidDao extends CRCDAO implements IPdoQueryPidDao {
@@ -60,7 +60,7 @@ public class PdoQueryPidDao extends CRCDAO implements IPdoQueryPidDao {
 	protected static Logger logesapi = ESAPI.getLogger(PdoQueryPidDao.class);
 
 	public PdoQueryPidDao(DataSourceLookup dataSourceLookup,
-			DataSource dataSource) {
+						  DataSource dataSource) {
 		setDataSource(dataSource);
 		setDbSchemaName(dataSourceLookup.getFullSchema());
 		this.dataSourceLookup = dataSourceLookup;
@@ -68,7 +68,7 @@ public class PdoQueryPidDao extends CRCDAO implements IPdoQueryPidDao {
 
 	/**
 	 * Function to return patient dimension data for given list of patient num
-	 * 
+	 *
 	 * @param patientNumList
 	 * @param detailFlag
 	 * @param blobFlag
@@ -78,8 +78,8 @@ public class PdoQueryPidDao extends CRCDAO implements IPdoQueryPidDao {
 	 */
 	@Override
 	public PidSet getPidByPatientNum(List<String> patientNumList,
-			boolean detailFlag, boolean blobFlag, boolean statusFlag)
-					throws I2B2DAOException {
+									 boolean detailFlag, boolean blobFlag, boolean statusFlag)
+			throws I2B2DAOException {
 
 		Connection conn = null;
 		PreparedStatement query = null;
@@ -132,9 +132,10 @@ public class PdoQueryPidDao extends CRCDAO implements IPdoQueryPidDao {
 
 				query = conn.prepareStatement(finalSql);
 				resultSet = query.executeQuery();
-			} else  if 
+			} else  if
 			(dataSourceLookup.getServerType().equalsIgnoreCase(
-					DAOFactoryHelper.POSTGRESQL))
+							DAOFactoryHelper.POSTGRESQL) || dataSourceLookup.getServerType().equalsIgnoreCase(
+							DAOFactoryHelper.SNOWFLAKE) )
 			{
 				// create temp table
 				// load to temp table
@@ -142,7 +143,7 @@ public class PdoQueryPidDao extends CRCDAO implements IPdoQueryPidDao {
 				log.debug("creating temp table");
 				java.sql.Statement tempStmt = conn.createStatement();
 
-				uploadTempTable(tempStmt, patientNumList,dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL));
+				uploadTempTable(tempStmt, patientNumList,dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) || dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE));
 				String finalSql = "SELECT "
 						+ selectClause
 						+ " FROM "
@@ -153,7 +154,7 @@ public class PdoQueryPidDao extends CRCDAO implements IPdoQueryPidDao {
 				log.debug("Executing [" + finalSql + "]");
 
 				query = conn.prepareStatement(finalSql);
-				resultSet = query.executeQuery();		
+				resultSet = query.executeQuery();
 			}
 
 			RPDRPdoFactory.PidBuilder pidBuilder = new RPDRPdoFactory.PidBuilder(
@@ -189,7 +190,7 @@ public class PdoQueryPidDao extends CRCDAO implements IPdoQueryPidDao {
 	/**
 	 * Get Patient dimension data based on patientlist present in input option
 	 * list
-	 * 
+	 *
 	 * @param patientListType
 	 *            {@link PatientListType}
 	 * @param detailFlag
@@ -200,8 +201,8 @@ public class PdoQueryPidDao extends CRCDAO implements IPdoQueryPidDao {
 	 */
 	@Override
 	public PidSet getPidFromPatientSet(PatientListType patientListType,
-			boolean detailFlag, boolean blobFlag, boolean statusFlag)
-					throws I2B2DAOException {
+									   boolean detailFlag, boolean blobFlag, boolean statusFlag)
+			throws I2B2DAOException {
 
 		PatientListTypeHandler patientListTypeHandler = new PatientListTypeHandler(
 				dataSourceLookup, patientListType);
@@ -270,7 +271,7 @@ public class PdoQueryPidDao extends CRCDAO implements IPdoQueryPidDao {
 
 	/**
 	 * Function to return patient dimension data for given list of pid list
-	 * 
+	 *
 	 * @param pidList
 	 * @param detailFlag
 	 * @param blobFlag
@@ -280,7 +281,7 @@ public class PdoQueryPidDao extends CRCDAO implements IPdoQueryPidDao {
 	 */
 	@Override
 	public PidSet getPidByPidList(PidListType pidList, boolean detailFlag,
-			boolean blobFlag, boolean statusFlag) throws I2B2DAOException {
+								  boolean blobFlag, boolean statusFlag) throws I2B2DAOException {
 
 		Connection conn = null;
 		PreparedStatement query = null;
@@ -290,7 +291,8 @@ public class PdoQueryPidDao extends CRCDAO implements IPdoQueryPidDao {
 				DAOFactoryHelper.SQLSERVER)) {
 			tempTableName = this.getDbSchemaName() + SQLServerFactRelatedQueryHandler.TEMP_PDO_INPUTLIST_TABLE;
 		} else if (dataSourceLookup.getServerType().equalsIgnoreCase(
-				DAOFactoryHelper.POSTGRESQL)) {
+				DAOFactoryHelper.POSTGRESQL) || dataSourceLookup.getServerType().equalsIgnoreCase(
+				DAOFactoryHelper.SNOWFLAKE)) {
 			tempTableName =  SQLServerFactRelatedQueryHandler.TEMP_PDO_INPUTLIST_TABLE.substring(1);
 		}
 		try {
@@ -329,7 +331,7 @@ public class PdoQueryPidDao extends CRCDAO implements IPdoQueryPidDao {
 			RPDRPdoFactory.PidBuilder pidBuilder = new RPDRPdoFactory.PidBuilder(
 					detailFlag, blobFlag, statusFlag);
 			pidSet = buildPidSetFromResultSet(resultSet, pidBuilder);
-			if (pidSet.getPid()!=null) { 
+			if (pidSet.getPid()!=null) {
 				logesapi.debug(null,"pid set size " + pidSet.getPid().size());
 				if (pidSet.getPid().size()>0) {
 					logesapi.debug(null,"pid set size " + pidSet.getPid().get(0).getPatientId().getValue());
@@ -360,7 +362,7 @@ public class PdoQueryPidDao extends CRCDAO implements IPdoQueryPidDao {
 	}
 
 	private PidSet buildPidSetFromResultSet(ResultSet resultSet,
-			RPDRPdoFactory.PidBuilder pidBuilder) throws SQLException,
+											RPDRPdoFactory.PidBuilder pidBuilder) throws SQLException,
 			IOException {
 		String prevPatientNum = "";
 		PidType pidType = new PidType();
@@ -422,26 +424,28 @@ public class PdoQueryPidDao extends CRCDAO implements IPdoQueryPidDao {
 		return pidSet;
 	}
 
-	private void uploadTempTable(Statement tempStmt, List<String> patientNumList,  boolean isPostgresql) 
+	private void uploadTempTable(Statement tempStmt, List<String> patientNumList,  boolean isPostgresql)
 			throws SQLException {
 		String temp_pdo = SQLServerFactRelatedQueryHandler.TEMP_PDO_INPUTLIST_TABLE;
 		if (dataSourceLookup.getServerType().equalsIgnoreCase(
-				DAOFactoryHelper.POSTGRESQL))
+				DAOFactoryHelper.POSTGRESQL) || dataSourceLookup.getServerType().equalsIgnoreCase(
+				DAOFactoryHelper.SNOWFLAKE))
 			temp_pdo = temp_pdo.substring(1);
 
 		String createTempInputListTable =  "create "
-				 + (isPostgresql ? " temp ": "" ) 
-				 + " table " 
-				+ temp_pdo
-				+ " ( char_param1 varchar(100) )";
-	
-		if (dataSourceLookup.getServerType().equalsIgnoreCase(
-				DAOFactoryHelper.POSTGRESQL))
-		 createTempInputListTable = "create temp table "
+				+ (isPostgresql ? " temp ": "" )
+				+ " table "
 				+ temp_pdo
 				+ " ( char_param1 varchar(100) )";
 
-		
+		if (dataSourceLookup.getServerType().equalsIgnoreCase(
+				DAOFactoryHelper.POSTGRESQL) || dataSourceLookup.getServerType().equalsIgnoreCase(
+				DAOFactoryHelper.SNOWFLAKE))
+			createTempInputListTable = "create temp table "
+					+ temp_pdo
+					+ " ( char_param1 varchar(100) )";
+
+
 		tempStmt.executeUpdate(createTempInputListTable);
 		log.debug("created temp table"
 				+ temp_pdo);
@@ -468,7 +472,7 @@ public class PdoQueryPidDao extends CRCDAO implements IPdoQueryPidDao {
 
 	private void deleteTempTable(Connection conn, String tempTableName) {
 
-		
+
 		Statement deleteStmt = null;
 		try {
 			deleteStmt = conn.createStatement();
@@ -479,7 +483,7 @@ public class PdoQueryPidDao extends CRCDAO implements IPdoQueryPidDao {
 		} finally {
 			try {
 				if (deleteStmt != null)
-				deleteStmt.close();
+					deleteStmt.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -489,7 +493,7 @@ public class PdoQueryPidDao extends CRCDAO implements IPdoQueryPidDao {
 	}
 
 	private void upLoadPidListToTempTable(Connection conn,
-			String tempTableName, PidListType pidListType) throws SQLException {
+										  String tempTableName, PidListType pidListType) throws SQLException {
 
 		// create temp table
 		java.sql.Statement tempStmt = conn.createStatement();
@@ -500,7 +504,8 @@ public class PdoQueryPidDao extends CRCDAO implements IPdoQueryPidDao {
 					+ " (set_index int, char_param1 varchar(200), char_param2 varchar(200) )";
 			tempStmt.executeUpdate(createTempInputListTable);
 		} else if (dataSourceLookup.getServerType().equalsIgnoreCase(
-				DAOFactoryHelper.POSTGRESQL)) {
+				DAOFactoryHelper.POSTGRESQL) || dataSourceLookup.getServerType().equalsIgnoreCase(
+				DAOFactoryHelper.SNOWFLAKE)) {
 			String createTempInputListTable = "create temp table "
 					+ tempTableName
 					+ " (set_index int, char_param1 varchar(200), char_param2 varchar(200) )";
@@ -527,9 +532,9 @@ public class PdoQueryPidDao extends CRCDAO implements IPdoQueryPidDao {
 
 	@Override
 	public PidSet getPidByFact(List<String> panelSqlList,
-			List<Integer> sqlParamCountList,
-			IInputOptionListHandler inputOptionListHandler, boolean detailFlag,
-			boolean blobFlag, boolean statusFlag) throws I2B2DAOException {
+							   List<Integer> sqlParamCountList,
+							   IInputOptionListHandler inputOptionListHandler, boolean detailFlag,
+							   boolean blobFlag, boolean statusFlag) throws I2B2DAOException {
 
 		PidSet pidSet = new PidSet();
 		RPDRPdoFactory.PidBuilder pidBuilder = new RPDRPdoFactory.PidBuilder(
@@ -559,12 +564,12 @@ public class PdoQueryPidDao extends CRCDAO implements IPdoQueryPidDao {
 						+ " ( set_index int, char_param1 varchar(500) )";
 				tempStmt.executeUpdate(createTempInputListTable);
 				log.debug("created temp table" + tempTable);
-			} else if (serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL)) {
+			} else if (serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) || serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) {
 				log.debug("creating temp table");
 				java.sql.Statement tempStmt = conn.createStatement();
 				tempTable = SQLServerFactRelatedQueryHandler.TEMP_PDO_INPUTLIST_TABLE.substring(1);
 				try {
-					tempStmt.executeUpdate("drop table " + tempTable);
+					tempStmt.executeUpdate("drop table if exists " + tempTable);
 				} catch (SQLException sqlex) {
 					;
 				}
@@ -585,9 +590,9 @@ public class PdoQueryPidDao extends CRCDAO implements IPdoQueryPidDao {
 			ResultSet resultSet = null;
 			for (String panelSql : panelSqlList) {
 				// if sqlserver and getting a pid than remove order by
-				 if (serverType.equalsIgnoreCase(DAOFactoryHelper.SQLSERVER)) {
-					 panelSql = panelSql.replace("ORDER BY obs_patient_num,obs_start_date,obs_concept_cd,obs_instance_num,obs_modifier_cd,rnum", "");
-					
+				if (serverType.equalsIgnoreCase(DAOFactoryHelper.SQLSERVER)) {
+					panelSql = panelSql.replace("ORDER BY obs_patient_num,obs_start_date,obs_concept_cd,obs_instance_num,obs_modifier_cd,rnum", "");
+
 				}
 				insertSql = " insert into "
 						+ tempTable
@@ -609,13 +614,13 @@ public class PdoQueryPidDao extends CRCDAO implements IPdoQueryPidDao {
 					+ "patient_mapping pm "
 					+ " where patient_num in (select distinct ";
 
-			if (serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL))
+			if (serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) || serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE))
 				finalSql += " CAST(coalesce(char_param1, '0') as integer) ";
 			else
 				finalSql += " char_param1 ";
 
 
-			finalSql += "from " 
+			finalSql += "from "
 					+ tempTable + ") order by patient_num";
 			log.debug("Executing SQL [" + finalSql + "]");
 			log.debug("Final Sql " + finalSql);
@@ -662,8 +667,8 @@ public class PdoQueryPidDao extends CRCDAO implements IPdoQueryPidDao {
 
 
 	private void executeUpdateSql(String totalSql, Connection conn,
-			int sqlParamCount, IInputOptionListHandler inputOptionListHandler)
-					throws SQLException {
+								  int sqlParamCount, IInputOptionListHandler inputOptionListHandler)
+			throws SQLException {
 
 		PreparedStatement stmt = conn.prepareStatement(totalSql);
 

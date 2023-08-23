@@ -187,7 +187,7 @@ class GetNamesInfoMapper implements RowMapper<ConceptType> {
 		entry.setName(rs.getString("c_name"));
 
 		if(!(vocabType.getType().equals("default"))) {
-			entry.setKey(rs.getString("c_fullname")); 
+			entry.setKey(rs.getString("c_fullname"));
 			entry.setBasecode(rs.getString("c_basecode"));
 			entry.setLevel(rs.getInt("c_hlevel"));
 			entry.setSynonymCd(rs.getString("c_synonym_cd"));
@@ -197,11 +197,11 @@ class GetNamesInfoMapper implements RowMapper<ConceptType> {
 			if ( obfuscatedUserFlag == false) { 
 				entry.setTotalnum(totalNum);
 			}
-			entry.setFacttablecolumn(rs.getString("c_facttablecolumn" ));
-			entry.setTablename(rs.getString("c_tablename")); 
-			entry.setColumnname(rs.getString("c_columnname")); 
-			entry.setColumndatatype(rs.getString("c_columndatatype")); 
-			entry.setOperator(rs.getString("c_operator")); 
+			entry.setFacttablecolumn(rs.getString("c_facttablecolumn"));
+			entry.setTablename(rs.getString("c_tablename"));
+			entry.setColumnname(rs.getString("c_columnname"));
+			entry.setColumndatatype(rs.getString("c_columndatatype"));
+			entry.setOperator(rs.getString("c_operator"));
 			entry.setDimcode(rs.getString("c_dimcode"));
 			entry.setTooltip(rs.getString("c_tooltip"));
 		}
@@ -211,6 +211,8 @@ class GetNamesInfoMapper implements RowMapper<ConceptType> {
 			else {
 				try {
 					if (dbType.equals("POSTGRESQL"))
+						entry.setComment(rs.getString("c_comment"));
+					else if (dbType.equals("SNOWFLAKE"))
 						entry.setComment(rs.getString("c_comment"));
 					else
 						entry.setComment(JDBCUtil.getClobString(rs.getClob("c_comment")));
@@ -224,6 +226,8 @@ class GetNamesInfoMapper implements RowMapper<ConceptType> {
 				String c_xml = null;
 				try {
 					if (dbType.equals("POSTGRESQL"))
+						c_xml = rs.getString("c_comment");
+					else if (dbType.equals("SNOWFLAKE"))
 						c_xml = rs.getString("c_comment");
 					else
 						c_xml = JDBCUtil.getClobString(rs.getClob("c_metadataxml"));

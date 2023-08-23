@@ -8,7 +8,7 @@
  ******************************************************************************/
 /*
 
- * 
+ *
  * Contributors:
  * 		Christopher Herrick
  */
@@ -55,7 +55,7 @@ public class TemporalQueryHandler extends CRCDAO {
 	private boolean isProtectedQuery = false;
 
 	public TemporalQueryHandler(DataSourceLookup dataSourceLookup, String queryXML,
-			boolean encounterSetOutputFlag) {
+								boolean encounterSetOutputFlag) {
 		this.setDbSchemaName(dataSourceLookup.getFullSchema());
 		this.dataSourceLookup = dataSourceLookup;
 		this.queryXML = queryXML;
@@ -73,7 +73,8 @@ public class TemporalQueryHandler extends CRCDAO {
 			tempDxTableName = "#dx";
 		} else if (this.dataSourceLookup.getServerType().equalsIgnoreCase(
 				DAOFactoryHelper.ORACLE) || this.dataSourceLookup.getServerType().equalsIgnoreCase(
-						DAOFactoryHelper.POSTGRESQL)) {
+				DAOFactoryHelper.POSTGRESQL) || this.dataSourceLookup.getServerType().equalsIgnoreCase(
+				DAOFactoryHelper.SNOWFLAKE)) {
 			tempTableName = "QUERY_GLOBAL_TEMP";
 			tempDxTableName = "DX";
 		}
@@ -83,11 +84,11 @@ public class TemporalQueryHandler extends CRCDAO {
 		return maxPanelNum;
 	}
 
-	public void setProcessTimingFlag(String level) { 
+	public void setProcessTimingFlag(String level) {
 		this.processTimingFlag = level;
 	}
 
-	public void setProjectParamMap(Map projectParamMap) { 
+	public void setProjectParamMap(Map projectParamMap) {
 		this.projectParamMap = projectParamMap;
 	}
 
@@ -95,14 +96,14 @@ public class TemporalQueryHandler extends CRCDAO {
 		return this.processTimingStr.toString();
 	}
 
-	public void setAllowLargeTextValueConstrainFlag(boolean allowLargeTextValueConstrainFlag)  { 
+	public void setAllowLargeTextValueConstrainFlag(boolean allowLargeTextValueConstrainFlag)  {
 		this.allowLargeTextValueConstrainFlag = allowLargeTextValueConstrainFlag;
 	}
 
-	public void setUserRoles(List<String> userRoles)  { 
+	public void setUserRoles(List<String> userRoles)  {
 		this.userRoles = userRoles;
 	}
-	
+
 	public String buildSql() throws JAXBUtilException, I2B2Exception {
 		TemporalQuery tQuery = new TemporalQuery(this.dataSourceLookup, this.projectParamMap, this.queryXML, this.allowLargeTextValueConstrainFlag, this.userRoles);
 		if (this.queryWithoutTempTableFlag)
@@ -113,11 +114,11 @@ public class TemporalQueryHandler extends CRCDAO {
 		this.isTemporalQuery = (tQuery.getSubQueryCount()>1?true:false);
 		this.isProtectedQuery = tQuery.isProtectedQuery();
 		logesapi.debug(null,tQuerySql);
-		
+
 		return tQuerySql;
 
 	}
-	
+
 	public String getIgnoredItemMessage() {
 		if (this.ignoredItemMessageBuffer != null
 				&& this.ignoredItemMessageBuffer.length() > 0) {
@@ -127,7 +128,7 @@ public class TemporalQueryHandler extends CRCDAO {
 			return "";
 		}
 	}
-	
+
 	/**
 	 * @return the queryWithoutTempTableFlag
 	 */

@@ -16,9 +16,9 @@ public class TempTableNameMap {
 	private String tempDxTableName = "";
 	private String tempMasterTableName = "";
 	private String noLockSqlServer = " ";
-	
-	
-	public TempTableNameMap(String serverType) { 
+
+
+	public TempTableNameMap(String serverType) {
 		if (serverType.equalsIgnoreCase(
 				DAOFactoryHelper.SQLSERVER)) {
 			tempTableName = "#global_temp_table";
@@ -26,25 +26,26 @@ public class TempTableNameMap {
 			tempMasterTableName = "#master_global_temp_table";
 		} else if (serverType.equalsIgnoreCase(
 				DAOFactoryHelper.ORACLE) || serverType.equalsIgnoreCase(
-						DAOFactoryHelper.POSTGRESQL)) {
+				DAOFactoryHelper.POSTGRESQL) || serverType.equalsIgnoreCase(
+				DAOFactoryHelper.SNOWFLAKE)) {
 			tempTableName = "QUERY_GLOBAL_TEMP";
 			tempDxTableName = "DX";
 			tempMasterTableName = "MASTER_QUERY_GLOBAL_TEMP";
-			
+
 		}
 	}
-	
-	public String getTempTableName() { 
+
+	public String getTempTableName() {
 		return this.tempTableName;
 	}
-	
-	public String getTempDxTableName() { 
+
+	public String getTempDxTableName() {
 		return this.tempDxTableName;
 	}
-	
-	public String getTempMasterTable() { 
+
+	public String getTempMasterTable() {
 		return this.tempMasterTableName;
 	}
-	
-	
+
+
 }

@@ -8,8 +8,8 @@
  ******************************************************************************/
 /*
 
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Rajesh Kuttan
  */
 package edu.harvard.i2b2.crc.dao.pdo;
@@ -43,7 +43,7 @@ import edu.harvard.i2b2.crc.datavo.pdo.ModifierType;
 /**
  * Class to support concept section of table pdo query $Id:
  * TablePdoQueryConceptDao.java,v 1.13 2008/07/21 19:53:40 rk903 Exp $
- * 
+ *
  * @author rkuttan
  */
 public class TablePdoQueryModifierDao extends CRCDAO implements
@@ -53,7 +53,7 @@ public class TablePdoQueryModifierDao extends CRCDAO implements
 	private String schemaName = null;
 
 	public TablePdoQueryModifierDao(DataSourceLookup dataSourceLookup,
-			DataSource dataSource) {
+									DataSource dataSource) {
 		this.dataSourceLookup = dataSourceLookup;
 		this.setDbSchemaName(dataSourceLookup.getFullSchema());
 		setDataSource(dataSource);
@@ -61,9 +61,9 @@ public class TablePdoQueryModifierDao extends CRCDAO implements
 
 	@Override
 	public ModifierSet getModifierByFact(List<String> panelSqlList,
-			List<Integer> sqlParamCountList,
-			IInputOptionListHandler inputOptionListHandler, boolean detailFlag,
-			boolean blobFlag, boolean statusFlag) throws I2B2DAOException {
+										 List<Integer> sqlParamCountList,
+										 IInputOptionListHandler inputOptionListHandler, boolean detailFlag,
+										 boolean blobFlag, boolean statusFlag) throws I2B2DAOException {
 		ModifierSet modifierSet = new ModifierSet();
 		RPDRPdoFactory.ModifierBuilder modifierBuilder = new RPDRPdoFactory.ModifierBuilder(
 				detailFlag, blobFlag, statusFlag);
@@ -80,7 +80,8 @@ public class TablePdoQueryModifierDao extends CRCDAO implements
 				factTempTable = this.getDbSchemaName()
 						+ FactRelatedQueryHandler.TEMP_FACT_PARAM_TABLE;
 			} else if (serverType.equalsIgnoreCase(DAOFactoryHelper.SQLSERVER) ||
-					serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL)) {
+					serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) ||
+					serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) {
 				log.debug("creating temp table");
 				java.sql.Statement tempStmt = conn.createStatement();
 				factTempTable = this.getDbSchemaName()
@@ -127,7 +128,7 @@ public class TablePdoQueryModifierDao extends CRCDAO implements
 					+ "modifier_dimension modifier where modifier_cd in (select distinct char_param1 from "
 					+ factTempTable + ") order by modifier_path";
 			log.debug("Executing SQL [" + finalSql + "]");
-			
+
 
 			query = conn.prepareStatement(finalSql);
 
@@ -144,9 +145,9 @@ public class TablePdoQueryModifierDao extends CRCDAO implements
 			log.error("", ioEx);
 			throw new I2B2DAOException("IO exception", ioEx);
 		} finally {
-			PdoTempTableUtil tempTableUtil = new PdoTempTableUtil(); 
+			PdoTempTableUtil tempTableUtil = new PdoTempTableUtil();
 			tempTableUtil.clearTempTable(serverType, conn, factTempTable);
-			
+
 			if (inputOptionListHandler != null
 					&& inputOptionListHandler.isEnumerationSet()) {
 				try {
@@ -166,7 +167,7 @@ public class TablePdoQueryModifierDao extends CRCDAO implements
 	}
 
 	private void executeTotalSql(String totalSql, Connection conn,
-			int sqlParamCount, IInputOptionListHandler inputOptionListHandler)
+								 int sqlParamCount, IInputOptionListHandler inputOptionListHandler)
 			throws SQLException {
 
 		PreparedStatement stmt = conn.prepareStatement(totalSql);
@@ -185,7 +186,7 @@ public class TablePdoQueryModifierDao extends CRCDAO implements
 
 	/**
 	 * Function returns concepts based on list of concept codes
-	 * 
+	 *
 	 * @param conceptCdList
 	 * @param detailFlag
 	 * @param blobFlag
@@ -195,7 +196,7 @@ public class TablePdoQueryModifierDao extends CRCDAO implements
 	 */
 	@Override
 	public ModifierSet getModifierByModifierCd(List<String> modifierCdList,
-			boolean detailFlag, boolean blobFlag, boolean statusFlag)
+											   boolean detailFlag, boolean blobFlag, boolean statusFlag)
 			throws I2B2DAOException {
 		ModifierSet modifierSet = new ModifierSet();
 		RPDRPdoFactory.ModifierBuilder modifierBuilder = new RPDRPdoFactory.ModifierBuilder(
@@ -212,7 +213,7 @@ public class TablePdoQueryModifierDao extends CRCDAO implements
 			String serverType = dataSourceLookup.getServerType();
 			if (serverType.equalsIgnoreCase(DAOFactoryHelper.ORACLE)) {
 				oracle.jdbc.driver.OracleConnection conn1 = null;// (oracle.jdbc.driver.OracleConnection) ((WrappedConnection) conn)
-			//			.getUnderlyingConnection();
+				//			.getUnderlyingConnection();
 				String finalSql = "SELECT "
 						+ selectClause
 						+ "  FROM "
@@ -228,7 +229,8 @@ public class TablePdoQueryModifierDao extends CRCDAO implements
 						modifierCdList.toArray(new String[] {}));
 				query.setArray(1, paramArray);
 			} else if (serverType.equalsIgnoreCase(DAOFactoryHelper.SQLSERVER) ||
-					serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL)) {
+					serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) ||
+					serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) {
 				log.debug("creating temp table");
 				java.sql.Statement tempStmt = conn.createStatement();
 				tempTableName = this.getDbSchemaName()
@@ -267,7 +269,7 @@ public class TablePdoQueryModifierDao extends CRCDAO implements
 		} finally {
 			PdoTempTableUtil tempTableUtil = new PdoTempTableUtil();
 			tempTableUtil.deleteTempTableSqlServer(conn, tempTableName);
-			
+
 			try {
 				JDBCUtil.closeJdbcResource(null, query, conn);
 			} catch (SQLException sqlEx) {
@@ -278,7 +280,7 @@ public class TablePdoQueryModifierDao extends CRCDAO implements
 	}
 
 	private void uploadTempTable(Statement tempStmt, String tempTableName,
-			List<String> patientNumList) throws SQLException {
+								 List<String> patientNumList) throws SQLException {
 		String createTempInputListTable = "create table " + tempTableName
 				+ " ( char_param1 varchar(100) )";
 		tempStmt.executeUpdate(createTempInputListTable);
@@ -303,5 +305,5 @@ public class TablePdoQueryModifierDao extends CRCDAO implements
 		tempStmt.executeBatch();
 	}
 
-	
+
 }

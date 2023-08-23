@@ -1,6 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2006-2018 Massachusetts General Hospital 
- * All rights reserved. This program and the accompanying materials 
+ * Copyright (c) 2006-2018 Massachusetts General Hospital
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/. I2b2 is also distributed under
@@ -21,13 +21,13 @@ public class BuildTotalOccuranceSql {
 
 	DataSourceLookup dataSourceLookup = null;
 
-	public BuildTotalOccuranceSql(DataSourceLookup dataSourceLookup) { 
+	public BuildTotalOccuranceSql(DataSourceLookup dataSourceLookup) {
 		this.dataSourceLookup = dataSourceLookup;
 	}
 
 	public String buildTotalOccuranceSql(String dimensionJoinSql,
-			boolean encounterFlag, boolean instanceNumFlag, String queryTiming, int panelNumber,
-			TotalItemOccurrences totalOccurances, boolean panelInvertFlag) {
+										 boolean encounterFlag, boolean instanceNumFlag, String queryTiming, int panelNumber,
+										 TotalItemOccurrences totalOccurances, boolean panelInvertFlag) {
 
 		String selectClause = " ", groupbyClause = " ";
 		TotalItemOccurrenceHandler totalItemOccurrencHandler = new TotalItemOccurrenceHandler();
@@ -63,30 +63,31 @@ public class BuildTotalOccuranceSql {
 		if (timingHandler.isSameInstanceNum(queryTiming)) {
 			groupbyClause = " " + groupbyClausePrefix + "encounter_num ," + groupbyClausePrefix + "instance_num, " + groupbyClausePrefix + "concept_cd," +
 					groupbyClausePrefix + "start_date," + groupbyClausePrefix + "provider_id,";
-		} else if (timingHandler.isSameVisit(queryTiming)) { 
+		} else if (timingHandler.isSameVisit(queryTiming)) {
 			groupbyClause = " "  + groupbyClausePrefix + "encounter_num ,";
-		} 
+		}
 		groupbyClause += " " +  groupbyClausePrefix + "patient_num ";
 
 		String totalOccuranceSql = "select " + selectClause + " from ("
 				+ dimensionJoinSql ;
 
-		//if (panelInvertFlag == false) { 
-			totalOccuranceSql += "  group by " + groupbyClause ;
+		//if (panelInvertFlag == false) {
+		totalOccuranceSql += "  group by " + groupbyClause ;
 		//}
 
-		if (totalOccurances != null) { 
+		if (totalOccurances != null) {
 			// TotOccuranceOperatorType
 
 			if ((totalOccurances.getOperator() != null && totalOccurances.getOperator().value() != null && totalOccurances.getOperator().value().equalsIgnoreCase(TotOccuranceOperatorType.GE.value())) && totalOccurances.getValue()==1) {
 			} else {
 				log.debug("Setfinder query total occurrences operator value [" + totalOccurances.getOperator().value() + "]");
 				String countDistinct = "*";
-				if (this.dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.SQLSERVER)) { 
-					countDistinct = " distinct cast(patient_num as varchar) + '|' +  cast(encounter_num as varchar) + '|' + " + 
-							" provider_id + '|' + cast(start_date as varchar) + '|' + cast(instance_num as varchar) + '|' +concept_cd"; 
+				if (this.dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.SQLSERVER)) {
+					countDistinct = " distinct cast(patient_num as varchar) + '|' +  cast(encounter_num as varchar) + '|' + " +
+							" provider_id + '|' + cast(start_date as varchar) + '|' + cast(instance_num as varchar) + '|' +concept_cd";
 				} else if (this.dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.ORACLE)  ||
-						this.dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL)	) { 
+						this.dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) ||
+						this.dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) {
 					countDistinct = " distinct patient_num || '|' || encounter_num || '|' || provider_id || '|' || instance_num || '|' ||concept_cd || '|' ||cast(start_date as  varchar(50) ) ";
 				}
 				totalOccuranceSql +=  " having count("+countDistinct+") " + totalItemOccurrenceClause;//  + " group by " + selectClause;

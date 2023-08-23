@@ -43,7 +43,7 @@ public class QueryResultEncounterSetGenerator extends CRCDAO implements
 	}
 
 	private String xmlResult = null;
-	
+
 	@Override
 	public void generateResult(Map param) throws I2B2DAOException {
 
@@ -63,8 +63,8 @@ public class QueryResultEncounterSetGenerator extends CRCDAO implements
 		int obfucatedRecordCount = (Integer) param.get("ObfuscatedRecordCount");
 		int recordCount = (Integer) param.get("RecordCount");
 		boolean obfuscatedRoleFlag = (Boolean)param.get("ObfuscatedRoleFlag");
-		this.setDbSchemaName(sfDAOFactory.getDataSourceLookup().getFullSchema()); 
-		
+		this.setDbSchemaName(sfDAOFactory.getDataSourceLookup().getFullSchema());
+
 
 		String queryGeneratorVersion = "1.6";
 		try {
@@ -104,7 +104,8 @@ public class QueryResultEncounterSetGenerator extends CRCDAO implements
 						+ "SELECT <dbSchemaName>QT_SQ_QPER_PECID.nextval AS patient_set_coll_id, ? AS result_instance_id, rownum AS set_index, t.patient_num, t.encounter_num "
 						+ "FROM (<encounterSql>) t";
 			} else if (sfDAOFactory.getDataSourceLookup().getServerType().equalsIgnoreCase(DAOFactoryHelper.SQLSERVER) ||
-					sfDAOFactory.getDataSourceLookup().getServerType().equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL)) {
+					sfDAOFactory.getDataSourceLookup().getServerType().equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) ||
+					sfDAOFactory.getDataSourceLookup().getServerType().equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) {
 				sql = "INSERT INTO <dbSchemaName>qt_patient_enc_collection"
 						+ " (result_instance_id, set_index, patient_num, encounter_num) "
 						+ "SELECT ? AS result_instance_id, ROW_NUMBER() OVER(ORDER BY patient_num) AS set_index, t.patient_num, t.encounter_num "
@@ -113,10 +114,10 @@ public class QueryResultEncounterSetGenerator extends CRCDAO implements
 			log.debug("Executing sql:\n" + sql);
 			LogTimingUtil logTimingUtil = new LogTimingUtil();
 			logTimingUtil.setStartTime();
-			
+
 			String sqlFinal = sql.replace("<dbSchemaName>", dbSchemaName);
 			sqlFinal = sqlFinal.replace("<encounterSql>", encounterSql);
-			
+
 			PreparedStatement ps = sfConn.prepareStatement(sqlFinal);
 			ps.setInt(1, Integer.parseInt(resultInstanceId));
 			loadCount = ps.executeUpdate();
@@ -147,14 +148,14 @@ public class QueryResultEncounterSetGenerator extends CRCDAO implements
 				resultInstanceDao.updatePatientSet(resultInstanceId,
 						QueryStatusTypeId.STATUSTYPE_ID_ERROR, 0);
 			} else {
-				
+
 				//set size for the encounter set = 0
-				if (obfuscatedRoleFlag) { 
+				if (obfuscatedRoleFlag) {
 					loadCount = obfucatedRecordCount;
 				} else {
 					loadCount = recordCount;
 				}
-				
+
 				resultInstanceDao.updatePatientSet(resultInstanceId,
 						QueryStatusTypeId.STATUSTYPE_ID_FINISHED, "",
 						loadCount, recordCount, obfusMethod);
@@ -171,8 +172,8 @@ public class QueryResultEncounterSetGenerator extends CRCDAO implements
 	}
 
 	private String buildEncounterSetSql(SetFinderDAOFactory sfDAOFactory,
-			String queryInstanceId, String TEMP_DX_TABLE,
-			String queryGeneratorVersion) throws I2B2DAOException {
+										String queryInstanceId, String TEMP_DX_TABLE,
+										String queryGeneratorVersion) throws I2B2DAOException {
 		// get request xml from query instance id
 		// call timing helper to find if timing is samevisit
 

@@ -169,7 +169,7 @@ class GetTermInfoConcept implements RowMapper<ConceptType> {
 		self.setName(rs.getString("c_name"));
 		self.setBasecode(rs.getString("c_basecode"));
 		self.setLevel(rs.getInt("c_hlevel"));
-		self.setKey(rs.getString("c_fullname")); 
+		self.setKey(rs.getString("c_fullname"));
 		self.setSynonymCd(rs.getString("c_synonym_cd"));
 		self.setVisualattributes(rs.getString("c_visualattributes"));
 
@@ -177,12 +177,12 @@ class GetTermInfoConcept implements RowMapper<ConceptType> {
 		if ( obfuscatedUserFlag == false) { 
 			self.setTotalnum(totalNum);
 		}
-		self.setFacttablecolumn(rs.getString("c_facttablecolumn" ));
-		self.setTablename(rs.getString("c_tablename")); 
-		self.setColumnname(rs.getString("c_columnname")); 
-		self.setColumndatatype(rs.getString("c_columndatatype")); 
-		self.setOperator(rs.getString("c_operator")); 
-		self.setDimcode(rs.getString("c_dimcode")); 
+		self.setFacttablecolumn(rs.getString("c_facttablecolumn"));
+		self.setTablename(rs.getString("c_tablename"));
+		self.setColumnname(rs.getString("c_columnname"));
+		self.setColumndatatype(rs.getString("c_columndatatype"));
+		self.setOperator(rs.getString("c_operator"));
+		self.setDimcode(rs.getString("c_dimcode"));
 		self.setTooltip(rs.getString("c_tooltip"));
 		if(termInfoType.isBlob() == true) {
 			if(rs.getClob("c_comment") == null)
@@ -190,6 +190,8 @@ class GetTermInfoConcept implements RowMapper<ConceptType> {
 			else {
 				try {
 					if (dbType.equals("POSTGRESQL"))
+						self.setComment(rs.getString("c_comment"));
+					else if (dbType.equals("SNOWFLAKE"))
 						self.setComment(rs.getString("c_comment"));
 					else
 						self.setComment(JDBCUtil.getClobString(rs.getClob("c_comment")));
@@ -203,6 +205,8 @@ class GetTermInfoConcept implements RowMapper<ConceptType> {
 				String c_xml = null;
 				try {
 					if (dbType.equals("POSTGRESQL"))
+						c_xml = rs.getString("c_metadataxml");
+					else if (dbType.equals("SNOWFLAKE"))
 						c_xml = rs.getString("c_metadataxml");
 					else
 						c_xml = JDBCUtil.getClobString(rs.getClob("c_metadataxml"));

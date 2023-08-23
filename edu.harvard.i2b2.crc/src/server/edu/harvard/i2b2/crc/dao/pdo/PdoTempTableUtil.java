@@ -16,15 +16,16 @@ import edu.harvard.i2b2.crc.dao.DAOFactoryHelper;
 
 public class PdoTempTableUtil {
 
-	public void clearTempTable(String serverType, Connection conn, String tableName) { 
+	public void clearTempTable(String serverType, Connection conn, String tableName) {
 		if (serverType.equalsIgnoreCase(DAOFactoryHelper.SQLSERVER) ||
-				serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL)) { 
+				serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) ||
+				serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) {
 			this.deleteTempTableSqlServer(conn, tableName);
-		} else if (serverType.equalsIgnoreCase(DAOFactoryHelper.ORACLE)) { 
+		} else if (serverType.equalsIgnoreCase(DAOFactoryHelper.ORACLE)) {
 			this.deleteTempTableOracle(conn, tableName);
 		}
 	}
-	
+
 	public void deleteTempTableSqlServer(Connection conn, String tableName) {
 
 		Statement deleteStmt = null;
@@ -46,28 +47,28 @@ public class PdoTempTableUtil {
 		}
 
 	}
-	
-	public void deleteTempTableOracle(Connection conn, String tableName) { 
-		
-		
+
+	public void deleteTempTableOracle(Connection conn, String tableName) {
+
+
 		Statement clearTempStmt = null;
 		try {
 			clearTempStmt = conn.createStatement();
 			clearTempStmt.executeUpdate("delete from " + tableName);
-			
+
 		} catch (SQLException dEx) {
 			;
 		} finally {
 			try {
 				if(clearTempStmt != null)
-				clearTempStmt.close();
+					clearTempStmt.close();
 			} catch (SQLException e) {
-				
+
 				e.printStackTrace();
 			}
 		}
 	}
-	
-	
-	
+
+
+
 }

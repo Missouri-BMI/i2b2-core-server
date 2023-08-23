@@ -8,8 +8,8 @@
  ******************************************************************************/
 /*
 
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Rajesh Kuttan
  */
 package edu.harvard.i2b2.crc.dao.pdo;
@@ -46,7 +46,7 @@ import edu.harvard.i2b2.crc.datavo.pdo.PatientDataType;
 /**
  * This class handles Concept dimension query's related to PDO request $Id:
  * PdoQueryConceptDao.java,v 1.11 2008/03/19 22:42:08 rk903 Exp $
- * 
+ *
  * @author rkuttan
  */
 public class PdoQueryModifierDao extends CRCDAO implements IPdoQueryModifierDao {
@@ -54,7 +54,7 @@ public class PdoQueryModifierDao extends CRCDAO implements IPdoQueryModifierDao 
 	private DataSourceLookup dataSourceLookup = null;
 
 	public PdoQueryModifierDao(DataSourceLookup dataSourceLookup,
-			DataSource dataSource) {
+							   DataSource dataSource) {
 		this.dataSourceLookup = dataSourceLookup;
 		setDataSource(dataSource);
 		setDbSchemaName(dataSourceLookup.getFullSchema());
@@ -65,7 +65,7 @@ public class PdoQueryModifierDao extends CRCDAO implements IPdoQueryModifierDao 
 
 	/**
 	 * Get concepts detail from concept code list
-	 * 
+	 *
 	 * @param conceptCdList
 	 * @param detailFlag
 	 * @param blobFlag
@@ -75,7 +75,7 @@ public class PdoQueryModifierDao extends CRCDAO implements IPdoQueryModifierDao 
 	 */
 	@Override
 	public ModifierSet getModifierByModifierCd(List<String> modifierCdList,
-			boolean detailFlag, boolean blobFlag, boolean statusFlag)
+											   boolean detailFlag, boolean blobFlag, boolean statusFlag)
 			throws I2B2DAOException {
 
 		ModifierSet modifierDimensionSet = new ModifierSet();
@@ -95,7 +95,7 @@ public class PdoQueryModifierDao extends CRCDAO implements IPdoQueryModifierDao 
 				// Otherwise Jboss wrapped connection fails when using oracle
 				// Arrays
 				oracle.jdbc.driver.OracleConnection conn1 = null;// (oracle.jdbc.driver.OracleConnection) ((WrappedConnection) conn)
-					//	.getUnderlyingConnection();
+				//	.getUnderlyingConnection();
 				String finalSql = "SELECT "
 						+ selectClause
 						+ "  FROM "
@@ -111,12 +111,13 @@ public class PdoQueryModifierDao extends CRCDAO implements IPdoQueryModifierDao 
 						modifierCdList.toArray(new String[] {}));
 				query.setArray(1, paramArray);
 			} else if (serverType.equalsIgnoreCase(DAOFactoryHelper.SQLSERVER) ||
-					serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL)) {
+					serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) ||
+					serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) {
 				log.debug("creating temp table");
 				java.sql.Statement tempStmt = conn.createStatement();
-				if (serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL))
+				if (serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) || serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE))
 					tempTableName = SQLServerFactRelatedQueryHandler.TEMP_PDO_INPUTLIST_TABLE.substring(1);
-				else 
+				else
 					tempTableName = SQLServerFactRelatedQueryHandler.TEMP_PDO_INPUTLIST_TABLE;
 				try {
 					tempStmt.executeUpdate("drop table " + tempTableName);
@@ -124,7 +125,7 @@ public class PdoQueryModifierDao extends CRCDAO implements IPdoQueryModifierDao 
 					;
 				}
 
-				uploadTempTable(tempStmt, tempTableName, modifierCdList, serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL));
+				uploadTempTable(tempStmt, tempTableName, modifierCdList, serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) || serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE));
 				String finalSql = "SELECT "
 						+ selectClause
 						+ " FROM "
@@ -167,13 +168,13 @@ public class PdoQueryModifierDao extends CRCDAO implements IPdoQueryModifierDao 
 		return modifierDimensionSet;
 	}
 
-	
+
 
 	private void uploadTempTable(Statement tempStmt, String tempTable,
-			List<String> patientNumList,  boolean isPostgresql) throws SQLException {
+								 List<String> patientNumList,  boolean isPostgresql) throws SQLException {
 		String createTempInputListTable =  "create "
-				 + (isPostgresql ? " temp ": "" ) 
-				 + " table " + tempTable
+				+ (isPostgresql ? " temp ": "" )
+				+ " table " + tempTable
 				+ " ( char_param1 varchar(100) )";
 		tempStmt.executeUpdate(createTempInputListTable);
 		log.debug("created temp table" + tempTable);
@@ -201,9 +202,9 @@ public class PdoQueryModifierDao extends CRCDAO implements IPdoQueryModifierDao 
 
 	@Override
 	public ModifierSet getModifierByFact(List<String> panelSqlList,
-			List<Integer> sqlParamCountList,
-			IInputOptionListHandler inputOptionListHandler, boolean detailFlag,
-			boolean blobFlag, boolean statusFlag) throws I2B2DAOException {
+										 List<Integer> sqlParamCountList,
+										 IInputOptionListHandler inputOptionListHandler, boolean detailFlag,
+										 boolean blobFlag, boolean statusFlag) throws I2B2DAOException {
 
 		ModifierSet modifierSet = new ModifierSet();
 		I2B2PdoFactory.ModifierBuilder modifierBuilder = new I2B2PdoFactory().new ModifierBuilder(
@@ -220,10 +221,11 @@ public class PdoQueryModifierDao extends CRCDAO implements IPdoQueryModifierDao 
 			if (serverType.equalsIgnoreCase(DAOFactoryHelper.ORACLE)) {
 				tempTable = FactRelatedQueryHandler.TEMP_FACT_PARAM_TABLE;
 			} else if (serverType.equalsIgnoreCase(DAOFactoryHelper.SQLSERVER) ||
-					serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL)) {
+					serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) ||
+					serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) {
 				log.debug("creating temp table");
 				java.sql.Statement tempStmt = conn.createStatement();
-				if (serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL))
+				if (serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) || serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE))
 					tempTable = SQLServerFactRelatedQueryHandler.TEMP_FACT_PARAM_TABLE.substring(1);
 				else
 					tempTable = SQLServerFactRelatedQueryHandler.TEMP_FACT_PARAM_TABLE;
@@ -287,7 +289,7 @@ public class PdoQueryModifierDao extends CRCDAO implements IPdoQueryModifierDao 
 		} finally {
 			PdoTempTableUtil tempUtil = new PdoTempTableUtil();
 			tempUtil.clearTempTable(dataSourceLookup.getServerType(), conn, tempTable);
-			
+
 			if (inputOptionListHandler != null
 					&& inputOptionListHandler.isEnumerationSet()) {
 				try {
@@ -308,7 +310,7 @@ public class PdoQueryModifierDao extends CRCDAO implements IPdoQueryModifierDao 
 	}
 
 	private void executeTotalSql(String totalSql, Connection conn,
-			int sqlParamCount, IInputOptionListHandler inputOptionListHandler)
+								 int sqlParamCount, IInputOptionListHandler inputOptionListHandler)
 			throws SQLException {
 
 		PreparedStatement stmt = conn.prepareStatement(totalSql);

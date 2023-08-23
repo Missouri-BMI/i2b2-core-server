@@ -8,8 +8,8 @@
  ******************************************************************************/
 /*
 
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Rajesh Kuttan
  */
 package edu.harvard.i2b2.crc.dao.pdo;
@@ -46,7 +46,7 @@ import edu.harvard.i2b2.crc.datavo.pdo.PatientDataType;
 /**
  * This class handles Concept dimension query's related to PDO request $Id:
  * PdoQueryConceptDao.java,v 1.11 2008/03/19 22:42:08 rk903 Exp $
- * 
+ *
  * @author rkuttan
  */
 public class PdoQueryConceptDao extends CRCDAO implements IPdoQueryConceptDao {
@@ -54,7 +54,7 @@ public class PdoQueryConceptDao extends CRCDAO implements IPdoQueryConceptDao {
 	private DataSourceLookup dataSourceLookup = null;
 
 	public PdoQueryConceptDao(DataSourceLookup dataSourceLookup,
-			DataSource dataSource) {
+							  DataSource dataSource) {
 		this.dataSourceLookup = dataSourceLookup;
 		setDataSource(dataSource);
 		setDbSchemaName(dataSourceLookup.getFullSchema());
@@ -65,7 +65,7 @@ public class PdoQueryConceptDao extends CRCDAO implements IPdoQueryConceptDao {
 
 	/**
 	 * Get concepts detail from concept code list
-	 * 
+	 *
 	 * @param conceptCdList
 	 * @param detailFlag
 	 * @param blobFlag
@@ -75,7 +75,7 @@ public class PdoQueryConceptDao extends CRCDAO implements IPdoQueryConceptDao {
 	 */
 	@Override
 	public ConceptSet getConceptByConceptCd(List<String> conceptCdList,
-			boolean detailFlag, boolean blobFlag, boolean statusFlag)
+											boolean detailFlag, boolean blobFlag, boolean statusFlag)
 			throws I2B2DAOException {
 
 		ConceptSet conceptDimensionSet = new ConceptSet();
@@ -111,21 +111,30 @@ public class PdoQueryConceptDao extends CRCDAO implements IPdoQueryConceptDao {
 				oracle.sql.ARRAY paramArray = new oracle.sql.ARRAY(desc, conn1,
 						conceptCdList.toArray(new String[] {}));
 				query.setArray(1, paramArray);
-			} else if (serverType.equalsIgnoreCase(DAOFactoryHelper.SQLSERVER) || 
-					serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL)) {
+			} else if (serverType.equalsIgnoreCase(DAOFactoryHelper.SQLSERVER) ||
+					serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) ||
+					serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) {
 				log.debug("creating temp table");
 				java.sql.Statement tempStmt = conn.createStatement();
 				if (serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL))
 					tempTableName = SQLServerFactRelatedQueryHandler.TEMP_PDO_INPUTLIST_TABLE.substring(1);
+				else if (serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE))
+					tempTableName = SQLServerFactRelatedQueryHandler.TEMP_PDO_INPUTLIST_TABLE.substring(1);
 				else
 					tempTableName = SQLServerFactRelatedQueryHandler.TEMP_PDO_INPUTLIST_TABLE;
 				try {
-					tempStmt.executeUpdate("drop table " + tempTableName);
+					if (serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) {
+						tempStmt.executeUpdate("drop table if exists " + tempTableName);
+					} else {
+						tempStmt.executeUpdate("drop table " + tempTableName);
+					}
+
 				} catch (SQLException sqlex) {
 					;
 				}
 
-				uploadTempTable(tempStmt, tempTableName, conceptCdList, serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL));
+				uploadTempTable(tempStmt, tempTableName, conceptCdList, serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) ||
+						serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE));
 				String finalSql = "SELECT "
 						+ selectClause
 						+ " FROM "
@@ -170,7 +179,7 @@ public class PdoQueryConceptDao extends CRCDAO implements IPdoQueryConceptDao {
 
 	/**
 	 * Get concept children by item key
-	 * 
+	 *
 	 * @param itemKey
 	 * @param detailFlag
 	 * @param blobFlag
@@ -180,7 +189,7 @@ public class PdoQueryConceptDao extends CRCDAO implements IPdoQueryConceptDao {
 	 */
 	@Override
 	public ConceptSet getChildrentByItemKey(String itemKey, boolean detailFlag,
-			boolean blobFlag, boolean statusFlag) throws I2B2DAOException {
+											boolean blobFlag, boolean statusFlag) throws I2B2DAOException {
 		ConceptSet conceptDimensionSet = new ConceptSet();
 		if (itemKey != null) {
 			if (itemKey.lastIndexOf('\\') == itemKey.length() - 1) {
@@ -225,6 +234,14 @@ public class PdoQueryConceptDao extends CRCDAO implements IPdoQueryConceptDao {
 						+ getDbSchemaName()
 						+ "concept_dimension concept WHERE concept_path LIKE ? order by concept_path) ";
 				itemKey = itemKey.replaceAll("\\\\", "\\\\\\\\");
+			} else if (serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) {
+				finalSql = "Select * from ( SELECT "
+						+ selectClause
+						+ " ROW_NUMBER() OVER (ORDER BY concept_path) AS RowNum"
+						+ "  FROM "
+						+ getDbSchemaName()
+						+ "concept_dimension concept WHERE concept_path LIKE ? order by concept_path) ";
+				itemKey = itemKey.replaceAll("\\\\", "\\\\\\\\");
 			}
 			log.debug("Pdo Concept sql [" + finalSql + "]");
 			query = conn.prepareStatement(finalSql);
@@ -257,9 +274,9 @@ public class PdoQueryConceptDao extends CRCDAO implements IPdoQueryConceptDao {
 	}
 
 	private void uploadTempTable(Statement tempStmt, String tempTable,
-			List<String> patientNumList, boolean isPostgresql) throws SQLException {
+								 List<String> patientNumList, boolean isPostgresql) throws SQLException {
 		String createTempInputListTable = "create "
-				 + (isPostgresql ? " temp ": "" )
+				+ (isPostgresql ? " temp ": "" )
 				+ " table " + tempTable
 				+ " ( char_param1 varchar(100) )";
 		tempStmt.executeUpdate(createTempInputListTable);
@@ -288,9 +305,9 @@ public class PdoQueryConceptDao extends CRCDAO implements IPdoQueryConceptDao {
 
 	@Override
 	public ConceptSet getConceptByFact(List<String> panelSqlList,
-			List<Integer> sqlParamCountList,
-			IInputOptionListHandler inputOptionListHandler, boolean detailFlag,
-			boolean blobFlag, boolean statusFlag) throws I2B2DAOException {
+									   List<Integer> sqlParamCountList,
+									   IInputOptionListHandler inputOptionListHandler, boolean detailFlag,
+									   boolean blobFlag, boolean statusFlag) throws I2B2DAOException {
 
 		ConceptSet conceptSet = new ConceptSet();
 		I2B2PdoFactory.ConceptBuilder conceptBuilder = new I2B2PdoFactory().new ConceptBuilder(
@@ -307,24 +324,29 @@ public class PdoQueryConceptDao extends CRCDAO implements IPdoQueryConceptDao {
 			if (serverType.equalsIgnoreCase(DAOFactoryHelper.ORACLE)) {
 				tempTable = FactRelatedQueryHandler.TEMP_FACT_PARAM_TABLE;
 			} else if (serverType.equalsIgnoreCase(DAOFactoryHelper.SQLSERVER) ||
-					serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL)) {
+					serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) ||
+					serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) {
 				log.debug("creating temp table");
 				java.sql.Statement tempStmt = conn.createStatement();
-				if (serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL))
+				if (serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) || serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE))
 					tempTable = SQLServerFactRelatedQueryHandler.TEMP_FACT_PARAM_TABLE.substring(1);
 				else
 					tempTable = SQLServerFactRelatedQueryHandler.TEMP_FACT_PARAM_TABLE;
 				try {
-					tempStmt.executeUpdate("drop table " + tempTable);
+					if (serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) {
+						tempStmt.executeUpdate("drop table if exists " + tempTable);
+					} else {
+						tempStmt.executeUpdate("drop table " + tempTable);
+					}
 				} catch (SQLException sqlex) {
 					;
 				}
-				String createTempInputListTable = "create " 
-						 + (serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) ? " temp ": "" )
+				String createTempInputListTable = "create "
+						+ (serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) || serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE) ? " temp ": "" )
 						+ " table "
 						+ tempTable
 						+ " ( set_index int, char_param1 varchar(500) )";
-				
+
 				tempStmt.executeUpdate(createTempInputListTable);
 				log.debug("created temp table" + tempTable);
 			}
@@ -359,7 +381,7 @@ public class PdoQueryConceptDao extends CRCDAO implements IPdoQueryConceptDao {
 					+ "concept_dimension concept where concept_cd in (select distinct char_param1 from "
 					+ tempTable + ") order by concept_path";
 			log.debug("Executing SQL [" + finalSql + "]");
-			
+
 
 			query = conn.prepareStatement(finalSql);
 
@@ -378,7 +400,7 @@ public class PdoQueryConceptDao extends CRCDAO implements IPdoQueryConceptDao {
 		} finally {
 			PdoTempTableUtil tempUtil = new PdoTempTableUtil();
 			tempUtil.clearTempTable(dataSourceLookup.getServerType(), conn, tempTable);
-			
+
 			if (inputOptionListHandler != null
 					&& inputOptionListHandler.isEnumerationSet()) {
 				try {
@@ -399,7 +421,7 @@ public class PdoQueryConceptDao extends CRCDAO implements IPdoQueryConceptDao {
 	}
 
 	private void executeTotalSql(String totalSql, Connection conn,
-			int sqlParamCount, IInputOptionListHandler inputOptionListHandler)
+								 int sqlParamCount, IInputOptionListHandler inputOptionListHandler)
 			throws SQLException {
 
 		PreparedStatement stmt = conn.prepareStatement(totalSql);

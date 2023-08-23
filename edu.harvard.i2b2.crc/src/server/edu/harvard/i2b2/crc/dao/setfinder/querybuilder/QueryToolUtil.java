@@ -8,8 +8,8 @@
  ******************************************************************************/
 /*
 
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Rajesh Kuttan
  */
 package edu.harvard.i2b2.crc.dao.setfinder.querybuilder;
@@ -48,7 +48,7 @@ import edu.harvard.i2b2.crc.util.SqlClauseUtil;
 /**
  * Main class to generate setfinder sql from query definition xml. $Id:
  * QueryToolUtil.java,v 1.18 2008/04/18 15:20:51 rk903 Exp $
- * 
+ *
  * @author chris,rkuttan
  */
 public class QueryToolUtil extends CRCDAO {
@@ -118,7 +118,8 @@ public class QueryToolUtil extends CRCDAO {
 		this.dataSourceLookup = dataSourceLookup;
 		if (dataSourceLookup.getServerType().equalsIgnoreCase(
 				DAOFactoryHelper.ORACLE) || dataSourceLookup.getServerType().equalsIgnoreCase(
-						DAOFactoryHelper.POSTGRESQL)) {
+				DAOFactoryHelper.POSTGRESQL) || dataSourceLookup.getServerType().equalsIgnoreCase(
+				DAOFactoryHelper.SNOWFLAKE)) {
 			TEMP_TABLE = "QUERY_GLOBAL_TEMP";
 			TEMP_RETURN_TABLE = "DX";
 			dateFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");
@@ -251,8 +252,8 @@ public class QueryToolUtil extends CRCDAO {
 	}
 
 	protected long GetEstimatedSize(Connection conn, String theTableName,
-			String theColumnName, String theOperator, String theData,
-			long DBNumPatients) {
+									String theColumnName, String theOperator, String theData,
+									long DBNumPatients) {
 		long EstSize = 0;
 		String sql = "";
 
@@ -346,7 +347,7 @@ public class QueryToolUtil extends CRCDAO {
 	}
 
 	private String buildDateConstrain(String dateColumn, String fromDateValue,
-			String toDateValue) {
+									  String toDateValue) {
 
 		String dateConstrain = " ";
 		String serverType = dataSourceLookup.getServerType();
@@ -373,7 +374,7 @@ public class QueryToolUtil extends CRCDAO {
 		if (fromDateValue != null
 				&& toDateValue != null
 				&& (fromDateValue.trim().length() > 0 && toDateValue.trim()
-						.length() > 0)) {
+				.length() > 0)) {
 			dateConstrain = " AND " + dateColumn + " between "
 					+ fromFormatDateValue + " AND " + toFormatDateValue;
 		}
@@ -390,8 +391,8 @@ public class QueryToolUtil extends CRCDAO {
 	}
 
 	private String buildDateConstrainNew(String fromDateColumn,
-			String toDateColumn, String fromInclusive, String toInclusive,
-			String fromDateValue, String toDateValue) {
+										 String toDateColumn, String fromInclusive, String toInclusive,
+										 String fromDateValue, String toDateValue) {
 
 		String dateConstrain = " ";
 		String serverType = dataSourceLookup.getServerType();
@@ -425,7 +426,7 @@ public class QueryToolUtil extends CRCDAO {
 		if (fromDateValue != null
 				&& toDateValue != null
 				&& (fromDateValue.trim().length() > 0 && toDateValue.trim()
-						.length() > 0)) {
+				.length() > 0)) {
 			if (fromDateColumn.equalsIgnoreCase(toDateColumn)
 					&& fromInclusive.equalsIgnoreCase("yes")
 					&& toInclusive.equalsIgnoreCase("yes")) {
@@ -458,7 +459,7 @@ public class QueryToolUtil extends CRCDAO {
 	}
 
 	private ResultEntry[] OrderPanels(ArrayList panelEntries,
-			ArrayList itemEntries, boolean sameVisit, int specificity) {
+									  ArrayList itemEntries, boolean sameVisit, int specificity) {
 		try {
 			Integer firstPanel = -1;
 
@@ -584,9 +585,9 @@ public class QueryToolUtil extends CRCDAO {
 			 * ArrayList vItems = (ArrayList) v.get(p.Panel); int xitems = 0;
 			 * for (int vi=0; vi<vItems.size(); vi++) if (((ItemEntry)
 			 * vItems.get(vi)).SqlX > 0) xitems++;
-			 * 
+			 *
 			 * if (p.Items==xitems) p.AllShort = 1; }
-			 * 
+			 *
 			 * if ((p.AllShort==1)||(p.FirstPanel==1)) p.ForInsert = 1; }
 			 */
 			comp = new QPanelEntryComparator();
@@ -659,8 +660,8 @@ public class QueryToolUtil extends CRCDAO {
 	}
 
 	private PanelEntry callPanelIfNoItem(boolean doInvert,
-			int totalItemOccurance, String totalItemOccurrenceOperator,
-			long EstQuerySize, long EstPanelSize, int panelNumber) {
+										 int totalItemOccurance, String totalItemOccurrenceOperator,
+										 long EstQuerySize, long EstPanelSize, int panelNumber) {
 		PanelEntry panel = new PanelEntry();
 		if (doInvert) {
 			EstQuerySize = EstQuerySize + (1 - EstPanelSize);

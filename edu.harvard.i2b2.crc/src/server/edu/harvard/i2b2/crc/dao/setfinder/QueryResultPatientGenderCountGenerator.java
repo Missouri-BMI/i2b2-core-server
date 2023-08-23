@@ -35,7 +35,7 @@ public class QueryResultPatientGenderCountGenerator extends CRCDAO implements
 	}
 
 	private String xmlResult = null;
-	
+
 	@Override
 	public void generateResult(Map param) throws I2B2DAOException {
 
@@ -99,8 +99,8 @@ public class QueryResultPatientGenderCountGenerator extends CRCDAO implements
 			jaxbUtil.marshaller(of.createI2B2ResultEnvelope(resultEnvelop),
 					strWriter);
 
-			 IXmlResultDao xmlResultDao = sfDAOFactory.getXmlResultDao();
-			 xmlResult = strWriter.toString();
+			IXmlResultDao xmlResultDao = sfDAOFactory.getXmlResultDao();
+			xmlResult = strWriter.toString();
 			xmlResultDao.createQueryXmlResult(resultInstanceId, strWriter
 					.toString());
 

@@ -60,15 +60,15 @@ public class BuildTempTableSql extends CRCDAO {
 			this.processTimingUtil = new ProcessTimingReportUtil(dataSourceLookup);
 		} catch (I2B2DAOException e) {
 			log.error("Error constructing the ProcessTimingReportUtil [" + e.getMessage() + "]");
-		} 
+		}
 
 	}
 
-	public void setProcessTimingFlag(String level) { 
+	public void setProcessTimingFlag(String level) {
 		this.processTimingFlag = level;
 	}
 
-	public void setProjectParamMap(Map projectParamMap) { 
+	public void setProjectParamMap(Map projectParamMap) {
 		this.projectParamMap = projectParamMap;
 	}
 
@@ -134,10 +134,10 @@ public class BuildTempTableSql extends CRCDAO {
 					conceptType = conceptTypeHandler.getConceptType(itemType
 							.getItemKey(), this.dataSourceLookup.getServerType());
 					//check if the concept is a container, if so return error
-					if (conceptType.getVisualattributes() != null) { 
+					if (conceptType.getVisualattributes() != null) {
 						String conceptVisualAtt = conceptType.getVisualattributes().trim();
 						if (conceptVisualAtt.length()>0 && (conceptVisualAtt.startsWith("C") ||
-								conceptVisualAtt.startsWith("c"))) { 
+								conceptVisualAtt.startsWith("c"))) {
 							throw new I2B2DAOException("The Container item is not valid in query [" +itemType.getItemKey() +"] " +
 									"in panel #" + panelCount);
 						}
@@ -179,7 +179,7 @@ public class BuildTempTableSql extends CRCDAO {
 
 			}
 			logTiming.setEndTime();
-			if (this.processTimingFlag.equalsIgnoreCase(ProcessTimingReportUtil.DEBUG)) { 
+			if (this.processTimingFlag.equalsIgnoreCase(ProcessTimingReportUtil.DEBUG)) {
 				//build the log xml and add it to the  string variable. 
 				processTimingStr += this.processTimingUtil.buildProcessTiming(logTiming, "BUILD SQL - PANEL", null) + "\n";
 			}
@@ -190,9 +190,9 @@ public class BuildTempTableSql extends CRCDAO {
 	}
 
 	private void handleConceptNotFoundException(ConceptNotFoundException e,
-			int panelCount) {
+												int panelCount) {
 		ignoredItemMessageBuffer
-		.append(e.getMessage() + " panel#" + panelCount);
+				.append(e.getMessage() + " panel#" + panelCount);
 	}
 
 	public String getIgnoredItemMessage() {
@@ -210,7 +210,7 @@ public class BuildTempTableSql extends CRCDAO {
 		String dimensionSql = "";
 		// if patient list
 
-	
+
 		dimensionSql = conceptType.getFacttablecolumn() + " IN (select "
 				+ conceptType.getFacttablecolumn() + " from "
 				+ getDbSchemaName() + conceptType.getTablename() + "  "
@@ -219,8 +219,8 @@ public class BuildTempTableSql extends CRCDAO {
 				+ conceptType.getDimcode();
 		if ((conceptType.getOperator() != null) && (conceptType.getOperator().toUpperCase().equals("LIKE")))
 		{
-			
-			dimensionSql +=  (!dataSourceLookup.getServerType().toUpperCase().equals("POSTGRESQL") ? " {ESCAPE '?'} " : "" ) ;
+
+			dimensionSql +=  (!(dataSourceLookup.getServerType().toUpperCase().equals("POSTGRESQL") || dataSourceLookup.getServerType().toUpperCase().equals("SNOWFLAKE")) ? " {ESCAPE '?'} " : "" ) ;
 		}
 		dimensionSql += ")";
 
@@ -229,12 +229,12 @@ public class BuildTempTableSql extends CRCDAO {
 
 	// function to build
 	public String buildDimensionJoinSql(String dimensionSql,
-			boolean encounterFlag, boolean instanceNumFlag, String queryTiming,ItemType itemType,
-			ConceptType conceptType, String panelDateConstrainSql, int panelAccuracyScale, TotalItemOccurrences totalOccurance)
-					throws I2B2DAOException {
+										boolean encounterFlag, boolean instanceNumFlag, String queryTiming,ItemType itemType,
+										ConceptType conceptType, String panelDateConstrainSql, int panelAccuracyScale, TotalItemOccurrences totalOccurance)
+			throws I2B2DAOException {
 		String joinTableName = "", joinContainsTable = "";
-		String itemDateConstrainSql = " "; 
-		String[] itemValueConstrainSql = new String[]{"",""} ; 
+		String itemDateConstrainSql = " ";
+		String[] itemValueConstrainSql = new String[]{"",""} ;
 		String itemModifierConstrainSql = "" ;
 		String sqlHintClause = " ";
 		QueryTimingHandler timingHandler = new QueryTimingHandler();
@@ -248,11 +248,11 @@ public class BuildTempTableSql extends CRCDAO {
 
 			// generate sql for item date constrain
 			//joinTableName = "qt_patient_set_collection";
-			if (timingHandler.isSameVisit(queryTiming)) { 
+			if (timingHandler.isSameVisit(queryTiming)) {
 				joinTableName = "visit_dimension";
-			} else if (timingHandler.isSameInstanceNum(queryTiming)) { 
+			} else if (timingHandler.isSameInstanceNum(queryTiming)) {
 				joinTableName = "observation_fact";
-			} else { 
+			} else {
 				joinTableName = "qt_patient_set_collection";
 			}
 
@@ -266,7 +266,7 @@ public class BuildTempTableSql extends CRCDAO {
 
 
 			//check if dateconstrain or value constrain present in the item
-			if (itemDateConstrainSql.length() > 0 || itemValueConstrainSql[0].length()>0 || panelDateConstrainSql.length() >0  || totalOccurance.getValue() > 1) { 
+			if (itemDateConstrainSql.length() > 0 || itemValueConstrainSql[0].length()>0 || panelDateConstrainSql.length() >0  || totalOccurance.getValue() > 1) {
 				joinTableName = "observation_fact";
 			}
 
@@ -274,7 +274,7 @@ public class BuildTempTableSql extends CRCDAO {
 
 
 		} else if (itemType.getItemKey().toLowerCase().startsWith(ItemKeyUtil.ITEM_KEY_PATIENT_ENCOUNTER_SET)) {
-			if (timingHandler.isSameInstanceNum(queryTiming)) { 
+			if (timingHandler.isSameInstanceNum(queryTiming)) {
 				joinTableName = "observation_fact";
 			}
 			joinTableName = "qt_patient_enc_collection";
@@ -285,7 +285,7 @@ public class BuildTempTableSql extends CRCDAO {
 			itemValueConstrainSql = callValueConstrain(itemType,"","",panelAccuracyScale);
 
 			//check if dateconstrain or value constrain present in the item
-			if (itemDateConstrainSql.length() > 0 || itemValueConstrainSql[0].length()>0 || panelDateConstrainSql.length() > 0  || totalOccurance.getValue() > 1) { 
+			if (itemDateConstrainSql.length() > 0 || itemValueConstrainSql[0].length()>0 || panelDateConstrainSql.length() > 0  || totalOccurance.getValue() > 1) {
 				joinTableName = "observation_fact";
 			}
 
@@ -303,11 +303,11 @@ public class BuildTempTableSql extends CRCDAO {
 			//check if dateconstrain or value constrain present in the item
 			if (itemDateConstrainSql.length() > 0 || itemValueConstrainSql[0].length() > 0 || panelDateConstrainSql.length() > 0 ) {
 				String masterWhereClause = " j1.patient_num = j2.patient_num ";
-				String masterSelectClause = " j1.patient_num "; 
-				if (timingHandler.isSameVisit(queryTiming)) { 
+				String masterSelectClause = " j1.patient_num ";
+				if (timingHandler.isSameVisit(queryTiming)) {
 					masterWhereClause = " j1.encounter_num = j2.encounter_num and j1.patient_num = j2.patient_num " ;
-					masterSelectClause = " j1.encounter_num, j1.patient_num "; 
-				} else if (timingHandler.isSameInstanceNum(queryTiming)) { 
+					masterSelectClause = " j1.encounter_num, j1.patient_num ";
+				} else if (timingHandler.isSameInstanceNum(queryTiming)) {
 					masterSelectClause = " j1.encounter_num, j1.patient_num, j1.instance_num, j1.concept_cd, j1.start_date, j1.provider_id ";
 					masterWhereClause = " j1.encounter_num = j2.encounter_num and j1.patient_num = j2.patient_num and " +
 							" j1.instance_num = j2.instance_num and j1.concept_cd = j2.concept_cd and j1.start_date = j2.start_date and j1.provider_id = j2.provider_id " ;
@@ -317,9 +317,9 @@ public class BuildTempTableSql extends CRCDAO {
 				panelDateConstrainSql = panelDateConstrainSql.replaceAll("start_date", "j1.start_date");
 				panelDateConstrainSql = panelDateConstrainSql.replaceAll("end_date", "j1.end_date");
 
-				String masterDimensionJoinSql = "select " +  masterSelectClause + "  from " + this.getDbSchemaName() + joinTableName + " j1, " + this.getDbSchemaName() + masterTableName + " j2 " + " where " + masterWhereClause 
+				String masterDimensionJoinSql = "select " +  masterSelectClause + "  from " + this.getDbSchemaName() + joinTableName + " j1, " + this.getDbSchemaName() + masterTableName + " j2 " + " where " + masterWhereClause
 						+  "  " + itemValueConstrainSql[0] + " "
-						+ itemDateConstrainSql + " AND " + panelDateConstrainSql;  
+						+ itemDateConstrainSql + " AND " + panelDateConstrainSql;
 				return masterDimensionJoinSql;
 			} else {
 				joinTableName = masterTableName;
@@ -328,17 +328,17 @@ public class BuildTempTableSql extends CRCDAO {
 			joinTableName = "observation_fact";
 
 			if (conceptType.getTablename().equalsIgnoreCase(
-					"patient_dimension")) { 
+					"patient_dimension")) {
 				joinTableName = "patient_dimension";
-				if (timingHandler.isSameVisit(queryTiming)) { 
+				if (timingHandler.isSameVisit(queryTiming)) {
 					joinTableName = "visit_dimension";
-				} else if (timingHandler.isSameInstanceNum(queryTiming)) { 
+				} else if (timingHandler.isSameInstanceNum(queryTiming)) {
 					joinTableName = "observation_fact";
 				}
 			} else if (conceptType.getTablename().equalsIgnoreCase(
-					"visit_dimension")) { 
-				joinTableName = "visit_dimension"; 
-				if (timingHandler.isSameInstanceNum(queryTiming)) { 
+					"visit_dimension")) {
+				joinTableName = "visit_dimension";
+				if (timingHandler.isSameInstanceNum(queryTiming)) {
 					joinTableName = "observation_fact";
 				}
 			}
@@ -353,7 +353,7 @@ public class BuildTempTableSql extends CRCDAO {
 			ModifierType modifierType = this.getModifierMetadataFromOntology(itemType);
 
 			//generate sql for item modifier constrain
-			if (modifierType != null) { 
+			if (modifierType != null) {
 				itemModifierConstrainSql = callModifierConstrain(modifierType,itemType);
 			}
 
@@ -367,7 +367,7 @@ public class BuildTempTableSql extends CRCDAO {
 
 			if ( projectParamMap != null && projectParamMap.get(ParamUtil.CRC_ENABLE_UNITCD_CONVERSION) != null) {
 				String unitCdConversionFlag = (String)projectParamMap.get(ParamUtil.CRC_ENABLE_UNITCD_CONVERSION);
-				if (unitCdConversionFlag != null && unitCdConversionFlag.equalsIgnoreCase("ON")) { 
+				if (unitCdConversionFlag != null && unitCdConversionFlag.equalsIgnoreCase("ON")) {
 					if (conceptType.getMetadataxml() != null && conceptType.getMetadataxml().getAny().get(0) != null) {
 						Element valueMetadataElement = conceptType.getMetadataxml().getAny().get(0);
 						UnitConverstionUtil unitConverstionUtil = new UnitConverstionUtil();
@@ -392,14 +392,14 @@ public class BuildTempTableSql extends CRCDAO {
 
 			// generate sql for item value constrain
 			itemValueConstrainSql = callValueConstrain(itemType,unitCdSwitchClause,unitCdInClause,panelAccuracyScale );
-			if (panelAccuracyScale >0) { 
+			if (panelAccuracyScale >0) {
 				joinContainsTable = itemValueConstrainSql[1];
 			}
 
 			// generate sql for modifier value constrain
 			String[] modifierConstainSql = callModifierValueConstrain(itemType,modifierUnitCdSwitchClause,modifierUnitCdInClause,panelAccuracyScale );
-			itemValueConstrainSql[0] +=  modifierConstainSql[0]; 
-			if (panelAccuracyScale >0) { 
+			itemValueConstrainSql[0] +=  modifierConstainSql[0];
+			if (panelAccuracyScale >0) {
 				joinContainsTable += modifierConstainSql[1];
 			}
 
@@ -415,7 +415,7 @@ public class BuildTempTableSql extends CRCDAO {
 			selectClause = " encounter_num, " + selectClause;
 		}
 
-		if (panelDateConstrainSql.trim().length() > 0)  { 
+		if (panelDateConstrainSql.trim().length() > 0)  {
 			panelDateConstrainSql = "  AND  ( " + panelDateConstrainSql
 					+ " )";
 		}
@@ -438,7 +438,7 @@ public class BuildTempTableSql extends CRCDAO {
 		//+ " AND 
 		//
 
-		if (!joinTableName.equalsIgnoreCase("observation_fact")) { 
+		if (!joinTableName.equalsIgnoreCase("observation_fact")) {
 			joinContainsTable = "";
 			itemDateConstrainSql = "";
 			itemModifierConstrainSql = "";
@@ -449,7 +449,7 @@ public class BuildTempTableSql extends CRCDAO {
 
 		String dimensionJoinSql = " select " + sqlHintClause + selectClause
 				+ " from " + this.getDbSchemaName() + joinTableName + joinContainsTable
-				+ " where  " + dimensionSql + "  " + itemModifierConstrainSql 
+				+ " where  " + dimensionSql + "  " + itemModifierConstrainSql
 				+ itemValueConstrainSql[0] + itemDateConstrainSql + panelDateConstrainSql;
 		log.debug("Dimension select sql [" + dimensionJoinSql + "]");
 
@@ -457,15 +457,15 @@ public class BuildTempTableSql extends CRCDAO {
 	}
 
 	private boolean getPanelInvertFlag(int panelInvert) {
-		if (panelInvert == 1) { 
+		if (panelInvert == 1) {
 			return true;
-		} else { 
+		} else {
 			return false;
 		}
 	}
 
 
-	private String callDateConstrain(ItemType itemType) { 
+	private String callDateConstrain(ItemType itemType) {
 		// generate sql for item date constrain
 		DateConstrainUtil dateConstrainUtil = new DateConstrainUtil(
 				this.dataSourceLookup);
@@ -481,9 +481,9 @@ public class BuildTempTableSql extends CRCDAO {
 		return itemDateConstrainSql;
 	}
 
-	private String[] callValueConstrain(ItemType itemType, String unitCdSwitchClause, String unitCdInClause, int panelAccuracyScale) throws I2B2DAOException { 
+	private String[] callValueConstrain(ItemType itemType, String unitCdSwitchClause, String unitCdInClause, int panelAccuracyScale) throws I2B2DAOException {
 		ValueConstrainsHandler valueConstrainHandler = new ValueConstrainsHandler();
-		if (unitCdSwitchClause.length()>0) { 
+		if (unitCdSwitchClause.length()>0) {
 			valueConstrainHandler.setUnitCdConversionFlag(true, unitCdInClause, unitCdSwitchClause);
 		}
 
@@ -495,22 +495,22 @@ public class BuildTempTableSql extends CRCDAO {
 		if (itemValueConstrainSql != null
 				&& itemValueConstrainSql[0].trim().length() > 0) {
 
-			itemValueConstrainSql[0] = "  AND  ( " + itemValueConstrainSql[0] 
+			itemValueConstrainSql[0] = "  AND  ( " + itemValueConstrainSql[0]
 					+ " )";
-		} else { 
+		} else {
 			itemValueConstrainSql[0] = "";
 		}
 		return itemValueConstrainSql;
 	}
 
-	private String[] callModifierValueConstrain(ItemType itemType, String modifierUnitCdSwitchClause, String modifierUnitCdInClause,int panelAccuracyScale) throws I2B2DAOException { 
+	private String[] callModifierValueConstrain(ItemType itemType, String modifierUnitCdSwitchClause, String modifierUnitCdInClause,int panelAccuracyScale) throws I2B2DAOException {
 		ValueConstrainsHandler valueConstrainHandler = new ValueConstrainsHandler();
-		if (modifierUnitCdSwitchClause.length()>0) { 
+		if (modifierUnitCdSwitchClause.length()>0) {
 			valueConstrainHandler.setUnitCdConversionFlag(true, modifierUnitCdInClause, modifierUnitCdSwitchClause);
 		}
 		boolean oracleFlag = false;
 		if (this.dataSourceLookup.getServerType().equalsIgnoreCase(
-				DAOFactoryHelper.ORACLE)) { 
+				DAOFactoryHelper.ORACLE)) {
 			oracleFlag = true;
 		}
 		String itemModifierValueConstrainSql[] = new String[] {"",""} ;
@@ -518,7 +518,7 @@ public class BuildTempTableSql extends CRCDAO {
 		if (itemType.getConstrainByModifier() != null  && itemType.getConstrainByModifier().getConstrainByValue() !=null) {
 			List<ItemType.ConstrainByValue> itemValueConstrainList = buildItemValueConstrain(itemType.getConstrainByModifier().getConstrainByValue());
 			itemModifierValueConstrainSql = valueConstrainHandler.constructValueConstainClause(itemValueConstrainList,this.dataSourceLookup.getServerType(),this.getDbSchemaName(),panelAccuracyScale);
-			if (itemModifierValueConstrainSql != null && itemModifierValueConstrainSql[0].length()>0) { 
+			if (itemModifierValueConstrainSql != null && itemModifierValueConstrainSql[0].length()>0) {
 				log.info("Modifier constrian value constrain sql " + itemModifierValueConstrainSql);
 			}
 		}
@@ -526,15 +526,15 @@ public class BuildTempTableSql extends CRCDAO {
 		if (itemModifierValueConstrainSql[0] != null
 				&& itemModifierValueConstrainSql[0].trim().length() > 0) {
 
-			itemModifierValueConstrainSql[0] = "  AND  ( " + itemModifierValueConstrainSql[0] 
+			itemModifierValueConstrainSql[0] = "  AND  ( " + itemModifierValueConstrainSql[0]
 					+ " )";
-		} else { 
+		} else {
 			itemModifierValueConstrainSql[0] = "";
 		}
 		return itemModifierValueConstrainSql;
 	}
 
-	private String callModifierConstrain(ModifierType modifierType, ItemType itemType) throws I2B2DAOException { 
+	private String callModifierConstrain(ModifierType modifierType, ItemType itemType) throws I2B2DAOException {
 
 		// generate sql for item date constrain
 		ModifierConstrainsHandler modifierConstrainUtil = new ModifierConstrainsHandler(this.getDbSchemaName());
@@ -544,17 +544,17 @@ public class BuildTempTableSql extends CRCDAO {
 			log.info("Item modifier constrain sql" + itemModifierConstrainSql);
 			itemModifierConstrainSql = "  AND ( " + itemModifierConstrainSql
 					+ " ) ";
-		} else { 
+		} else {
 			itemModifierConstrainSql = " ";
 		}
 
 		return itemModifierConstrainSql;
 	}
-	private ModifierType getModifierMetadataFromOntology(ItemType itemType) throws I2B2DAOException { 
+	private ModifierType getModifierMetadataFromOntology(ItemType itemType) throws I2B2DAOException {
 		ItemType.ConstrainByModifier modifierConstrain = itemType.getConstrainByModifier();
-		if (modifierConstrain == null) { 
+		if (modifierConstrain == null) {
 			return null;
-		} 
+		}
 		String modifierKey = modifierConstrain.getModifierKey();
 		String modifierAppliedPath = modifierConstrain.getAppliedPath();
 		ItemMetaDataHandler metadataHandler = new ItemMetaDataHandler(
@@ -575,11 +575,11 @@ public class BuildTempTableSql extends CRCDAO {
 
 	private List<ItemType.ConstrainByValue> buildItemValueConstrain(List<ItemType.ConstrainByModifier.ConstrainByValue> modifierConstrainList) {
 		List<ItemType.ConstrainByValue> itemValueConstrainList = new ArrayList<ItemType.ConstrainByValue>();
-		for (ItemType.ConstrainByModifier.ConstrainByValue modifierValueConstrain : modifierConstrainList) { 
+		for (ItemType.ConstrainByModifier.ConstrainByValue modifierValueConstrain : modifierConstrainList) {
 			ItemType.ConstrainByValue constrainByValue = new ItemType.ConstrainByValue();
 			constrainByValue.setValueConstraint(modifierValueConstrain.getValueConstraint());
-			constrainByValue.setValueOperator(modifierValueConstrain.getValueOperator()) ; 
-			constrainByValue.setValueType(modifierValueConstrain.getValueType()); 
+			constrainByValue.setValueOperator(modifierValueConstrain.getValueOperator()) ;
+			constrainByValue.setValueType(modifierValueConstrain.getValueType());
 			constrainByValue.setValueUnitOfMeasure(modifierValueConstrain.getValueUnitOfMeasure()) ;
 			itemValueConstrainList.add(constrainByValue);
 		}

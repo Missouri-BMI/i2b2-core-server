@@ -32,8 +32,8 @@ public class MetadataDao extends CRCDAO implements IMetadataDao {
 
 	/** log * */
 	protected final Log log = LogFactory.getLog(getClass());
-	
-	
+
+
 
 	private ArrayList<String> PATIENT_DIMENSION_REQUIRED_FIELDS = new ArrayList<String>();
 	private ArrayList<String> VISIT_DIMENSION_REQUIRED_FIELDS = new ArrayList<String>();
@@ -43,21 +43,21 @@ public class MetadataDao extends CRCDAO implements IMetadataDao {
 	private String[] patient_dim_required_field = new String[] {
 			"patient_num", "vital_status_cd", "birth_date", "death_date", "patient_blob", "update_date",
 			"download_date", "import_date", "sourcesystem_cd", "upload_id" };
-	
-	private String[] patient_dim_detail_field = new String[] { 
+
+	private String[] patient_dim_detail_field = new String[] {
 			"vital_status_cd","birth_date"};
-	
+
 	private String[] visit_dim_detail_field = new String[] {"active_status_cd"};
-	
+
 	private String[] visit_dim_required_field = new String[] { "encounter_num",
 			"patient_num", "start_date", "end_date", "active_status_cd", "visit_blob",
 			"update_date", "download_date", "import_date", "sourcesystem_cd",
 			"upload_id" };
-	
+
 	public final static String CRC_COLUMN_DESCRIPTOR = "crc_column_descriptor";
-	
-	
-	
+
+
+
 
 	private DataSourceLookup dataSourceLookup = null;
 
@@ -75,11 +75,11 @@ public class MetadataDao extends CRCDAO implements IMetadataDao {
 				.asList(visit_dim_detail_field));
 	}
 
-	
-	
+
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see edu.harvard.i2b2.crc.dao.pdo.IMetadataDao#blah(java.lang.String)
 	 */
 	@Override
@@ -88,7 +88,7 @@ public class MetadataDao extends CRCDAO implements IMetadataDao {
 
 		ArrayList<String> requiredFieldLookupList = null;
 		ArrayList<String> requiredDetailFieldLookupList = null;
-		
+
 		if (tableName.equalsIgnoreCase(DimensionTable.PATIENT_DIMENSION)) {
 			requiredFieldLookupList = PATIENT_DIMENSION_REQUIRED_FIELDS;
 			requiredDetailFieldLookupList = PATIENT_DIMENSION_REQUIRED_DETAIL_FIELDS;
@@ -102,9 +102,9 @@ public class MetadataDao extends CRCDAO implements IMetadataDao {
 		Statement stmt = null;
 		try {
 			conn = getDataSource().getConnection();
-			
-			Map<String,String> columnDescriptorMap =  getColumnDescription(conn, tableName) ; 
-			
+
+			Map<String,String> columnDescriptorMap =  getColumnDescription(conn, tableName) ;
+
 			stmt = conn.createStatement();
 			// Execute the query
 			ResultSet rs = stmt.executeQuery("SELECT * FROM "
@@ -113,7 +113,7 @@ public class MetadataDao extends CRCDAO implements IMetadataDao {
 			// Get the metadata
 			ResultSetMetaData md = rs.getMetaData();
 
-			String columnName = "", columnType = ""; 
+			String columnName = "", columnType = "";
 			int columnSize = 0;
 			// Print the column labels
 			for (int i = 1; i <= md.getColumnCount(); i++) {
@@ -129,8 +129,8 @@ public class MetadataDao extends CRCDAO implements IMetadataDao {
 					columnName = md.getColumnLabel(i).toLowerCase();
 					columnType = md.getColumnTypeName(i).toLowerCase();
 					columnSize = md.getColumnDisplaySize(i);
-					
-					log.debug("column name "  
+
+					log.debug("column name "
 							+ columnName);
 					log.debug(" column type name"
 							+ columnType );
@@ -149,7 +149,7 @@ public class MetadataDao extends CRCDAO implements IMetadataDao {
 			log.error("", sqlEx);
 			throw new I2B2DAOException("", sqlEx);
 		} finally {
-			
+
 			try {
 				JDBCUtil.closeJdbcResource(null, stmt, conn);
 			} catch (SQLException sqlEx) {
@@ -158,7 +158,7 @@ public class MetadataDao extends CRCDAO implements IMetadataDao {
 		}
 		return columnMap;
 	}
-	
+
 	private Map<String,String> getColumnDescription(Connection conn, String tableName) throws SQLException {
 		Map<String,String> columnDescriptorMap = new HashMap<String,String>();
 		PreparedStatement pStmt = conn.prepareStatement("select * from " +  getDbSchemaName() + "code_lookup where lower(table_cd) = ?   and lower(code_cd) = ?");
@@ -166,13 +166,13 @@ public class MetadataDao extends CRCDAO implements IMetadataDao {
 		pStmt.setString(2, CRC_COLUMN_DESCRIPTOR);
 		ResultSet resultSet = pStmt.executeQuery();
 		String columnCd = null, columnDescriptor = null;
-		while (resultSet.next()) { 
-			columnCd = resultSet.getString("column_cd"); 
+		while (resultSet.next()) {
+			columnCd = resultSet.getString("column_cd");
 			columnDescriptor = resultSet.getString("name_char");
-			if (columnCd != null && columnDescriptor != null) { 
+			if (columnCd != null && columnDescriptor != null) {
 				columnDescriptorMap.put(columnCd.trim().toLowerCase() , columnDescriptor);
 			}
-			
+
 		}
 		return columnDescriptorMap;
 	}

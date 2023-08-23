@@ -36,7 +36,7 @@ import edu.harvard.i2b2.crc.loader.datavo.loader.UploadStatus;
 
 /**
  * Upload Status data access object.
- * 
+ *
  * @author rk903
  */
 public class UploadStatusDAO extends CRCLoaderDAO implements UploadStatusDAOI {
@@ -66,7 +66,7 @@ public class UploadStatusDAO extends CRCLoaderDAO implements UploadStatusDAOI {
 
 	/**
 	 * Fetch Upload Status info.
-	 * 
+	 *
 	 * @param uploadStatusId
 	 * @return
 	 * @throws UniqueKeyException
@@ -101,7 +101,7 @@ public class UploadStatusDAO extends CRCLoaderDAO implements UploadStatusDAOI {
 
 	/**
 	 * Insert UploadStatus
-	 * 
+	 *
 	 * @param uploadStatus
 	 * @return
 	 */
@@ -120,7 +120,7 @@ public class UploadStatusDAO extends CRCLoaderDAO implements UploadStatusDAOI {
 
 	/**
 	 * Insert SetUploadStatus
-	 * 
+	 *
 	 * @param uploadStatus
 	 * @return
 	 */
@@ -175,7 +175,7 @@ public class UploadStatusDAO extends CRCLoaderDAO implements UploadStatusDAOI {
 
 	/**
 	 * update SetUploadStatus
-	 * 
+	 *
 	 * @param uploadSetStatus
 	 * @return
 	 */
@@ -229,7 +229,7 @@ public class UploadStatusDAO extends CRCLoaderDAO implements UploadStatusDAOI {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
 	public UploadSetStatus getUploadSetStatus(int uploadId, int setId) {
@@ -277,7 +277,7 @@ public class UploadStatusDAO extends CRCLoaderDAO implements UploadStatusDAOI {
 
 	/**
 	 * Return load status of individual sets in patient data objects
-	 * 
+	 *
 	 * @param uploadId
 	 * @return
 	 */
@@ -285,8 +285,8 @@ public class UploadStatusDAO extends CRCLoaderDAO implements UploadStatusDAOI {
 	public List<UploadSetStatus> getUploadSetStatusByLoadId(int uploadId) {
 		List<UploadSetStatus> setUploadStatusList = new ArrayList<UploadSetStatus>();
 		int rowCount = jdbcTemplate.queryForObject("select count(1) from "
-				+ this.getDbSchemaName()
-				+ "SET_UPLOAD_STATUS where UPLOAD_ID=?",Integer.class,
+						+ this.getDbSchemaName()
+						+ "SET_UPLOAD_STATUS where UPLOAD_ID=?",Integer.class,
 				new Object[] { uploadId });
 		if (rowCount < 1) {
 			return setUploadStatusList;
@@ -369,7 +369,7 @@ public class UploadStatusDAO extends CRCLoaderDAO implements UploadStatusDAOI {
 		List uploadStatusList = null;
 		UploadStatusQuery uploadStatusQuery = new UploadStatusQuery(
 				getDataSource(), "select * from " + this.getDbSchemaName()
-						+ "upload_status order by upload_id desc");
+				+ "upload_status order by upload_id desc");
 		uploadStatusList = uploadStatusQuery.execute();
 		return uploadStatusList;
 	}
@@ -393,7 +393,7 @@ public class UploadStatusDAO extends CRCLoaderDAO implements UploadStatusDAOI {
 	/**
 	 * Calculate upload status information like records loaded,etc for given
 	 * upload id using stored proc.
-	 * 
+	 *
 	 * @param upload
 	 *            id
 	 * @throws Exception
@@ -429,7 +429,7 @@ public class UploadStatusDAO extends CRCLoaderDAO implements UploadStatusDAOI {
 	/**
 	 * Function to delete upload data(observation_fact) based on upload id using
 	 * stored proc.
-	 * 
+	 *
 	 * @param upload
 	 *            id
 	 * @throws Exception
@@ -469,7 +469,7 @@ public class UploadStatusDAO extends CRCLoaderDAO implements UploadStatusDAOI {
 
 		/**
 		 * Create a new instance of UploadStatusQuery.
-		 * 
+		 *
 		 * @param ds
 		 *            the DataSource to use for the query
 		 * @param sql
@@ -482,12 +482,12 @@ public class UploadStatusDAO extends CRCLoaderDAO implements UploadStatusDAOI {
 		/**
 		 * Create a new instance of UploadStatusQuery that returns all
 		 * UploadStatus.
-		 * 
+		 *
 		 * @param ds
 		 *            the DataSource to use for the query
 		 */
 		protected UploadStatusQuery(DataSource ds, String schemaName,
-				DataSourceLookup dataSourceLookup) {
+									DataSourceLookup dataSourceLookup) {
 
 			super(ds, "SELECT upload_id, " + " upload_label, " + " user_id, "
 					+ " source_cd, " + " no_of_record, " + " deleted_record, "
@@ -527,20 +527,20 @@ public class UploadStatusDAO extends CRCLoaderDAO implements UploadStatusDAOI {
 	protected class UploadStatusInsert extends SqlUpdate {
 		/**
 		 * Create a new instance of OwnerInsert.
-		 * 
+		 *
 		 * @param ds
 		 *            the DataSource to use for the insert
 		 */
 		protected UploadStatusInsert(DataSource ds, String schemaName,
-				DataSourceLookup dataSourceLookup) {
+									 DataSourceLookup dataSourceLookup) {
 
 			String sql = null;
-			if (dataSourceLookup.getServerType().equalsIgnoreCase(
-					LoaderDAOFactoryHelper.SQLSERVER) || (dataSourceLookup.getServerType().equalsIgnoreCase(
-							LoaderDAOFactoryHelper.POSTGRESQL))) {
+			if (dataSourceLookup.getServerType().equalsIgnoreCase(LoaderDAOFactoryHelper.SQLSERVER) ||
+					dataSourceLookup.getServerType().equalsIgnoreCase(LoaderDAOFactoryHelper.POSTGRESQL) ||
+					dataSourceLookup.getServerType().equalsIgnoreCase(LoaderDAOFactoryHelper.SNOWFLAKE)) {
 				sql = "INSERT INTO " + schemaName + "upload_status (" +
 
-				" upload_label, " + " user_id, " + " source_cd, "
+						" upload_label, " + " user_id, " + " source_cd, "
 						+ " no_of_record, " + " deleted_record, "
 						+ " loaded_record, " + " load_date, " + " end_date, "
 						+ " load_status, " + " input_file_name, "
@@ -561,9 +561,9 @@ public class UploadStatusDAO extends CRCLoaderDAO implements UploadStatusDAOI {
 			this.setSql(sql);
 			this.setDataSource(dataSource);
 
-			if (dataSourceLookup.getServerType().equalsIgnoreCase(
-					LoaderDAOFactoryHelper.ORACLE) || dataSourceLookup.getServerType().equalsIgnoreCase(
-							LoaderDAOFactoryHelper.POSTGRESQL)) {
+			if (dataSourceLookup.getServerType().equalsIgnoreCase(LoaderDAOFactoryHelper.ORACLE) ||
+					dataSourceLookup.getServerType().equalsIgnoreCase(LoaderDAOFactoryHelper.POSTGRESQL) ||
+					dataSourceLookup.getServerType().equalsIgnoreCase(LoaderDAOFactoryHelper.SNOWFLAKE)) {
 				declareParameter(new SqlParameter(Types.INTEGER));
 			}
 			declareParameter(new SqlParameter(Types.VARCHAR));
@@ -585,9 +585,9 @@ public class UploadStatusDAO extends CRCLoaderDAO implements UploadStatusDAOI {
 		protected void insert(UploadStatus uploadStatus) {
 			int uploadId = 0;
 			Object[] objs = null;
-			if (dataSourceLookup.getServerType().equalsIgnoreCase(
-					LoaderDAOFactoryHelper.ORACLE) || dataSourceLookup.getServerType().equalsIgnoreCase(
-							LoaderDAOFactoryHelper.POSTGRESQL)) {
+			if (dataSourceLookup.getServerType().equalsIgnoreCase(LoaderDAOFactoryHelper.ORACLE) ||
+					dataSourceLookup.getServerType().equalsIgnoreCase(LoaderDAOFactoryHelper.POSTGRESQL) ||
+					dataSourceLookup.getServerType().equalsIgnoreCase(LoaderDAOFactoryHelper.SNOWFLAKE)) {
 				uploadId = getJdbcTemplate().queryForObject(
 						"select sq_uploadstatus_uploadid.nextval from dual",Integer.class);
 				uploadStatus.setUploadId(uploadId);
@@ -639,7 +639,7 @@ public class UploadStatusDAO extends CRCLoaderDAO implements UploadStatusDAOI {
 
 		/**
 		 * Create a new instance of UploadStatusUpdate.
-		 * 
+		 *
 		 * @param ds
 		 *            the DataSource to use for the update
 		 */
@@ -670,7 +670,7 @@ public class UploadStatusDAO extends CRCLoaderDAO implements UploadStatusDAOI {
 
 		/**
 		 * Method to update <code>UploadStatus</code>'s data.
-		 * 
+		 *
 		 * @param UploadStatus
 		 *            to update
 		 * @return the number of rows affected by the update

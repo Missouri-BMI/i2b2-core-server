@@ -43,14 +43,14 @@ import edu.harvard.i2b2.crc.util.QueryProcessorUtil;
 
 /**
  * Paging Handler class.
- * 
+ *
  * a)Calculate average observation per patient and keep trying until the
  * iteration count reached.
- * 
+ *
  * b)Then try with min percent of patient list specified in the property file.
- * 
+ *
  * c)Then try with min size of patient list specified in the property file.
- * 
+ *
  * @author rk903
  */
 public class PagingHandler extends CRCDAO {
@@ -63,16 +63,16 @@ public class PagingHandler extends CRCDAO {
 	DAOFactoryHelper daoFactoryHelper = null;
 	PageMethod pageMethod = null;
 	Map projectParamMap = null;
-	Map<String,XmlValueType> modifierMetadataXmlMap = null; 
-	
+	Map<String,XmlValueType> modifierMetadataXmlMap = null;
+
 
 	public static final String TOTAL_OBSERVATION = "TOTAL_OBSERVATION";
 	public static final String MAX_INPUT_LIST = "MAX_INPUT_LIST";
 	public static final String PAGING_REQUIRED_FLAG = "PAGING_REQUIRED_FLAG";
 
 	public PagingHandler(DAOFactoryHelper helper,
-			final InputOptionListType inputList,
-			final FilterListType filterList, String pageMethodName)
+						 final InputOptionListType inputList,
+						 final FilterListType filterList, String pageMethodName)
 			throws I2B2DAOException {
 		this.daoFactoryHelper = helper;
 		this.dataSourceLookup = helper.getDataSourceLookup();
@@ -81,16 +81,16 @@ public class PagingHandler extends CRCDAO {
 		this.outputOptionList = new OutputOptionListType();
 		pageMethod = PageMethodFactory.buildPageMethod(pageMethodName);
 	}
-	
-	public void setProjectParamMap(Map projectParamMap) { 
+
+	public void setProjectParamMap(Map projectParamMap) {
 		this.projectParamMap = projectParamMap;
 	}
-	
-	public void setModifierMetadataXmlMap(Map<String,XmlValueType> modifierMetadataXmlMap) { 
+
+	public void setModifierMetadataXmlMap(Map<String,XmlValueType> modifierMetadataXmlMap) {
 		this.modifierMetadataXmlMap = modifierMetadataXmlMap;
 	}
-	
-	
+
+
 	public long getTotal(int maxInputList) throws SQLException, I2B2Exception {
 
 		IInputOptionListHandler inputOptionListHandler = PDOFactory
@@ -105,7 +105,7 @@ public class PagingHandler extends CRCDAO {
 		String countClause = " COUNT(*) ";
 		if (dataSourceLookup.getServerType().equalsIgnoreCase(
 				DAOFactoryHelper.ORACLE) || dataSourceLookup.getServerType().equalsIgnoreCase(
-						DAOFactoryHelper.POSTGRESQL)) {
+				DAOFactoryHelper.POSTGRESQL)) {
 			factRelatedHandler = new FactRelatedQueryHandler(dataSourceLookup,
 					inputList, filterList, outputOptionList);
 		} else if (dataSourceLookup.getServerType().equalsIgnoreCase(
@@ -114,10 +114,14 @@ public class PagingHandler extends CRCDAO {
 			countClause = " COUNT_BIG(*) ";
 			factRelatedHandler = new SQLServerFactRelatedQueryHandler(
 					dataSourceLookup, inputList, filterList, outputOptionList);
+		} else if (dataSourceLookup.getServerType().equalsIgnoreCase(
+				DAOFactoryHelper.SNOWFLAKE)) {
+			factRelatedHandler = new FactRelatedQueryHandler(dataSourceLookup,
+					inputList, filterList, outputOptionList);
 		}
 		factRelatedHandler.setProjectParamMap(this.projectParamMap);
 		factRelatedHandler.setModifierMetadataXmlMap(this.modifierMetadataXmlMap);
-		
+
 		FactOutputOptionType factOutputOptionType = new FactOutputOptionType();
 		factOutputOptionType.setOnlykeys(true);
 		outputOptionList.setObservationSet(factOutputOptionType);
@@ -142,12 +146,12 @@ public class PagingHandler extends CRCDAO {
 			sqlCountList.add(sqlParamCount);
 			String totalSql = pageTotalDao.buildTotalSql(factRelatedHandler,
 					singlePanel);
-			if (totalSql.trim().length() == 0) { 
+			if (totalSql.trim().length() == 0) {
 				continue;
 			}
 			if((singlePanel != null)&&(singlePanel.getItem().get(0).getFacttablecolumn()!=null)){
 				boolean derivedFactTable = QueryProcessorUtil.getInstance().getDerivedFactTable();
-				
+
 				String defaultTableName = dataSourceLookup.getFullSchema() + ".observation_FACT" ;
 				if(derivedFactTable == true){
 					if(singlePanel.getItem().get(0).getFacttablecolumn().contains(".")){
@@ -163,15 +167,15 @@ public class PagingHandler extends CRCDAO {
 
 								Iterator<String> it = columns.getDerivedFactTableColumn().iterator();
 								String column = it.next();
-								
+
 								lastIndex = column.lastIndexOf(".");
 								String table = dataSourceLookup.getFullSchema() + "."+ (column.substring(0, lastIndex));
 
-								
+
 								factTable = "( select * from " + table;
 								while(it.hasNext()){
 									column = it.next();
-									
+
 									lastIndex = column.lastIndexOf(".");
 									table = dataSourceLookup.getFullSchema() + "."+ (column.substring(0, lastIndex));
 
@@ -184,18 +188,18 @@ public class PagingHandler extends CRCDAO {
 						}
 						log.debug("Parse columns " + factTable);
 						totalSql=totalSql.replaceAll(defaultTableName, factTable)	;
-						
-						
-						
+
+
+
 					}
 				}
-				
-		
-				
-				
-				
+
+
+
+
+
 			}
-			
+
 			panelSqlList.add("SELECT "
 					+ countClause
 					+ " from ( "
@@ -221,7 +225,7 @@ public class PagingHandler extends CRCDAO {
 		String countSqlFrom = " ";
 		if (dataSourceLookup.getServerType().equalsIgnoreCase(
 				DAOFactoryHelper.ORACLE) || dataSourceLookup.getServerType().equalsIgnoreCase(
-						DAOFactoryHelper.POSTGRESQL)) {
+				DAOFactoryHelper.POSTGRESQL)) {
 			factRelatedHandler = new FactRelatedQueryHandler(dataSourceLookup,
 					inputList, filterList, outputOptionList);
 		} else if (dataSourceLookup.getServerType().equalsIgnoreCase(
@@ -229,11 +233,15 @@ public class PagingHandler extends CRCDAO {
 			countSqlFrom = "as";
 			factRelatedHandler = new SQLServerFactRelatedQueryHandler(
 					dataSourceLookup, inputList, filterList, outputOptionList);
+		} else if (dataSourceLookup.getServerType().equalsIgnoreCase(
+				DAOFactoryHelper.SNOWFLAKE)) {
+			factRelatedHandler = new FactRelatedQueryHandler(dataSourceLookup,
+					inputList, filterList, outputOptionList);
 		}
 		//set project param
 		factRelatedHandler.setProjectParamMap(this.projectParamMap);
 		factRelatedHandler.setModifierMetadataXmlMap(this.modifierMetadataXmlMap);
-		
+
 		FactOutputOptionType factOutputOptionType = new FactOutputOptionType();
 		factOutputOptionType.setOnlykeys(true);
 		outputOptionList.setObservationSet(factOutputOptionType);
@@ -267,7 +275,7 @@ public class PagingHandler extends CRCDAO {
 
 			panelSql = pageTotalDao.buildTotalSql(factRelatedHandler,
 					singlePanel);
-			if (panelSql.length() ==0) { 
+			if (panelSql.length() ==0) {
 				continue;
 			}
 			String minSql = inputOptionListHandler
@@ -371,7 +379,7 @@ public class PagingHandler extends CRCDAO {
 		 * getMinPercentInput(listLength);
 		 * log.debug("Trying with minimum input list percent of [ " +
 		 * minPercentInput + "]");
-		 * 
+		 *
 		 * if (minPercentInput > 0) { if (minPercentInput < maxInputList) {
 		 * totalObservations = getTotal(minPercentInput); log
 		 * .debug("Total observations for minimum input list percent  [" +
@@ -431,12 +439,12 @@ public class PagingHandler extends CRCDAO {
 
 	}
 
-	
+
 	protected DerivedFactColumnsType getFactColumnsFromOntologyCell(String itemKey)
 			throws ConceptNotFoundException, OntologyException {
 		DerivedFactColumnsType factColumns = new DerivedFactColumnsType();
 		try {
-			
+
 			QueryProcessorUtil qpUtil = QueryProcessorUtil.getInstance();
 			String ontologyUrl = qpUtil
 					.getCRCPropertyValue(QueryProcessorUtil.ONTOLOGYCELL_ROOT_WS_URL_PROPERTIES);
@@ -444,8 +452,8 @@ public class PagingHandler extends CRCDAO {
 
 			SecurityType securityType = PMServiceAccountUtil
 					.getServiceSecurityType(dataSourceLookup.getDomainId());
-			
-			
+
+
 			factColumns = CallOntologyUtil.callGetFactColumns(itemKey,
 					securityType, dataSourceLookup.getProjectPath(),
 					ontologyUrl +"/getDerivedFactColumns");
@@ -482,5 +490,5 @@ public class PagingHandler extends CRCDAO {
 	}
 
 
-	
+
 }

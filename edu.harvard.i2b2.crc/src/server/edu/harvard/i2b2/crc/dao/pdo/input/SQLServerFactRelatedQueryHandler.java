@@ -196,7 +196,8 @@ public class SQLServerFactRelatedQueryHandler extends CRCDAO implements
 		eidFactRelated = new EidFactRelated(outputOptionList.getEidSet());
 
 		// If postgresql change temp table name
-		if (dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL)) {
+		if (dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL)
+				|| dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) {
 			 TEMP_PDO_INPUTLIST_TABLE = "TEMP_PDO_INPUTLIST";
 			 TEMP_FACT_PARAM_TABLE = "TEMP_FACT_PARAM_TABLE";
 

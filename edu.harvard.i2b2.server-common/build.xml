@@ -22,11 +22,11 @@
 			<pathelement location="${classes}" />
 		</path>
 
-	<!--  JRE 1.5 style jaxb_gen
-		<taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
-			<classpath refid="classpath" />
-		</taskdef>
-	-->
+		<!--  JRE 1.5 style jaxb_gen
+            <taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
+                <classpath refid="classpath" />
+            </taskdef>
+        -->
 	</target>
 
 
@@ -68,101 +68,101 @@
 	<!-- =================================================================== -->
 	<!-- 								WAR 								 -->
 	<!-- =================================================================== -->
-	  <target name="war" depends="init,compile" description="package application for distribution/deployment">
-	 
-	                <echo message="${Name}: Creating the war package!" />
-	 
-	                <copy todir="${dist}/${axis2.war.name}_build">
-	                                        <fileset dir="lib/axis2.war">
-	                                                <include name="**/**" />
-	                                        </fileset>
-	                                </copy>
-	 
-	                <copy todir="${dist}/${axis2.war.name}_build/WEB-INF/lib">
-	                        <fileset dir="${lib}/spring" includes="**/*" />
-	                        <fileset dir="${lib}/jcifs" includes="**/*" />
-	                        <fileset dir="${lib}/jdbc" includes="**/*" />
-                       		<fileset dir="${lib}/okta" includes="**/*" />
-	                        <fileset dir="${lib}/jboss" includes="**/*" />
-	                        <fileset dir="${lib}/esapi" includes="**/*" />
-	                        <fileset dir="${lib}/zip" includes="**/*" />
-	                        <fileset dir="${lib}/quartz" includes="**/*" />
-	                </copy>
-	 
-	                <copy todir="${dist}/${axis2.war.name}_build/WEB-INF/lib">
-	                                                <fileset dir="${dist}" includes="**/*-core.jar" />
-	                                        </copy>
-	 
-	                <echo message="${Name}: Building CRC package!" />
-	                    <ant antfile="build.xml"  dir="../edu.harvard.i2b2.crc" target="clean"/>
-	                    <ant antfile="build.xml"  dir="../edu.harvard.i2b2.crc" target="all">
-	                         <property name="Name" value="CRC"/>
-	                    </ant>
-	                <copy todir="${dist}/${axis2.war.name}_build/WEB-INF/lib">
-	                     <fileset dir="../edu.harvard.i2b2.crc/${dist}" includes="**/*-core.jar" />
-	                </copy>
-	                <copy todir="${dist}/${axis2.war.name}_build/WEB-INF/services">
-	                     <fileset dir="../edu.harvard.i2b2.crc/${dist}" includes="**/*.aar" />
-	                </copy>
-	 
-	 
-	                <echo message="${Name}: Building Ontology package!" />
-	                    <ant antfile="build.xml"  dir="../edu.harvard.i2b2.ontology" target="clean"/>
-	                    <ant antfile="build.xml"  dir="../edu.harvard.i2b2.ontology" target="all">
-	                         <property name="Name" value="Ontology"/>
-	                    </ant>
-	                <copy todir="${dist}/${axis2.war.name}_build/WEB-INF/lib">
-	                     <fileset dir="../edu.harvard.i2b2.ontology/${dist}" includes="**/*-core.jar" />
-	                </copy>
-	                <copy todir="${dist}/${axis2.war.name}_build/WEB-INF/services">
-	                     <fileset dir="../edu.harvard.i2b2.ontology/${dist}" includes="**/*.aar" />
-	                </copy>
-	 
-	                <echo message="${Name}: Building Workplace package!" />
-	                    <ant antfile="build.xml"  dir="../edu.harvard.i2b2.workplace" target="clean"/>
-	                    <ant antfile="build.xml"  dir="../edu.harvard.i2b2.workplace" target="all">
-	                         <property name="Name" value="Workplace"/>
-	                    </ant>
-	                <copy todir="${dist}/${axis2.war.name}_build/WEB-INF/lib">
-	                     <fileset dir="../edu.harvard.i2b2.workplace/${dist}" includes="**/*-core.jar" />
-	                </copy>
-	                <copy todir="${dist}/${axis2.war.name}_build/WEB-INF/services">
-	                     <fileset dir="../edu.harvard.i2b2.workplace/${dist}" includes="**/*.aar" />
-	                </copy>
+	<target name="war" depends="init,compile" description="package application for distribution/deployment">
 
-			        <echo message="${Name}: Building IM package!" />
-			            <ant antfile="build.xml"  dir="../edu.harvard.i2b2.im" target="clean"/>
-			            <ant antfile="build.xml"  dir="../edu.harvard.i2b2.im" target="all">
-			                 <property name="Name" value="IM"/>
-			            </ant>
-			        <copy todir="${dist}/${axis2.war.name}_build/WEB-INF/lib">
-			             <fileset dir="../edu.harvard.i2b2.im/${dist}" includes="**/*-core.jar" />
-			        </copy>
-			        <copy todir="${dist}/${axis2.war.name}_build/WEB-INF/services">
-			             <fileset dir="../edu.harvard.i2b2.im/${dist}" includes="**/*.aar" />
-			        </copy>
-	  	
-	                <echo message="${Name}: Building PM package!" />
-	                    <ant antfile="build.xml"  dir="../edu.harvard.i2b2.pm" target="clean"/>
-	                    <ant antfile="build.xml"  dir="../edu.harvard.i2b2.pm" target="all">
-	                         <property name="Name" value="PM"/>
-	                    </ant>
-	                <copy todir="${dist}/${axis2.war.name}_build/WEB-INF/lib">
-	                     <fileset dir="../edu.harvard.i2b2.pm/${dist}" includes="**/*-core.jar" />
-	                </copy>
-	                <copy todir="${dist}/${axis2.war.name}_build/WEB-INF/services">
-	                     <fileset dir="../edu.harvard.i2b2.pm/${dist}" includes="**/*.aar" />
-	                </copy>
-	 
-	               <jar destfile="${dist}/${axis2.war.name}">
-	                        <fileset dir="${dist}/${axis2.war.name}_build">
-	                        </fileset>
-	                </jar>
-	 
-	 
-	                <!-- <zip destfile="${dist}/${axis2.war.name}"
-	                     basedir="${dist}/${axis2.war.name}_biuld"/> -->
-	        </target>
+		<echo message="${Name}: Creating the war package!" />
+
+		<copy todir="${dist}/${axis2.war.name}_build">
+			<fileset dir="lib/axis2.war">
+				<include name="**/**" />
+			</fileset>
+		</copy>
+
+		<copy todir="${dist}/${axis2.war.name}_build/WEB-INF/lib">
+			<fileset dir="${lib}/spring" includes="**/*" />
+			<fileset dir="${lib}/jcifs" includes="**/*" />
+			<fileset dir="${lib}/jdbc" includes="**/*" />
+			<fileset dir="${lib}/okta" includes="**/*" />
+			<fileset dir="${lib}/jboss" includes="**/*" />
+			<fileset dir="${lib}/esapi" includes="**/*" />
+			<fileset dir="${lib}/zip" includes="**/*" />
+			<fileset dir="${lib}/quartz" includes="**/*" />
+		</copy>
+
+		<copy todir="${dist}/${axis2.war.name}_build/WEB-INF/lib">
+			<fileset dir="${dist}" includes="**/*-core.jar" />
+		</copy>
+
+		<echo message="${Name}: Building CRC package!" />
+		<ant antfile="build.xml"  dir="../edu.harvard.i2b2.crc" target="clean"/>
+		<ant antfile="build.xml"  dir="../edu.harvard.i2b2.crc" target="all">
+			<property name="Name" value="CRC"/>
+		</ant>
+		<copy todir="${dist}/${axis2.war.name}_build/WEB-INF/lib">
+			<fileset dir="../edu.harvard.i2b2.crc/${dist}" includes="**/*-core.jar" />
+		</copy>
+		<copy todir="${dist}/${axis2.war.name}_build/WEB-INF/services">
+			<fileset dir="../edu.harvard.i2b2.crc/${dist}" includes="**/*.aar" />
+		</copy>
+
+
+		<echo message="${Name}: Building Ontology package!" />
+		<ant antfile="build.xml"  dir="../edu.harvard.i2b2.ontology" target="clean"/>
+		<ant antfile="build.xml"  dir="../edu.harvard.i2b2.ontology" target="all">
+			<property name="Name" value="Ontology"/>
+		</ant>
+		<copy todir="${dist}/${axis2.war.name}_build/WEB-INF/lib">
+			<fileset dir="../edu.harvard.i2b2.ontology/${dist}" includes="**/*-core.jar" />
+		</copy>
+		<copy todir="${dist}/${axis2.war.name}_build/WEB-INF/services">
+			<fileset dir="../edu.harvard.i2b2.ontology/${dist}" includes="**/*.aar" />
+		</copy>
+
+		<echo message="${Name}: Building Workplace package!" />
+		<ant antfile="build.xml"  dir="../edu.harvard.i2b2.workplace" target="clean"/>
+		<ant antfile="build.xml"  dir="../edu.harvard.i2b2.workplace" target="all">
+			<property name="Name" value="Workplace"/>
+		</ant>
+		<copy todir="${dist}/${axis2.war.name}_build/WEB-INF/lib">
+			<fileset dir="../edu.harvard.i2b2.workplace/${dist}" includes="**/*-core.jar" />
+		</copy>
+		<copy todir="${dist}/${axis2.war.name}_build/WEB-INF/services">
+			<fileset dir="../edu.harvard.i2b2.workplace/${dist}" includes="**/*.aar" />
+		</copy>
+
+		<echo message="${Name}: Building IM package!" />
+		<ant antfile="build.xml"  dir="../edu.harvard.i2b2.im" target="clean"/>
+		<ant antfile="build.xml"  dir="../edu.harvard.i2b2.im" target="all">
+			<property name="Name" value="IM"/>
+		</ant>
+		<copy todir="${dist}/${axis2.war.name}_build/WEB-INF/lib">
+			<fileset dir="../edu.harvard.i2b2.im/${dist}" includes="**/*-core.jar" />
+		</copy>
+		<copy todir="${dist}/${axis2.war.name}_build/WEB-INF/services">
+			<fileset dir="../edu.harvard.i2b2.im/${dist}" includes="**/*.aar" />
+		</copy>
+
+		<echo message="${Name}: Building PM package!" />
+		<ant antfile="build.xml"  dir="../edu.harvard.i2b2.pm" target="clean"/>
+		<ant antfile="build.xml"  dir="../edu.harvard.i2b2.pm" target="all">
+			<property name="Name" value="PM"/>
+		</ant>
+		<copy todir="${dist}/${axis2.war.name}_build/WEB-INF/lib">
+			<fileset dir="../edu.harvard.i2b2.pm/${dist}" includes="**/*-core.jar" />
+		</copy>
+		<copy todir="${dist}/${axis2.war.name}_build/WEB-INF/services">
+			<fileset dir="../edu.harvard.i2b2.pm/${dist}" includes="**/*.aar" />
+		</copy>
+
+		<jar destfile="${dist}/${axis2.war.name}">
+			<fileset dir="${dist}/${axis2.war.name}_build">
+			</fileset>
+		</jar>
+
+
+		<!-- <zip destfile="${dist}/${axis2.war.name}"
+             basedir="${dist}/${axis2.war.name}_biuld"/> -->
+	</target>
 
 
 	<!-- =================================================================== -->
@@ -172,8 +172,8 @@
 		<!-- copy jar to jboss lib -->
 		<antcall target="copy_jdbc_jar" />
 		<antcall target="copy_app_jar" />
-		
-		<!--		
+
+		<!--
 		<echo> Copying axis2.xml to conf directory</echo>
 		<copy todir="${jboss.home}/standalone/deployments/${axis2.war.name}/WEB-INF/conf">
 			<fileset dir="${etc}/axis2">
@@ -181,8 +181,8 @@
 			</fileset>
 		</copy>
 	  	-->
-	
-		<!-- copy endosed jar to jboss endorsed lib 
+
+		<!-- copy endosed jar to jboss endorsed lib
 		<antcall target="copy_endosed_jar" />
 		<echo> Copying axis2.xml to conf directory</echo>
 		<copy todir="${jboss.home}/server/default/deploy/${axis2.war.name}/WEB-INF/conf">
@@ -199,60 +199,65 @@
 			<fileset dir="${lib}/jdbc" includes="ojdbc8.jar" />
 			<fileset dir="${lib}/jdbc" includes="mssql-jdbc-12.4.2.jre8.jar"/>
 			<fileset dir="${lib}/jdbc" includes="postgresql-42.7.1.jar"/>
+			<fileset dir="${lib}/jdbc" includes="snowflake-jdbc-3.20.0.jar"/>
 		</copy>
 	</target>
-		
+
 	<target name="copy_jdbc_jar">
 		<echo>Copying to ${jboss.home} directory</echo>
 		<copy todir="${jboss.home}/standalone/deployments/${axis2.war.name}/WEB-INF/lib">
 			<fileset dir="${lib}/jdbc" includes="ojdbc8.jar" />
 			<fileset dir="${lib}/jdbc" includes="mssql-jdbc-12.4.2.jre8.jar"/>
 			<fileset dir="${lib}/jdbc" includes="postgresql-42.7.1.jar"/>
+			<fileset dir="${lib}/jdbc" includes="snowflake-jdbc-3.20.0.jar"/>
 		</copy>
 		<copy todir="${jboss.home}/standalone/deployments">
 			<fileset dir="${lib}/jdbc" includes="ojdbc8.jar" />
 			<fileset dir="${lib}/jdbc" includes="mssql-jdbc-12.4.2.jre8.jar"/>
 			<fileset dir="${lib}/jdbc" includes="postgresql-42.7.1.jar"/>
+			<fileset dir="${lib}/jdbc" includes="snowflake-jdbc-3.20.0.jar"/>
 		</copy>
 	</target>
-	
-	<target name="copy_new_jdbc_jar">
-			<echo>Copying to ${jboss.home} directory</echo>
-			<delete file="${jboss.home}/standalone/deployments/${axis2.war.name}/WEB-INF/lib/ojdbc6.jar"/>
-			<delete file="${jboss.home}/standalone/deployments/${axis2.war.name}/WEB-INF/lib/sqljdbc4.jar"/>
-			<delete file="${jboss.home}/standalone/deployments/${axis2.war.name}/WEB-INF/lib/postgresql-9.2-1002.jdbc4.jar"/>
-			<delete file="${jboss.home}/standalone/deployments/ojdbc6.jar"/>
-			<delete file="${jboss.home}/standalone/deployments/ojdbc8.jar"/>
-			<delete file="${jboss.home}/standalone/deployments/postgresql-42.2.5.jar"/>
-			<delete file="${jboss.home}/standalone/deployments/mssql-jdbc-7.2.1.jre8.jar"/>
-			<delete file="${jboss.home}/standalone/deployments/sqljdbc4.jar"/>
-			<delete file="${jboss.home}/standalone/deployments/postgresql-9.2-1002.jdbc4.jar"/>
-			<delete file="${jboss.home}/standalone/deployments/ojdbc6.jar.dodeploy"/>
-			<delete file="${jboss.home}/standalone/deployments/sqljdbc4.jar.dodeploy"/>
-			<delete file="${jboss.home}/standalone/deployments/postgresql-9.2-1002.jdbc4.jar.dodeploy"/>
-			
-			<copy todir="${jboss.home}/standalone/deployments/${axis2.war.name}/WEB-INF/lib">
-				<fileset dir="${lib}/jdbc" includes="ojdbc8.jar" />
-				<fileset dir="${lib}/jdbc" includes="mssql-jdbc-12.4.2.jre8.jar"/>
-				<fileset dir="${lib}/jdbc" includes="postgresql-42.7.1.jar"/>
-			</copy>
-			<copy todir="${jboss.home}/standalone/deployments">
-				<fileset dir="${lib}/jdbc" includes="ojdbc8.jar" />
-				<fileset dir="${lib}/jdbc" includes="mssql-jdbc-12.4.2.jre8.jar"/>
-				<fileset dir="${lib}/jdbc" includes="postgresql-42.7.1.jar"/>
-			</copy>
 
-		</target>
-	
+	<target name="copy_new_jdbc_jar">
+		<echo>Copying to ${jboss.home} directory</echo>
+		<delete file="${jboss.home}/standalone/deployments/${axis2.war.name}/WEB-INF/lib/ojdbc6.jar"/>
+		<delete file="${jboss.home}/standalone/deployments/${axis2.war.name}/WEB-INF/lib/sqljdbc4.jar"/>
+		<delete file="${jboss.home}/standalone/deployments/${axis2.war.name}/WEB-INF/lib/postgresql-9.2-1002.jdbc4.jar"/>
+		<delete file="${jboss.home}/standalone/deployments/ojdbc6.jar"/>
+		<delete file="${jboss.home}/standalone/deployments/ojdbc8.jar"/>
+		<delete file="${jboss.home}/standalone/deployments/postgresql-42.2.5.jar"/>
+		<delete file="${jboss.home}/standalone/deployments/mssql-jdbc-7.2.1.jre8.jar"/>
+		<delete file="${jboss.home}/standalone/deployments/sqljdbc4.jar"/>
+		<delete file="${jboss.home}/standalone/deployments/postgresql-9.2-1002.jdbc4.jar"/>
+		<delete file="${jboss.home}/standalone/deployments/ojdbc6.jar.dodeploy"/>
+		<delete file="${jboss.home}/standalone/deployments/sqljdbc4.jar.dodeploy"/>
+		<delete file="${jboss.home}/standalone/deployments/postgresql-9.2-1002.jdbc4.jar.dodeploy"/>
+
+		<copy todir="${jboss.home}/standalone/deployments/${axis2.war.name}/WEB-INF/lib">
+			<fileset dir="${lib}/jdbc" includes="ojdbc8.jar" />
+			<fileset dir="${lib}/jdbc" includes="mssql-jdbc-12.4.2.jre8.jar"/>
+			<fileset dir="${lib}/jdbc" includes="postgresql-42.7.1.jar"/>
+			<fileset dir="${lib}/jdbc" includes="snowflake-jdbc-3.20.0.jar"/>
+		</copy>
+		<copy todir="${jboss.home}/standalone/deployments">
+			<fileset dir="${lib}/jdbc" includes="ojdbc8.jar" />
+			<fileset dir="${lib}/jdbc" includes="mssql-jdbc-12.4.2.jre8.jar"/>
+			<fileset dir="${lib}/jdbc" includes="postgresql-42.7.1.jar"/>
+			<fileset dir="${lib}/jdbc" includes="snowflake-jdbc-3.20.0.jar"/>
+		</copy>
+
+	</target>
+
 	<target name="copy_app_jar">
 		<echo>Copying to ${jboss.home} directory</echo>
 		<copy todir="${jboss.home}/standalone/deployments/${axis2.war.name}/WEB-INF/lib">
 			<fileset dir="${lib}/spring" includes="**/*" />
-			<fileset dir="${lib}/jcifs" includes="**/*" />			
-			<fileset dir="${lib}/jdbc" includes="**/*" />			
-			<fileset dir="${lib}/jboss" includes="**/*" />				
-			<fileset dir="${lib}/okta" includes="**/*" />	
-            <fileset dir="${lib}/esapi" includes="**/*" />
+			<fileset dir="${lib}/jcifs" includes="**/*" />
+			<fileset dir="${lib}/jdbc" includes="**/*" />
+			<fileset dir="${lib}/jboss" includes="**/*" />
+			<fileset dir="${lib}/okta" includes="**/*" />
+			<fileset dir="${lib}/esapi" includes="**/*" />
 		</copy>
 	</target>
 
@@ -262,15 +267,15 @@
 			<fileset dir="${dist}">
 				<include name="**/**" />
 			</fileset>
-		</copy>		
-		
-	</target>
-	
-    <target name="deploy_war">
-             <echo>Deploy WAR</echo>
-             <copy todir="${jboss.home}/standalone/deployments">
-                     <fileset dir="${dist}" includes="i2b2.war"/>
-             </copy>
+		</copy>
 
-     </target>
+	</target>
+
+	<target name="deploy_war">
+		<echo>Deploy WAR</echo>
+		<copy todir="${jboss.home}/standalone/deployments">
+			<fileset dir="${dist}" includes="i2b2.war"/>
+		</copy>
+
+	</target>
 </project>

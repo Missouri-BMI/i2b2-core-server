@@ -292,7 +292,8 @@ IQueryResultInstanceDao {
 					+ " group by r1.real_set_size "
 					+ " having count(r1.result_instance_id) > ? ";
 		} else if (dataSourceLookup.getServerType().equalsIgnoreCase(
-				DAOFactoryHelper.POSTGRESQL) ) {
+				DAOFactoryHelper.POSTGRESQL) || dataSourceLookup.getServerType().equalsIgnoreCase(
+				DAOFactoryHelper.SNOWFLAKE) ) {
 			queryCountSql = " select count(r1.result_instance_id) result_count,r1.real_set_size "
 					+ " from " + this.getDbSchemaName() + "qt_query_result_instance r1 inner join " + this.getDbSchemaName()+ "qt_query_result_instance r2 on "
 					+ " r1.real_set_size = r2.real_set_size, "
@@ -382,6 +383,8 @@ IQueryResultInstanceDao {
 		private String SEQUENCE_ORACLE = "";
 		private String SEQUENCE_POSTGRESQL = "";
 		private String INSERT_POSTGRESQL = "";
+		private String SEQUENCE_SNOWFLAKE = "";
+		private String INSERT_SNOWFLAKE = "";
 		DataSourceLookup dataSourceLookup = null;
 
 		public SavePatientSetResult(DataSource dataSource, String dbSchemaName,
@@ -420,6 +423,19 @@ IQueryResultInstanceDao {
 						+ "nextval('qt_query_result_instance_result_instance_id_seq') ";
 				declareParameter(new SqlParameter(Types.INTEGER));
 
+
+			} else if (dataSourceLookup.getServerType().equalsIgnoreCase(
+					DAOFactoryHelper.SNOWFLAKE)) {
+				INSERT_SNOWFLAKE = "INSERT INTO "
+						+ dbSchemaName
+						+ "QT_QUERY_RESULT_INSTANCE "
+						+ "(RESULT_INSTANCE_ID, QUERY_INSTANCE_ID, RESULT_TYPE_ID, SET_SIZE,START_DATE,END_DATE,STATUS_TYPE_ID,DELETE_FLAG) "
+						+ "VALUES (?,?,?,?,?,?,?,?)";
+				setSql(INSERT_SNOWFLAKE);
+				SEQUENCE_SNOWFLAKE = "select "
+						+ dbSchemaName
+						+ "SEQ_QT_QUERY_RESULT_INSTANCE.nextval";
+				declareParameter(new SqlParameter(Types.INTEGER));
 
 			}
 
@@ -488,6 +504,24 @@ IQueryResultInstanceDao {
 						resultInstance.getDeleteFlag()
 
 				};
+			}	else  if (dataSourceLookup.getServerType().equalsIgnoreCase(
+					DAOFactoryHelper.SNOWFLAKE)) {
+				resultInstanceId = jdbc.queryForObject(SEQUENCE_SNOWFLAKE, Integer.class);
+				resultInstance.setResultInstanceId(String
+						.valueOf(resultInstanceId));
+				object = new Object[] {
+						resultInstance.getResultInstanceId(),
+						resultInstance.getQtQueryInstance()
+								.getQueryInstanceId(),
+						resultInstance.getQtQueryResultType().getResultTypeId(),
+						resultInstance.getSetSize(),
+						resultInstance.getStartDate(),
+						resultInstance.getEndDate(),
+						resultInstance.getQtQueryStatusType().getStatusTypeId(),
+						resultInstance.getDeleteFlag()
+
+				};
+
 			}
 
 			update(object);

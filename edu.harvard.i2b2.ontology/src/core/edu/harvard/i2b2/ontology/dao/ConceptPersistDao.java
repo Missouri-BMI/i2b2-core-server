@@ -724,7 +724,8 @@ public class ConceptPersistDao extends JdbcDaoSupport {
 					" C_SYMBOL	VARCHAR(50)	NULL )  ";
 
 
-			if(dbInfo.getDb_serverType().equals("POSTGRESQL"))	{
+			if(dbInfo.getDb_serverType().equals("POSTGRESQL")
+					|| dbInfo.getDb_serverType().equals("SNOWFLAKE"))	{
 				createSql = "CREATE TABLE " + metadataSchema + tableName +
 						"  (	C_HLEVEL INT			NOT NULL, C_FULLNAME VARCHAR(700)	NOT NULL, C_NAME VARCHAR(2000)		NOT NULL, "+
 						" C_SYNONYM_CD CHAR(1)		NOT NULL, C_VISUALATTRIBUTES CHAR(3)	NOT NULL,  C_TOTALNUM INT			NULL, " +

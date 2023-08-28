@@ -275,9 +275,9 @@ public class QueryResultGenerator extends CRCDAO implements IResultGenerator {
 
 					String dimCode = this.getDimCodeInSqlFormat(conceptType);
 
-					if (serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL)) 
+					if (serverType.equalsIgnoreCase(DAOFactoryHelper.POSTGRESQL) || serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE))
 						dimCode = dimCode.replaceAll("\\\\", "\\\\\\\\");
-					itemCountSql += " ( select distinct PATIENT_NUM as item_count from " +  this.getDbSchemaName() + joinTableName +  
+					itemCountSql += " ( select distinct PATIENT_NUM as item_count from " +  this.getDbSchemaName() + joinTableName +
 							" where " + " patient_num in (select patient_num from "
 							+ TEMP_DX_TABLE
 

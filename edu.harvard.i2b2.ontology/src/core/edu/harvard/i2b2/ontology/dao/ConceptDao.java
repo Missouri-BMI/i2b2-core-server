@@ -76,7 +76,7 @@ public class ConceptDao extends JdbcDaoSupport {
 	final static String MOD_LIMITED = " c_hlevel, c_fullname, c_name, c_synonym_cd, c_visualattributes, c_totalnum, c_basecode, c_tooltip, m_applied_path ";
 
 
-	final static String DEFAULT = " c_hlevel, c_fullname, c_name, c_synonym_cd, c_visualattributes, c_totalnum, c_basecode, c_facttablecolumn, c_tablename, c_columnname, c_columndatatype, c_operator, c_dimcode, c_tooltip, valuetype_cd ";
+	final static String DEFAULT = " c_hlevel, c_fullname, c_name, c_synonym_cd, c_visualattributes, c_totalnum, c_basecode, c_facttablecolumn, c_tablename, c_columnname, c_columndatatype, c_operator, c_dimcode, c_tooltip, valuetype_cd, m_applied_path ";
 	final static String CORE = DEFAULT;
 	final static String LIMITED = " c_hlevel, c_fullname, c_name, c_synonym_cd, c_visualattributes, c_totalnum, c_basecode, c_tooltip, valuetype_cd ";
 
@@ -330,7 +330,7 @@ public class ConceptDao extends JdbcDaoSupport {
 			while (it2.hasNext()){
 				ConceptType concept = it2.next();
 				// if a leaf has modifiers report it with visAttrib == F
-				if(concept.getVisualattributes().startsWith("L")){
+				if(concept.getVisualattributes().startsWith("L") && !concept.getMAppliedPath().equals("@")){
 					String modPath = StringUtil.getPath(concept.getKey());
 					// I have to do this the hard way because there are a dynamic number of applied paths to check
 					//   prevent SQL injection
@@ -2259,6 +2259,12 @@ class GetConceptNodeMapper implements RowMapper<ConceptType> {
 			child.setSourcesystemCd(rs.getString("sourcesystem_cd"));
 
 		}
+
+		// stroing m_applied_path
+		if(rs.getString("m_applied_path") == null)
+			child.setMAppliedPath("@");
+		else
+			child.setMAppliedPath(rs.getString("m_applied_path"));
 		return child;
 	}
 

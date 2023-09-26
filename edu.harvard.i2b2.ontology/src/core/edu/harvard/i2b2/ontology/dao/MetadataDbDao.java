@@ -19,7 +19,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import javax.sql.DataSource;
-
+import java.sql.Connection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.dao.DataAccessException;
@@ -35,7 +35,7 @@ import edu.harvard.i2b2.ontology.util.OntologyUtil;
 public class MetadataDbDao extends JdbcDaoSupport {
 	
     private static Log log = LogFactory.getLog(MetadataDbDao.class);
-   
+   	private DataSource dataSource;
     private JdbcTemplate jt;
     
     public MetadataDbDao() throws I2B2Exception{
@@ -46,13 +46,23 @@ public class MetadataDbDao extends JdbcDaoSupport {
 		} catch (I2B2Exception e2) {
 			log.error("bootstrap ds failure: " + e2.getMessage());
 			throw e2;
-		} 
+		}
+		this.dataSource = ds;
 		this.jt = new JdbcTemplate(ds);
 	}
 	
 	private String getMetadataSchema() throws I2B2Exception{
+		String metadataSchema;
+		try {
+			Connection conn = dataSource.getConnection();
+			metadataSchema = conn.getSchema() + ".";
+			conn.close();
 
-		return OntologyUtil.getInstance().getMetaDataSchemaName();
+		} catch (Exception e) {
+			String message = "getMetadataSchema failure: " + e.getMessage();
+			throw new I2B2Exception(message);
+		}
+		return metadataSchema;
 	}
 	
 	

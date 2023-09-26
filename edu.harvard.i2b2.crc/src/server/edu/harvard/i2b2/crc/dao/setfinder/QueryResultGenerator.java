@@ -217,7 +217,7 @@ public class QueryResultGenerator extends CRCDAO implements IResultGenerator {
 				}
 				DataType mdataType = new DataType();
 				mdataType.setValue(String.valueOf(demoCount));
-				mdataType.setColumn(conceptType.getName());
+				mdataType.setColumn(getShortNameForConcept(conceptType.getName()));
 				mdataType.setType("int");
 				resultType.getData().add(mdataType);
 			}
@@ -373,5 +373,38 @@ public class QueryResultGenerator extends CRCDAO implements IResultGenerator {
 					conceptType.getOperator(), conceptType.getDimcode());
 		}
 		return theData;
+	}
+
+	private String getShortNameForConcept(String name) {
+		switch (name) {
+			case "Allina Health System":
+				return "Allina";
+			case "Intermountain Healthcare":
+				return "Intermountain";
+			case "Marshfield Clinic Research Institute":
+				return "Marshfield Clinic";
+			case "Washington University at St. Louis":
+				return "Washington Univ";
+			case "University of Iowa":
+				return "Univ of Iowa";
+			case "University of Texas Southwestern Medical Center":
+				return "UT Southwestern";
+			case "University of Kansas Medical Center":
+				return "Univ of Kansas";
+			case "University of Missouri":
+				return "Univ of Missouri";
+			case "Medical College of Wisconsin":
+				return "Medical College of WI";
+			case "University of Utah":
+				return "Univ of Utah";
+			case "University of Texas Health Science Center at Houston":
+				return "UT Houston";
+			case "University of Texas Health Science Center at San Antonio":
+				return "UT San Antonio";
+			case "University of Nebraska Medical Center":
+				return "Univ of Nebraska";
+			default:
+				return name;
+		}
 	}
 }

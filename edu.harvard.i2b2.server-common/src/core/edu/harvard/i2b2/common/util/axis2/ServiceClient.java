@@ -105,6 +105,15 @@ public class ServiceClient {
 				options.setProperty(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
 //				options.setProperty(HTTPConstants.CACHED_HTTP_CLIENT, httpClient);	
 				options.setProperty(HTTPConstants.REUSE_HTTP_CLIENT, Constants.VALUE_TRUE);
+
+				// Set the connection timeout in milliseconds
+				int connectionTimeout = 5000; // 5 seconds
+				options.setProperty(HTTPConstants.CONNECTION_TIMEOUT, connectionTimeout);
+
+				// set the socket timeout (read timeout)
+				int socketTimeout = 15000; // 15 seconds
+				serviceClient.getOptions().setProperty(HTTPConstants.SO_TIMEOUT, socketTimeout);
+
 				serviceClient.setOptions(options);
 
 				OMElement result = serviceClient.sendReceive(request);

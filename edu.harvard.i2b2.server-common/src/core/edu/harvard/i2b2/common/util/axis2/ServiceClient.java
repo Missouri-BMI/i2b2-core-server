@@ -111,7 +111,7 @@ public class ServiceClient {
 				options.setProperty(HTTPConstants.CONNECTION_TIMEOUT, connectionTimeout);
 
 				// set the socket timeout (read timeout)
-				int socketTimeout = 15000; // 15 seconds
+				int socketTimeout = 120000; // 120 seconds
 				serviceClient.getOptions().setProperty(HTTPConstants.SO_TIMEOUT, socketTimeout);
 
 				serviceClient.setOptions(options);

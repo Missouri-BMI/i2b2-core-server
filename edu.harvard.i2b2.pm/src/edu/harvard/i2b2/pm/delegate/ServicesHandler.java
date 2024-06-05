@@ -131,7 +131,7 @@ public class ServicesHandler extends RequestHandler {
 	{
 		PMDbDao pmDb = new PMDbDao();
 
-		if (pmDb.verifyNotLockedOut(username))
+		if (pmDb.verifyNotLockedOut(username) && (skipValidation == false))
 		{
 			saveLoginAttempt(pmDb, username, "LOCKED_OUT");
 			throw new Exception ("Too many invalid attempts, user locked out");
@@ -431,7 +431,7 @@ public class ServicesHandler extends RequestHandler {
 						if (name.equalsIgnoreCase("set_password"))
 							skipValidation = true;
 						
-						if (rmt.getUsername().equalsIgnoreCase("AGG_SERVICE_ACCOUNT") && 
+						if ((rmt.getUsername().equalsIgnoreCase("AGG_SERVICE_ACCOUNT") || rmt.getUsername().equalsIgnoreCase("shrine"))&&
 								(name.equalsIgnoreCase("get_user") || name.equalsIgnoreCase("set_user") || name.equalsIgnoreCase("set_user_param")) )
 							skipValidation = true;
 					}
@@ -440,7 +440,7 @@ public class ServicesHandler extends RequestHandler {
 					uType.setFullName(user.getFullName());
 					uType.setIsAdmin(user.isIsAdmin());
 					//Dont log AGG_SERVICE_ACOUNT
-					if (!rmt.getUsername().equals("AGG_SERVICE_ACCOUNT"))
+					if (!(rmt.getUsername().equalsIgnoreCase("AGG_SERVICE_ACCOUNT") || rmt.getUsername().equalsIgnoreCase("shrine")))
 						saveLoginAttempt(pmDb, rmt.getUsername(), "SUCCESS");
 
 				} catch (Exception e)

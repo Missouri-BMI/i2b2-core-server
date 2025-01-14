@@ -133,7 +133,7 @@ public class ServicesHandler extends RequestHandler {
 	{
 		PMDbDao pmDb = new PMDbDao();
 
-		if (pmDb.verifyNotLockedOut(username))
+		if (pmDb.verifyNotLockedOut(username) && (skipValidation == false))
 		{
 			saveLoginAttempt(pmDb, username, "LOCKED_OUT");
 			throw new Exception ("Too many invalid attempts, user locked out");
@@ -257,10 +257,11 @@ public class ServicesHandler extends RequestHandler {
 		log.debug("checking date");
 		log.debug("Now Time: "+ now.toString());
 		log.debug("Current session: "+ session.getExpiredDate().toString());
-		if(now.after(session.getExpiredDate()))
-		{
+		if(now.after(session.getExpiredDate())){
 			log.debug("Session Expired");
-			return false;
+			// reduce update session frequency
+			int sessionUpdated = pmDb.updateSession(userId, sessionId, timeout);
+			return sessionUpdated != -1;
 		}
 		log.debug("date ok");
 
@@ -416,8 +417,8 @@ public class ServicesHandler extends RequestHandler {
 						name  = ((JAXBElement) obj).getName().getLocalPart();
 						if (name.equalsIgnoreCase("set_password"))
 							skipValidation = true;
-						
-						if (rmt.getUsername().equalsIgnoreCase("AGG_SERVICE_ACCOUNT") && 
+
+						if ((rmt.getUsername().equalsIgnoreCase("AGG_SERVICE_ACCOUNT") || rmt.getUsername().equalsIgnoreCase("shrine")) &&
 								(name.equalsIgnoreCase("get_user") || name.equalsIgnoreCase("set_user") || name.equalsIgnoreCase("set_user_param")) )
 							skipValidation = true;
 					}
@@ -427,7 +428,7 @@ public class ServicesHandler extends RequestHandler {
 					uType.setIsAdmin(user.isIsAdmin());
 					uType.setEmail(user.getEmail());
 					//Dont log AGG_SERVICE_ACOUNT
-					if (!rmt.getUsername().equals("AGG_SERVICE_ACCOUNT"))
+					if (!(rmt.getUsername().equalsIgnoreCase("AGG_SERVICE_ACCOUNT") || rmt.getUsername().equalsIgnoreCase("shrine")))
 						saveLoginAttempt(pmDb, rmt.getUsername(), "SUCCESS");
 
 				} catch (Exception e)

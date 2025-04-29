@@ -204,8 +204,7 @@ public class PidListTypeHandler extends CRCDAO implements
 
 			if (dataSourceLookup.getServerType().equalsIgnoreCase(
 					DAOFactoryHelper.SQLSERVER) || dataSourceLookup.getServerType().equalsIgnoreCase(
-					DAOFactoryHelper.POSTGRESQL) || dataSourceLookup.getServerType().equalsIgnoreCase(
-					DAOFactoryHelper.SNOWFLAKE)) {
+					DAOFactoryHelper.POSTGRESQL)) {
 				//conn.createStatement().executeUpdate(
 				//		"drop table " + getTempTableName());
 				deleteStmt.executeUpdate(
@@ -216,6 +215,10 @@ public class PidListTypeHandler extends CRCDAO implements
 				//		"delete  " + getTempTableName());
 				deleteStmt.executeUpdate(
 						"delete  " + getTempTableName());
+			} else if (dataSourceLookup.getServerType().equalsIgnoreCase(
+					DAOFactoryHelper.SNOWFLAKE)) {
+				deleteStmt.executeUpdate(
+						"drop table if exists " + getTempTableName());
 			}
 		} catch (SQLException sqle) {
 			throw sqle;

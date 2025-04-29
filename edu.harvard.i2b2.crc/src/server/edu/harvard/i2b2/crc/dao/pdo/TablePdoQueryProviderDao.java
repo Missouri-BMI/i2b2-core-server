@@ -86,7 +86,10 @@ public class TablePdoQueryProviderDao extends CRCDAO implements
 				factTempTable = this.getDbSchemaName()
 						+ SQLServerFactRelatedQueryHandler.TEMP_FACT_PARAM_TABLE;
 				try {
-					tempStmt.executeUpdate("drop table " + factTempTable);
+					if (serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE))
+						tempStmt.executeUpdate("drop table if exists " + factTempTable);
+					else
+						tempStmt.executeUpdate("drop table " + factTempTable);
 				} catch (SQLException sqlex) {
 					;
 				}
@@ -236,7 +239,10 @@ public class TablePdoQueryProviderDao extends CRCDAO implements
 				tempTable = this.getDbSchemaName()
 						+ SQLServerFactRelatedQueryHandler.TEMP_PDO_INPUTLIST_TABLE;
 				try {
-					tempStmt.executeUpdate("drop table " + tempTable);
+					if (serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE))
+						tempStmt.executeUpdate("drop table if exists " + tempTable);
+					else
+						tempStmt.executeUpdate("drop table " + tempTable);
 				} catch (SQLException sqlex) {
 					;
 				}

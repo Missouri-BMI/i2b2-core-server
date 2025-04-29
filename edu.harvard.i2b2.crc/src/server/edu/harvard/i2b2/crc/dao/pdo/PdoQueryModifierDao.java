@@ -120,7 +120,10 @@ public class PdoQueryModifierDao extends CRCDAO implements IPdoQueryModifierDao 
 				else 
 					tempTableName = SQLServerFactRelatedQueryHandler.TEMP_PDO_INPUTLIST_TABLE;
 				try {
-					tempStmt.executeUpdate("drop table " + tempTableName);
+					if (serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE))
+						tempStmt.executeUpdate("drop table exists " + tempTableName);
+					else
+						tempStmt.executeUpdate("drop table " + tempTableName);
 				} catch (SQLException sqlex) {
 					;
 				}
@@ -230,7 +233,10 @@ public class PdoQueryModifierDao extends CRCDAO implements IPdoQueryModifierDao 
 				else
 					tempTable = SQLServerFactRelatedQueryHandler.TEMP_FACT_PARAM_TABLE;
 				try {
-					tempStmt.executeUpdate("drop table " + tempTable);
+					if (serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE))
+						tempStmt.executeUpdate("drop table if exists " + tempTable);
+					else
+						tempStmt.executeUpdate("drop table " + tempTable);
 				} catch (SQLException sqlex) {
 					;
 				}

@@ -132,7 +132,12 @@ public class TablePdoQueryVisitDao extends CRCDAO implements
 				tempTableName = getDbSchemaName()
 						+ SQLServerFactRelatedQueryHandler.TEMP_PDO_INPUTLIST_TABLE;
 				try {
-					tempStmt.executeUpdate("drop table " + tempTableName);
+					if (serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE)) {
+						tempStmt.executeUpdate("drop table if exists  " + tempTableName);
+					} else {
+						tempStmt.executeUpdate("drop table " + tempTableName);
+					}
+
 				} catch (SQLException sqlex) {
 					;
 				}
@@ -491,7 +496,10 @@ public class TablePdoQueryVisitDao extends CRCDAO implements
 				factTempTable = getDbSchemaName()
 						+ SQLServerFactRelatedQueryHandler.TEMP_FACT_PARAM_TABLE;
 				try {
-					tempStmt.executeUpdate("drop table " + factTempTable);
+					if (serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE))
+						tempStmt.executeUpdate("drop table if exists " + factTempTable);
+					else
+						tempStmt.executeUpdate("drop table " + factTempTable);
 				} catch (SQLException sqlex) {
 					;
 				}

@@ -477,7 +477,11 @@ public class PdoQueryPidDao extends CRCDAO implements IPdoQueryPidDao {
 		try {
 			deleteStmt = conn.createStatement();
 			//conn.createStatement().executeUpdate("drop table " + tempTableName);
-			deleteStmt.executeUpdate("drop table " + tempTableName);
+			if (dataSourceLookup.getServerType().equalsIgnoreCase(
+					DAOFactoryHelper.SNOWFLAKE))
+				deleteStmt.executeUpdate("drop table if exists " + tempTableName);
+			else
+				deleteStmt.executeUpdate("drop table " + tempTableName);
 		} catch (SQLException sqle) {
 			;
 		} finally {
@@ -556,7 +560,11 @@ public class PdoQueryPidDao extends CRCDAO implements IPdoQueryPidDao {
 				java.sql.Statement tempStmt = conn.createStatement();
 				tempTable = SQLServerFactRelatedQueryHandler.TEMP_PDO_INPUTLIST_TABLE;
 				try {
-					tempStmt.executeUpdate("drop table " + tempTable);
+					if (dataSourceLookup.getServerType().equalsIgnoreCase(
+							DAOFactoryHelper.SNOWFLAKE))
+						tempStmt.executeUpdate("drop table if exists " + tempTable);
+					else
+						tempStmt.executeUpdate("drop table " + tempTable);
 				} catch (SQLException sqlex) {
 					;
 				}
@@ -569,7 +577,11 @@ public class PdoQueryPidDao extends CRCDAO implements IPdoQueryPidDao {
 				java.sql.Statement tempStmt = conn.createStatement();
 				tempTable = SQLServerFactRelatedQueryHandler.TEMP_PDO_INPUTLIST_TABLE.substring(1);
 				try {
-					tempStmt.executeUpdate("drop table " + tempTable);
+					if (dataSourceLookup.getServerType().equalsIgnoreCase(
+							DAOFactoryHelper.SNOWFLAKE))
+						tempStmt.executeUpdate("drop table if exists " + tempTable);
+					else
+						tempStmt.executeUpdate("drop table " + tempTable);
 				} catch (SQLException sqlex) {
 					;
 				}

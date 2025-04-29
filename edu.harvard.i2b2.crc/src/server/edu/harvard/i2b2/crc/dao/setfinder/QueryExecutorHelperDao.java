@@ -203,6 +203,12 @@ public class QueryExecutorHelperDao extends CRCDAO {
 				String checkDeleteGlobalTempTable = "drop table " + TEMP_TABLE;
 				String checkDeleteCountTable = "drop table " + TEMP_DX_TABLE;
 				String checkDeleteMasterTable = "drop table " + TEMP_MASTER_TABLE;
+				if (dsLookup.getServerType().equalsIgnoreCase(
+						DAOFactoryHelper.SNOWFLAKE)) {
+					checkDeleteGlobalTempTable = "drop table if exists " + TEMP_TABLE;
+					checkDeleteCountTable = "drop table if exists " + TEMP_DX_TABLE;
+					checkDeleteMasterTable = "drop table if exists " + TEMP_MASTER_TABLE;
+				}
 				Statement clearTempStmt = manualConnection.createStatement();
 				try {
 					clearTempStmt.executeUpdate(checkDeleteGlobalTempTable);
@@ -410,6 +416,12 @@ public class QueryExecutorHelperDao extends CRCDAO {
 				String checkDeleteGlobalTempTable = "drop table " + TEMP_TABLE;
 				String checkDeleteCountTable = "drop table " + TEMP_DX_TABLE;
 				String checkDeleteMasterTable = "drop table " + TEMP_MASTER_TABLE;
+				if (dsLookup.getServerType().equalsIgnoreCase(
+						DAOFactoryHelper.SNOWFLAKE)) {
+					checkDeleteGlobalTempTable = "drop table if exists " + TEMP_TABLE;
+					checkDeleteCountTable = "drop table if exists " + TEMP_DX_TABLE;
+					checkDeleteMasterTable = "drop table if exists " + TEMP_MASTER_TABLE;
+				}
 				Statement clearTempStmt = manualConnection.createStatement();
 				try {
 					clearTempStmt.executeUpdate(checkDeleteGlobalTempTable);

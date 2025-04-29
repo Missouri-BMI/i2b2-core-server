@@ -118,7 +118,11 @@ public class PdoQueryVisitDao extends CRCDAO implements IPdoQueryVisitDao {
 				java.sql.Statement tempStmt = conn.createStatement();
 
 				try {
-					tempStmt.executeUpdate("drop table " + tempTableName);
+					if (serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE))
+						tempStmt.executeUpdate("drop table if exists " + tempTableName);
+					else {
+						tempStmt.executeUpdate("drop table " + tempTableName);
+					}
 				} catch (SQLException sqlex) {
 					;
 				}
@@ -401,7 +405,10 @@ public class PdoQueryVisitDao extends CRCDAO implements IPdoQueryVisitDao {
 				else
 					factTempTable = SQLServerFactRelatedQueryHandler.TEMP_FACT_PARAM_TABLE;
 				try {
-					tempStmt.executeUpdate("drop table " + factTempTable);
+					if (serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE))
+						tempStmt.executeUpdate("drop table if exists " + factTempTable);
+					else
+						tempStmt.executeUpdate("drop table " + factTempTable);
 				} catch (SQLException sqlex) {
 					;
 				}

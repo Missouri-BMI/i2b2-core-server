@@ -443,7 +443,10 @@ public class PdoQueryEidDao extends CRCDAO implements IPdoQueryEidDao {
 		try {
 			deleteStmt = conn.createStatement();
 			//conn.createStatement().executeUpdate("drop table " + tempTableName);
-			deleteStmt.executeUpdate("drop table " + tempTableName);
+			if (dataSourceLookup.getServerType().equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE))
+				deleteStmt.executeUpdate("drop table if exists " + tempTableName);
+			else
+				deleteStmt.executeUpdate("drop table " + tempTableName);
 
 		} catch (SQLException sqle) {
 			;
@@ -520,7 +523,10 @@ public class PdoQueryEidDao extends CRCDAO implements IPdoQueryEidDao {
 				else
 					tempTable = SQLServerFactRelatedQueryHandler.TEMP_PDO_INPUTLIST_TABLE;
 				try {
-					tempStmt.executeUpdate("drop table " + tempTable);
+					if (serverType.equalsIgnoreCase(DAOFactoryHelper.SNOWFLAKE))
+						tempStmt.executeUpdate("drop table if exists " + tempTable);
+					else
+						tempStmt.executeUpdate("drop table " + tempTable);
 				} catch (SQLException sqlex) {
 					;
 				}

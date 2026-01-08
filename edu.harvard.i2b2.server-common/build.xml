@@ -198,6 +198,7 @@
 			<fileset dir="${lib}/jdbc" includes="ojdbc11.jar" />
 			<fileset dir="${lib}/jdbc" includes="mssql-jdbc-12.8.1.jre11.jar"/>
 			<fileset dir="${lib}/jdbc" includes="postgresql-42.7.8.jar"/>
+			<fileset dir="${lib}/jdbc" includes="snowflake-jdbc-3.27.0.jar"/>
 		</copy>
 	</target>
 		
@@ -206,6 +207,7 @@
 			<fileset dir="${lib}/jdbc" includes="ojdbc11.jar" />
 			<fileset dir="${lib}/jdbc" includes="mssql-jdbc-12.8.1.jre11.jar"/>
 			<fileset dir="${lib}/jdbc" includes="postgresql-42.7.8.jar"/>
+			<fileset dir="${lib}/jdbc" includes="snowflake-jdbc-3.27.0.jar"/>
 		</copy>
 	</target>
 	
@@ -228,6 +230,7 @@
 				<fileset dir="${lib}/jdbc" includes="ojdbc11.jar" />
 				<fileset dir="${lib}/jdbc" includes="mssql-jdbc-12.8.1.jre11.jar"/>
 				<fileset dir="${lib}/jdbc" includes="postgresql-42.7.8.jar"/>
+				<fileset dir="${lib}/jdbc" includes="snowflake-jdbc-3.27.0.jar"/>
 			</copy>
 
 		</target>

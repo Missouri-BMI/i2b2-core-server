@@ -416,8 +416,8 @@ public class ServicesHandler extends RequestHandler {
 						name  = ((JAXBElement) obj).getName().getLocalPart();
 						if (name.equalsIgnoreCase("set_password"))
 							skipValidation = true;
-						
-						if (rmt.getUsername().equalsIgnoreCase("AGG_SERVICE_ACCOUNT") && 
+
+						if (rmt.getUsername().equalsIgnoreCase("AGG_SERVICE_ACCOUNT") &&
 								(name.equalsIgnoreCase("get_user") || name.equalsIgnoreCase("set_user") || name.equalsIgnoreCase("set_user_param")) )
 							skipValidation = true;
 					}
